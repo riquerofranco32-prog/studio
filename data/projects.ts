@@ -105,14 +105,14 @@ export const projects: Project[] = [
     slug: "altum-sci",
     number: "05",
     name: "Altum Sci",
-    category: "Ciencia / Sitio Corporativo",
+    category: "Inmobiliaria / Sitio Corporativo",
     year: "2025",
     shortDescription:
-      "Un sitio web corporativo para una firma de asesoría científica y financiera.",
+      "Un sitio web corporativo para una inmobiliaria enfocada en Río Negro y la Patagonia.",
     description:
-      "Altum Sci es una marca corporativa y de asesoría científica — diseñamos y construimos su sitio web corporativo.",
+      "Altum Sci es una inmobiliaria en Río Negro y la Patagonia — diseñamos y construimos su sitio web corporativo.",
     challenge:
-      "Construir credibilidad y claridad para una audiencia técnica orientada a la asesoría.",
+      "Construir credibilidad y claridad para compradores e inversores evaluando propiedades a distancia.",
     approach:
       "Detalles a agregar a medida que el caso de estudio se desarrolle.",
     design:
@@ -130,14 +130,14 @@ export const projects: Project[] = [
     slug: "pravilo",
     number: "06",
     name: "Pravilo",
-    category: "Servicios Profesionales",
+    category: "Entrenamiento y Movilidad",
     year: "2026",
     shortDescription:
-      "Un sitio web corporativo para una práctica de servicios profesionales.",
+      "Un sitio web para el primer centro Pravilo de Argentina, un método de entrenamiento y terapia de movilidad.",
     description:
-      "Pravilo es una marca de servicios profesionales — diseñamos y construimos su sitio web corporativo, desde la estructura de contenidos hasta la identidad visual.",
+      "Pravilo es un centro de entrenamiento y terapia de movilidad con el método Pravilo (tradición eslava) en Plottier, Neuquén — diseñamos y construimos su sitio web, desde la estructura de contenidos hasta la identidad visual.",
     challenge:
-      "Presentar una práctica profesional con una presencia digital premium y confiable.",
+      "Presentar un método de entrenamiento poco conocido en Argentina con una presencia digital premium y confiable.",
     approach:
       "Detalles a agregar a medida que el caso de estudio se desarrolle.",
     design:
