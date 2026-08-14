@@ -1,36 +1,81 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# STUDIO
 
-## Getting Started
+Portfolio website for a digital product / creative technology studio.
 
-First, run the development server:
+> **Naming note:** "STUDIO" is a placeholder brand name used throughout the codebase.
+> It lives in one place — `data/site.ts` — so renaming the brand is a one-file change.
+
+## Stack
+
+- [Next.js](https://nextjs.org) (App Router) + TypeScript
+- [Tailwind CSS v4](https://tailwindcss.com)
+- [Framer Motion](https://www.framer.com/motion/) for motion design
+- [Lucide](https://lucide.dev) icons
+- [Supabase](https://supabase.com) — prepared, optional (see below)
+- Deploys on [Vercel](https://vercel.com)
+
+## Getting started
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Content
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+All content ships from typed local data files — no database required to run the site:
 
-## Learn More
+- `data/site.ts` — brand name, tagline, contact links, stats
+- `data/projects.ts` — the six case studies (source of truth for `/work/[slug]`)
+- `data/services.ts` — services, process steps, technology list
+- `data/team.ts` — founders and testimonials (testimonials section auto-hides when empty)
 
-To learn more about Next.js, take a look at the following resources:
+Project screenshots go in `public/projects/` — see the README there for filenames.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Supabase (optional CMS path)
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+The site does **not** require Supabase to run. `supabase/schema.sql` defines the tables
+(`projects`, `project_images`, `services`, `testimonials`, `team_members`, `site_settings`)
+for a future migration off the local data files. `lib/supabase.ts` exposes a client that
+activates once the env vars below are set — swap the reads in `data/*.ts` for Supabase
+queries when you're ready to add a CMS/admin.
 
-## Deploy on Vercel
+## Environment variables
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Copy `.env.example` to `.env.local`:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+```
+
+Both are optional in v1.
+
+## Project structure
+
+```
+app/                  routes (home, /work/[slug], sitemap, robots)
+components/ui/        design-system primitives (Container, RevealText, MagneticLink…)
+components/sections/  page sections (Hero, SelectedWork, Services, Process, About…)
+components/work/      case-study/work-grid components
+data/                 typed local content
+lib/                  Supabase client
+types/                shared TypeScript types
+supabase/schema.sql   future CMS schema
+```
+
+## Scripts
+
+```bash
+npm run dev     # local dev server
+npm run build   # production build
+npm run start   # run the production build
+npm run lint    # eslint
+```
+
+## Deploy
+
+Push to GitHub and import into Vercel — no configuration required for v1 (Supabase env
+vars are optional). Framework preset: Next.js.
