@@ -22,12 +22,12 @@ export function Hero() {
 
       <Container className="relative">
         <p className="mb-6 font-mono text-xs tracking-widest text-muted uppercase">
-          Digital product &amp; creative technology studio
+          Estudio de producto digital y tecnología creativa
         </p>
 
         <h1 className="max-w-4xl text-[2.75rem] leading-[1.05] font-medium tracking-tight text-foreground sm:text-6xl md:text-7xl">
-          <RevealText>We build digital experiences</RevealText>
-          <RevealText delay={0.08}>for brands moving forward.</RevealText>
+          <RevealText>Construimos experiencias digitales</RevealText>
+          <RevealText delay={0.08}>para marcas que avanzan.</RevealText>
         </h1>
 
         <motion.p
@@ -36,7 +36,8 @@ export function Hero() {
           transition={{ duration: 0.6, delay: 0.5 }}
           className="mt-8 max-w-md text-lg text-muted"
         >
-          Strategy, design and technology — from first idea to final product.
+          Estrategia, diseño y tecnología — desde la primera idea hasta el
+          producto final.
         </motion.p>
 
         <motion.div
@@ -49,13 +50,13 @@ export function Hero() {
             href="#work"
             className="text-sm font-medium text-foreground"
           >
-            View our work <ArrowRight size={15} />
+            Ver nuestro trabajo <ArrowRight size={15} />
           </MagneticLink>
           <MagneticLink
             href="#contact"
             className="text-sm text-muted hover:text-foreground"
           >
-            Start a project <ArrowRight size={15} />
+            Iniciar un proyecto <ArrowRight size={15} />
           </MagneticLink>
         </motion.div>
       </Container>

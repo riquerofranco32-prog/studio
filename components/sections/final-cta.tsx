@@ -10,13 +10,13 @@ export function FinalCta() {
     <section id="contact" className="border-t border-border py-24 md:py-40">
       <Container>
         <h2 className="text-5xl font-medium tracking-tight text-foreground md:text-7xl">
-          <RevealText>Have an idea?</RevealText>
-          <RevealText delay={0.08}>Let&rsquo;s build it.</RevealText>
+          <RevealText>¿Tenés una idea?</RevealText>
+          <RevealText delay={0.08}>Construyámosla.</RevealText>
         </h2>
 
         <p className="mt-8 max-w-md text-lg text-muted">
-          Tell us what you&rsquo;re working on. We&rsquo;ll help turn it into
-          something people remember.
+          Contanos en qué estás trabajando. Te ayudamos a convertirlo en algo
+          memorable.
         </p>
 
         <div className="mt-10">
@@ -24,7 +24,7 @@ export function FinalCta() {
             href={`mailto:${SITE.email}`}
             className="text-2xl font-medium text-foreground md:text-3xl"
           >
-            Start a project <ArrowRight size={22} />
+            Iniciar un proyecto <ArrowRight size={22} />
           </MagneticLink>
         </div>
 

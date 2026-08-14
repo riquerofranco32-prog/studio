@@ -8,9 +8,9 @@ import { Container } from "@/components/ui/container";
 import { SITE } from "@/data/site";
 
 const links = [
-  { href: "/#work", label: "Work" },
-  { href: "/#services", label: "Services" },
-  { href: "/#about", label: "About" },
+  { href: "/#work", label: "Trabajo" },
+  { href: "/#services", label: "Servicios" },
+  { href: "/#about", label: "Nosotros" },
 ];
 
 export function Navbar() {
@@ -64,11 +64,11 @@ export function Navbar() {
             href="/#contact"
             className="focus-ring hidden items-center gap-1.5 text-sm text-foreground transition-opacity hover:opacity-70 md:inline-flex"
           >
-            Contact <ArrowUpRight size={14} />
+            Contacto <ArrowUpRight size={14} />
           </Link>
 
           <button
-            aria-label={open ? "Close menu" : "Open menu"}
+            aria-label={open ? "Cerrar menú" : "Abrir menú"}
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
             className="focus-ring -mr-2 p-2 md:hidden"
@@ -88,7 +88,7 @@ export function Navbar() {
             className="overflow-hidden border-b border-border bg-background md:hidden"
           >
             <Container className="flex flex-col gap-1 py-4">
-              {[...links, { href: "/#contact", label: "Contact" }].map(
+              {[...links, { href: "/#contact", label: "Contacto" }].map(
                 (link) => (
                   <Link
                     key={link.href}

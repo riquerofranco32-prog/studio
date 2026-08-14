@@ -12,7 +12,7 @@ export function Process() {
   return (
     <section className="border-t border-border py-24 md:py-32">
       <Container>
-        <SectionHeading kicker="Process" title="How we build." />
+        <SectionHeading kicker="Proceso" title="Cómo construimos." />
 
         <div className="mt-16 flex flex-col gap-0 md:flex-row md:gap-8">
           <div className="flex flex-row overflow-x-auto md:flex-col md:overflow-visible">
@@ -52,7 +52,7 @@ export function Process() {
               transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             >
               <p className="font-mono text-xs tracking-widest text-muted uppercase">
-                Step {process[active].number}
+                Paso {process[active].number}
               </p>
               <h3 className="mt-4 text-3xl font-medium tracking-tight text-foreground md:text-4xl">
                 {process[active].title}

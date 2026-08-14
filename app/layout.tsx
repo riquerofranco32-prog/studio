@@ -28,7 +28,7 @@ export const metadata: Metadata = {
     url: SITE.url,
     siteName: SITE.name,
     type: "website",
-    locale: "en_US",
+    locale: "es_AR",
   },
   twitter: {
     card: "summary_large_image",
@@ -46,7 +46,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="es">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

@@ -8,18 +8,18 @@ export function About() {
     <section id="about" className="border-t border-border py-24 md:py-32">
       <Container>
         <SectionHeading
-          kicker="About"
-          title="Small team. Big digital thinking."
+          kicker="Nosotros"
+          title="Equipo chico. Pensamiento digital grande."
         />
 
         <p className="mt-8 max-w-2xl text-xl leading-relaxed text-muted md:text-2xl">
-          We combine design, technology and strategy to create digital
-          experiences that feel as good as they perform.
+          Combinamos diseño, tecnología y estrategia para crear experiencias
+          digitales que se sienten tan bien como funcionan.
         </p>
 
         <div className="mt-16 grid grid-cols-3 gap-6 border-y border-border py-10 sm:max-w-xl">
-          <Stat value={SITE.stats.projects} label="Projects" />
-          <Stat value={SITE.stats.people} label="People" />
+          <Stat value={SITE.stats.projects} label="Proyectos" />
+          <Stat value={SITE.stats.people} label="Personas" />
           <Stat value={SITE.stats.years} label="" />
         </div>
 
@@ -28,7 +28,7 @@ export function About() {
             <div key={member.id} className="border-t border-border pt-6">
               <div className="mb-5 aspect-square w-full max-w-[220px] bg-white/[0.03]" />
               <p className="text-lg font-medium tracking-tight text-foreground">
-                {member.name ?? "Name to be added"}
+                {member.name ?? "Nombre a definir"}
               </p>
               <p className="mt-1 text-sm text-muted">{member.role}</p>
             </div>

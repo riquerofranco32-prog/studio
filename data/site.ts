@@ -1,9 +1,9 @@
-// ponytail: "STUDIO" is a placeholder brand name — update here when the name is final, everything else derives from it.
+// ponytail: "STUDIO" es un nombre de marca provisorio — actualizar acá cuando esté definido, todo lo demás deriva de este valor.
 export const SITE = {
   name: "STUDIO",
-  tagline: "Digital experiences & products",
+  tagline: "Experiencias y productos digitales",
   description:
-    "A two-person digital product and creative technology studio. We design and build digital experiences for brands moving forward.",
+    "Un estudio de dos personas de producto digital y tecnología creativa. Diseñamos y construimos experiencias digitales para marcas que avanzan.",
   url: "https://studio.example.com",
   email: "hello@studio.example.com",
   whatsapp: "https://wa.me/5490000000000",

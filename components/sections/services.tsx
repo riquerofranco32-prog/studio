@@ -6,7 +6,7 @@ export function Services() {
   return (
     <section id="services" className="border-t border-border py-24 md:py-32">
       <Container>
-        <SectionHeading kicker="Services" title="From idea to interface." />
+        <SectionHeading kicker="Servicios" title="De la idea a la interfaz." />
 
         <div className="mt-16 grid grid-cols-1 border-t border-border md:grid-cols-2">
           {services.map((service) => (

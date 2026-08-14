@@ -66,7 +66,7 @@ export default async function CaseStudyPage({
           href="/#work"
           className="focus-ring inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-foreground"
         >
-          <ArrowLeft size={14} /> Back to work
+          <ArrowLeft size={14} /> Volver a trabajo
         </Link>
 
         <div className="mt-10 flex flex-wrap items-baseline justify-between gap-4">
@@ -98,14 +98,14 @@ export default async function CaseStudyPage({
 
         <div className="mt-4">
           {project.challenge && (
-            <Field label="Challenge">{project.challenge}</Field>
+            <Field label="Desafío">{project.challenge}</Field>
           )}
           {project.approach && (
-            <Field label="Approach">{project.approach}</Field>
+            <Field label="Enfoque">{project.approach}</Field>
           )}
-          {project.design && <Field label="Design">{project.design}</Field>}
+          {project.design && <Field label="Diseño">{project.design}</Field>}
           {project.technology && project.technology.length > 0 && (
-            <Field label="Technology">
+            <Field label="Tecnología">
               <div className="flex flex-wrap gap-3">
                 {project.technology.map((tech) => (
                   <span
@@ -118,7 +118,9 @@ export default async function CaseStudyPage({
               </div>
             </Field>
           )}
-          {project.outcome && <Field label="Outcome">{project.outcome}</Field>}
+          {project.outcome && (
+            <Field label="Resultado">{project.outcome}</Field>
+          )}
         </div>
 
         <div className="mt-8 border-t border-border pt-10">
@@ -128,7 +130,7 @@ export default async function CaseStudyPage({
             rel="noopener noreferrer"
             className="focus-ring inline-flex items-center gap-2 text-2xl font-medium text-foreground transition-opacity hover:opacity-70"
           >
-            Live website <ArrowUpRight size={20} />
+            Sitio en vivo <ArrowUpRight size={20} />
           </a>
         </div>
       </Container>

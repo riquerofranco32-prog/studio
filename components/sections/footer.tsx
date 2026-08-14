@@ -8,10 +8,10 @@ import { Container } from "@/components/ui/container";
 import { SITE } from "@/data/site";
 
 const links = [
-  { href: "/#work", label: "Work" },
-  { href: "/#services", label: "Services" },
-  { href: "/#about", label: "About" },
-  { href: "/#contact", label: "Contact" },
+  { href: "/#work", label: "Trabajo" },
+  { href: "/#services", label: "Servicios" },
+  { href: "/#about", label: "Nosotros" },
+  { href: "/#contact", label: "Contacto" },
 ];
 
 export function Footer() {
@@ -24,7 +24,7 @@ export function Footer() {
               {SITE.name}
             </p>
             <p className="mt-3 max-w-xs text-sm text-muted">
-              Digital experiences. Built with intention.
+              Experiencias digitales. Construidas con intención.
             </p>
           </div>
 
@@ -73,13 +73,14 @@ export function Footer() {
 
         <div className="mt-16 flex flex-col-reverse items-start justify-between gap-4 border-t border-border pt-6 text-xs text-muted sm:flex-row sm:items-center">
           <p>
-            &copy; {new Date().getFullYear()} {SITE.name}. All rights reserved.
+            &copy; {new Date().getFullYear()} {SITE.name}. Todos los derechos
+            reservados.
           </p>
           <Link
             href="/"
             className="focus-ring inline-flex items-center gap-1 text-foreground"
           >
-            Built by {SITE.name} &#8599;
+            Hecho por {SITE.name} &#8599;
           </Link>
         </div>
       </Container>

@@ -1,26 +1,26 @@
 import { Project } from "@/types";
 
-// ponytail: local data source for v1 — swap for a Supabase `projects` table read once the schema in supabase/schema.sql is applied.
+// ponytail: fuente de datos local para v1 — reemplazar por lectura de la tabla `projects` de Supabase cuando se aplique supabase/schema.sql.
 export const projects: Project[] = [
   {
     slug: "takefyy",
     number: "01",
     name: "Takefyy",
-    category: "SaaS / Digital Product",
+    category: "SaaS / Producto Digital",
     year: "2025",
     shortDescription:
-      "A digital ordering platform for restaurants — catalogs, orders and admin tools in one product.",
+      "Una plataforma de pedidos digital para restaurantes — catálogos, pedidos y herramientas de administración en un solo producto.",
     description:
-      "Takefyy is a SaaS product for restaurants to manage digital catalogs and orders. We designed and built the public ordering experience and the admin platform behind it.",
+      "Takefyy es un producto SaaS para que restaurantes gestionen catálogos digitales y pedidos. Diseñamos y construimos la experiencia pública de pedidos y la plataforma de administración detrás de ella.",
     challenge:
-      "Restaurants needed a fast, self-serve way to publish a digital menu and take orders without relying on third-party marketplace fees.",
+      "Los restaurantes necesitaban una forma rápida y autogestionable de publicar un menú digital y recibir pedidos sin depender de comisiones de marketplaces externos.",
     approach:
-      "We designed a system that separates the public storefront from an admin dashboard, built for owners with no technical background.",
+      "Diseñamos un sistema que separa el local público de un panel de administración, pensado para dueños sin conocimientos técnicos.",
     design:
-      "A clean, high-contrast interface that keeps the focus on the product photography and pricing, with a simple cart-to-WhatsApp checkout flow.",
+      "Una interfaz limpia y de alto contraste que mantiene el foco en la fotografía del producto y los precios, con un flujo simple de carrito a WhatsApp.",
     technology: ["Next.js", "TypeScript", "Supabase", "Vercel"],
     outcome:
-      "Live product in production use by real restaurants — outcome details to be added as the case study develops.",
+      "Producto en producción, usado por restaurantes reales — detalles de resultados a agregar a medida que el caso de estudio se desarrolle.",
     url: "https://takefyy.com/",
     image: "/projects/takefyy.jpg",
     featured: true,
@@ -31,21 +31,21 @@ export const projects: Project[] = [
     slug: "pone-la-pava",
     number: "02",
     name: "Poné La Pava",
-    category: "E-commerce / Brand Experience",
+    category: "E-commerce / Experiencia de Marca",
     year: "2026",
     shortDescription:
-      "An e-commerce brand experience built around a distinct visual identity and product catalog.",
+      "Una experiencia de marca de e-commerce construida alrededor de una identidad visual distintiva y un catálogo de productos.",
     description:
-      "Poné La Pava is an e-commerce brand experience — we designed and built the storefront, product catalog and checkout flow.",
+      "Poné La Pava es una experiencia de marca de e-commerce — diseñamos y construimos el local, el catálogo de productos y el flujo de checkout.",
     challenge:
-      "Translate a strong brand identity into a fast, conversion-focused online store.",
+      "Traducir una identidad de marca fuerte en una tienda online rápida y enfocada en la conversión.",
     approach:
-      "We built a component-driven storefront with real-time stock management tied directly to product availability.",
+      "Construimos un local basado en componentes con gestión de stock en tiempo real, ligada directamente a la disponibilidad de cada producto.",
     design:
-      "Motion-led product reveals and an editorial layout that treats the catalog as the hero of the experience.",
+      "Revelados de producto guiados por motion y un layout editorial que trata al catálogo como el protagonista de la experiencia.",
     technology: ["Next.js", "TypeScript", "Supabase", "Vercel"],
     outcome:
-      "Live store — outcome details to be added as the case study develops.",
+      "Tienda en producción — detalles de resultados a agregar a medida que el caso de estudio se desarrolle.",
     url: "https://ponelapava.vercel.app/",
     image: "/projects/pone-la-pava.jpg",
     featured: true,
@@ -56,21 +56,21 @@ export const projects: Project[] = [
     slug: "sentinel",
     number: "03",
     name: "Sentinel",
-    category: "Climate Tech / AI",
+    category: "Climate Tech / IA",
     year: "2025",
     shortDescription:
-      "A climate technology platform combining satellite fire data with AI-driven risk analysis.",
+      "Una plataforma de tecnología climática que combina datos satelitales de incendios con análisis de riesgo impulsado por IA.",
     description:
-      "Sentinel is a climate tech and AI product for environmental monitoring — we designed and built the marketing site and data-driven interactive map.",
+      "Sentinel es un producto de climate tech e IA para monitoreo ambiental — diseñamos y construimos el sitio institucional y el mapa interactivo basado en datos.",
     challenge:
-      "Present complex environmental and satellite data in a way that is fast, credible and easy to understand.",
+      "Presentar datos ambientales y satelitales complejos de forma rápida, creíble y fácil de entender.",
     approach:
-      "We built an interactive map layer on top of live data sources, paired with a precise, technical brand language.",
+      "Construimos una capa de mapa interactivo sobre fuentes de datos en vivo, combinada con un lenguaje de marca preciso y técnico.",
     design:
-      "A dark, data-first interface where typography and live visualizations carry the credibility of the product.",
-    technology: ["Next.js", "TypeScript", "AI/APIs", "Vercel"],
+      "Una interfaz oscura y centrada en datos, donde la tipografía y las visualizaciones en vivo sostienen la credibilidad del producto.",
+    technology: ["Next.js", "TypeScript", "IA/APIs", "Vercel"],
     outcome:
-      "Live platform — outcome details to be added as the case study develops.",
+      "Plataforma en producción — detalles de resultados a agregar a medida que el caso de estudio se desarrolle.",
     url: "https://sentineltech.com.ar/",
     image: "/projects/sentinel.jpg",
     featured: true,
@@ -81,19 +81,20 @@ export const projects: Project[] = [
     slug: "apex-ai",
     number: "04",
     name: "Apex AI",
-    category: "Artificial Intelligence",
+    category: "Inteligencia Artificial",
     year: "2025",
     shortDescription:
-      "A technology and artificial intelligence product website.",
+      "Un sitio web para un producto de tecnología e inteligencia artificial.",
     description:
-      "Apex AI is an artificial intelligence technology product — we designed and built its web presence.",
+      "Apex AI es un producto de tecnología con inteligencia artificial — diseñamos y construimos su presencia web.",
     challenge:
-      "Communicate an AI product's value clearly to a technical audience.",
-    approach: "Details to be added as the case study develops.",
-    design: "Details to be added as the case study develops.",
-    technology: ["Next.js", "AI/APIs"],
+      "Comunicar con claridad el valor de un producto de IA a una audiencia técnica.",
+    approach:
+      "Detalles a agregar a medida que el caso de estudio se desarrolle.",
+    design: "Detalles a agregar a medida que el caso de estudio se desarrolle.",
+    technology: ["Next.js", "IA/APIs"],
     outcome:
-      "Live site — outcome details to be added as the case study develops.",
+      "Sitio en producción — detalles de resultados a agregar a medida que el caso de estudio se desarrolle.",
     url: "https://apex-ai-arg.netlify.app/",
     image: "/projects/apex-ai.jpg",
     featured: false,
@@ -104,20 +105,21 @@ export const projects: Project[] = [
     slug: "altum-sci",
     number: "05",
     name: "Altum Sci",
-    category: "Science / Corporate Website",
+    category: "Ciencia / Sitio Corporativo",
     year: "2025",
     shortDescription:
-      "A corporate website for a scientific and financial advisory firm.",
+      "Un sitio web corporativo para una firma de asesoría científica y financiera.",
     description:
-      "Altum Sci is a science and corporate advisory brand — we designed and built its corporate website.",
+      "Altum Sci es una marca corporativa y de asesoría científica — diseñamos y construimos su sitio web corporativo.",
     challenge:
-      "Build credibility and clarity for a technical, advisory-driven audience.",
-    approach: "Details to be added as the case study develops.",
+      "Construir credibilidad y claridad para una audiencia técnica orientada a la asesoría.",
+    approach:
+      "Detalles a agregar a medida que el caso de estudio se desarrolle.",
     design:
-      "A restrained, corporate visual language focused on legibility and trust.",
+      "Un lenguaje visual corporativo y contenido, enfocado en la legibilidad y la confianza.",
     technology: ["Next.js", "TypeScript", "Vercel"],
     outcome:
-      "Live site — outcome details to be added as the case study develops.",
+      "Sitio en producción — detalles de resultados a agregar a medida que el caso de estudio se desarrolle.",
     url: "https://altumsci.com.ar/",
     image: "/projects/altum-sci.jpg",
     featured: false,
@@ -128,19 +130,21 @@ export const projects: Project[] = [
     slug: "pravilo",
     number: "06",
     name: "Pravilo",
-    category: "Professional Services",
+    category: "Servicios Profesionales",
     year: "2026",
     shortDescription:
-      "A corporate website for a professional services practice.",
+      "Un sitio web corporativo para una práctica de servicios profesionales.",
     description:
-      "Pravilo is a professional services brand — we designed and built its corporate website, from copy structure to visual identity.",
+      "Pravilo es una marca de servicios profesionales — diseñamos y construimos su sitio web corporativo, desde la estructura de contenidos hasta la identidad visual.",
     challenge:
-      "Present a professional practice with a premium, trustworthy digital presence.",
-    approach: "Details to be added as the case study develops.",
-    design: "A cinematic, dark-toned identity with real photography and video.",
+      "Presentar una práctica profesional con una presencia digital premium y confiable.",
+    approach:
+      "Detalles a agregar a medida que el caso de estudio se desarrolle.",
+    design:
+      "Una identidad cinematográfica, en tonos oscuros, con fotografía y video reales.",
     technology: ["Next.js", "TypeScript", "Vercel"],
     outcome:
-      "Live site — outcome details to be added as the case study develops.",
+      "Sitio en producción — detalles de resultados a agregar a medida que el caso de estudio se desarrolle.",
     url: "https://www.pravilo.com.ar/",
     image: "/projects/pravilo.jpg",
     featured: false,

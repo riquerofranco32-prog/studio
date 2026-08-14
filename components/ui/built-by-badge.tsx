@@ -12,7 +12,7 @@ export function BuiltByBadge({ className = "" }: { className?: string }) {
       rel="noopener noreferrer"
       className={`focus-ring inline-flex items-center gap-1 text-xs text-muted transition-colors hover:text-foreground ${className}`}
     >
-      Built by {SITE.name} &#8599;
+      Hecho por {SITE.name} &#8599;
     </a>
   );
 }

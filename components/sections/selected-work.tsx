@@ -19,9 +19,9 @@ export function SelectedWork() {
     <section id="work" className="border-t border-border py-24 md:py-32">
       <Container>
         <SectionHeading
-          kicker="Selected work"
-          title="Selected work."
-          subtitle="Six digital experiences we've designed and built."
+          kicker="Trabajo seleccionado"
+          title="Trabajo seleccionado."
+          subtitle="Seis experiencias digitales que diseñamos y construimos."
         />
 
         <div className="mt-16 grid grid-cols-1 gap-x-6 gap-y-14 md:grid-cols-12">

@@ -7,7 +7,7 @@ export function Technology() {
       <Container>
         <div className="flex flex-col items-start justify-between gap-8 md:flex-row md:items-center">
           <p className="font-mono text-xs tracking-widest text-muted uppercase">
-            Built with
+            Construido con
           </p>
           <div className="flex flex-wrap gap-x-8 gap-y-3 md:justify-end">
             {technologies.map((tech) => (
