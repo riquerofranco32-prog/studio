@@ -1,16 +1,16 @@
-// ponytail: "STUDIO" es un nombre de marca provisorio — actualizar acá cuando esté definido, todo lo demás deriva de este valor.
+// Nombre de marca: Se7en Studio. Todo lo demás (title, OG, footer, etc.) deriva de este archivo.
 export const SITE = {
-  name: "STUDIO",
+  name: "Se7en Studio",
   tagline: "Experiencias y productos digitales",
   description:
     "Un estudio de dos personas de producto digital y tecnología creativa. Diseñamos y construimos experiencias digitales para marcas que avanzan.",
-  url: "https://studio.example.com",
-  email: "hello@studio.example.com",
+  url: "https://se7enstudio.example.com",
+  email: "hello@se7enstudio.com",
   whatsapp: "https://wa.me/5490000000000",
   social: {
-    instagram: "https://instagram.com/studio",
-    linkedin: "https://linkedin.com/company/studio",
-    github: "https://github.com/studio",
+    instagram: "https://instagram.com/se7enstudio",
+    linkedin: "https://linkedin.com/company/se7enstudio",
+    github: "https://github.com/se7enstudio",
   },
   stats: {
     projects: "6+",
