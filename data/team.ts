@@ -1,12 +1,12 @@
 import { TeamMember, Testimonial } from "@/types";
 
 // Faltan las fotos (`imageUrl`) y las bios: la tarjeta cae a un placeholder mientras
-// estén vacías. Los roles dicen "Fundador" a secas hasta tener el reparto real.
+// estén vacías.
 export const team: TeamMember[] = [
   {
     id: "founder-01",
     name: "Franco Riquero",
-    role: "Fundador",
+    role: "Fundador · Desarrollo",
     bio: "",
     imageUrl: "",
     linkedin: "https://www.linkedin.com/in/franco-riquero-117492355/",
@@ -14,7 +14,7 @@ export const team: TeamMember[] = [
   {
     id: "founder-02",
     name: "Federico Martín",
-    role: "Fundador",
+    role: "Fundador · Diseño",
     bio: "",
     imageUrl: "",
     linkedin: "https://www.linkedin.com/in/federico-martin-632223231/",

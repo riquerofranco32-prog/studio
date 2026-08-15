@@ -90,18 +90,22 @@ no es un caso.
 usuarios. Reemplazar el texto placeholder en `data/projects.ts`.
 
 ### 2.3 Nombres y fotos del equipo — PARCIAL
-Cargados Franco Riquero y Federico Martín con sus LinkedIn, y la tarjeta ahora renderiza el
-link. **Falta**: fotos en `public/team/` (hoy cae a un placeholder), bios, y el reparto real
-de roles — los dos dicen "Fundador" a secas.
+Cargados Franco Riquero (Fundador · Desarrollo) y Federico Martín (Fundador · Diseño) con
+sus LinkedIn, y la tarjeta renderiza el link. **Falta**: fotos en `public/team/` — hoy cae a
+un placeholder que dice "FOTO" — y las bios.
 
 ### 2.4 Completar los cuatro casos flojos — MEDIO
 Apex AI, Altum Sci y Pravilo tienen `approach` y `design` en placeholder. La página
 `/work/[slug]` los muestra igual.
 
-### 2.5 Datos reales del sitio — MEDIO
-`data/site.ts` todavía tiene `url: "https://se7enstudio.example.com"` y
-`whatsapp: "https://wa.me/5490000000000"`. El `metadataBase` y el sitemap salen de ahí, así
-que hoy los OG tags apuntan a un dominio inexistente.
+### 2.5 Datos reales del sitio — CASI
+Cargados el dominio (`se7enstudio.com.ar`) y el email de contacto. Verificado en el build de
+producción: `og:image` y `twitter:image` resuelven a
+`https://se7enstudio.com.ar/opengraph-image`, y el sitemap y `robots.txt` listan el dominio
+real.
+
+**Falta**: `whatsapp` sigue en `https://wa.me/5490000000000`, un número de relleno. Aparece
+en la sección de contacto como canal directo.
 
 ---
 
@@ -218,9 +222,8 @@ Recomendación: changelog. Es el que menos cuesta y el que más muestra que el e
 
 1. **Fase 2 completa** — sin contenido real, ninguna mejora visual convierte. Es lo único
    que hoy bloquea: los campos ya están cableados, falta el contenido.
-2. **2.5 (datos del sitio)** — con 3.1 ya hecho, esto es lo último que separa al link
-   compartido de verse bien: `metadataBase` todavía apunta a un dominio inexistente, así que
-   la tarjeta OG se genera pero se referencia mal.
+2. **Fotos del equipo y número de WhatsApp** — lo que sobrevive de 2.3 y 2.5. Minutos de
+   trabajo, cero código.
 3. **4.1 (formulario real)** — cerrar el loop de conversión.
 4. **3.2 (video en hero)** — el salto de percepción más grande, pero pide producción.
 5. Resto por oportunidad.
