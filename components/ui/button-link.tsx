@@ -3,9 +3,11 @@ import { ReactNode } from "react";
 
 type Variant = "primary" | "secondary" | "ghost";
 
+// Texto oscuro sobre el acento, no blanco: #fff sobre #ff4d2e da 3.31:1 y no
+// llega al 4.5:1 que pide WCAG AA para etiquetas de 14px. En negativo da 5.99:1.
 const variants: Record<Variant, string> = {
   primary:
-    "bg-accent text-white hover:bg-accent/90 border border-transparent",
+    "bg-accent text-background hover:bg-accent/90 border border-transparent",
   secondary:
     "bg-transparent text-foreground border border-border hover:border-foreground/40 hover:bg-white/[0.04]",
   ghost:

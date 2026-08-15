@@ -5,7 +5,8 @@ producto/tecnología con una landing que resuelve bien tres cosas que a esta le 
 color de marca con intención, prueba social arriba del scroll, y un cierre de contacto
 que no es sólo un `mailto:`.
 
-Estado a 2026-08-14. Fase 1 está implementada y verificada; el resto es backlog priorizado.
+Estado a 2026-08-14. Implementados: toda la Fase 1, más 3.1 (imagen OG), 3.4 (navbar con
+sección activa) y el contraste de 4.5. El resto es backlog priorizado.
 
 ---
 
@@ -106,10 +107,15 @@ que hoy los OG tags apuntan a un dominio inexistente.
 
 ## Fase 3 — Experiencia y motion
 
-### 3.1 Imagen OG
-No existe `opengraph-image`. Cada vez que alguien comparte el link, sale sin preview.
-**Acción**: `app/opengraph-image.tsx` con `ImageResponse` — wordmark + tagline sobre el fondo
-oscuro con el acento.
+### 3.1 Imagen OG — HECHO
+`app/opengraph-image.tsx` y `app/twitter-image.tsx` generan una tarjeta 1200×630 con
+`ImageResponse`; el JSX vive en `lib/og-card.tsx` para no duplicarlo. Twitter no hereda
+`og:image`, por eso son dos archivos.
+
+Dos límites de Satori que condicionan el diseño: sólo acepta fuentes ttf/otf/woff (Geist
+llega como woff2 vía `next/font`, así que la tarjeta se apoya en layout y color, no en la
+tipografía de marca), y no soporta filtros — el resplandor del hero se resuelve con un
+`linear-gradient`, porque un círculo dejaba un borde duro cruzando el titular.
 
 ### 3.2 Video o loop en el hero
 El recurso más fuerte de paisanos es el video. Un loop mudo de 6-8s mostrando los productos
@@ -121,9 +127,10 @@ en uso pesa más que cualquier headline.
 Hoy la tarjeta hace scale + overlay. Paisanos muestra un preview del caso. Alternativa
 barata: un segundo screenshot por proyecto que aparezca en hover.
 
-### 3.4 Navbar con sección activa
-El header ya reacciona al scroll. Falta resaltar el link de la sección visible
-(`IntersectionObserver` sobre los `<section id>`).
+### 3.4 Navbar con sección activa — HECHO
+`IntersectionObserver` con banda `-45% / -50%`, así se activa la sección que cruza el medio
+del viewport y no la que apenas asoma por abajo. El link activo pasa a `text-foreground` con
+un subrayado en acento y `aria-current="true"`.
 
 ### 3.5 Transiciones de página
 Next 16 trae View Transitions
@@ -151,10 +158,24 @@ Los screenshots son JPG de 36-151 KB. Convertir a AVIF/WebP y servir dos tamaño
 Medir con Lighthouse en producción. GSAP + ScrollTrigger + Framer Motion son tres librerías
 de animación; probablemente se pueda sacar una.
 
-### 4.5 Accesibilidad
-Auditar contraste del acento sobre el fondo (`#ff4d2e` sobre `#0a0a0b`), navegación completa
-por teclado en el menú mobile, y `aria-live` en el estado del formulario (ya está puesto,
-falta validarlo con lector de pantalla).
+### 4.5 Accesibilidad — CONTRASTE HECHO, RESTO PENDIENTE
+Ratios medidos contra WCAG:
+
+| Par | Ratio | Estado |
+|---|---|---|
+| acento sobre fondo | 5.99:1 | AA |
+| **blanco sobre acento** | **3.31:1** | **fallaba AA** |
+| fondo sobre acento | 5.99:1 | AA |
+| muted sobre fondo | 5.75:1 | AA |
+| foreground sobre fondo | 18.14:1 | AAA |
+
+Los botones de acento tenían texto blanco a 14px: 3.31:1, por debajo del 4.5:1 que pide AA
+para texto normal. Cambiados a `text-background` (texto casi negro sobre el acento), que da
+5.99:1. Afecta a `ButtonLink`, los dos CTAs del navbar, el submit del formulario y el badge
+de las tarjetas de trabajo.
+
+Pendiente: navegación completa por teclado en el menú mobile, y validar el `aria-live` del
+formulario con lector de pantalla.
 
 ---
 
@@ -173,9 +194,11 @@ Recomendación: changelog. Es el que menos cuesta y el que más muestra que el e
 
 ## Orden sugerido
 
-1. **Fase 2 completa** — sin contenido real, ninguna mejora visual convierte.
-2. **3.1 (imagen OG) + 2.5 (datos del sitio)** — juntos, media hora, arreglan cómo se ve el
-   link compartido.
+1. **Fase 2 completa** — sin contenido real, ninguna mejora visual convierte. Es lo único
+   que hoy bloquea: los campos ya están cableados, falta el contenido.
+2. **2.5 (datos del sitio)** — con 3.1 ya hecho, esto es lo último que separa al link
+   compartido de verse bien: `metadataBase` todavía apunta a un dominio inexistente, así que
+   la tarjeta OG se genera pero se referencia mal.
 3. **4.1 (formulario real)** — cerrar el loop de conversión.
 4. **3.2 (video en hero)** — el salto de percepción más grande, pero pide producción.
 5. Resto por oportunidad.

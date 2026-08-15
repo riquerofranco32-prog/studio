@@ -8,14 +8,15 @@ import { Container } from "@/components/ui/container";
 import { SITE } from "@/data/site";
 
 const links = [
-  { href: "/#work", label: "Trabajo" },
-  { href: "/#services", label: "Servicios" },
-  { href: "/#about", label: "Nosotros" },
+  { href: "/#work", id: "work", label: "Trabajo" },
+  { href: "/#services", id: "services", label: "Servicios" },
+  { href: "/#about", id: "about", label: "Nosotros" },
 ];
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
+  const [active, setActive] = useState<string | null>(null);
 
   useEffect(() => {
     function onScroll() {
@@ -24,6 +25,33 @@ export function Navbar() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  useEffect(() => {
+    const sections = links
+      .map((link) => document.getElementById(link.id))
+      .filter((el): el is HTMLElement => el !== null);
+    if (sections.length === 0) return;
+
+    // La banda de -45%/-50% deja activa la sección que cruza el medio del
+    // viewport, en vez de la que apenas asoma por abajo.
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            setActive(entry.target.id);
+          } else {
+            // Update funcional: leer `active` del closure lo dejaría congelado
+            // en el valor del primer render.
+            setActive((cur) => (cur === entry.target.id ? null : cur));
+          }
+        }
+      },
+      { rootMargin: "-45% 0px -50% 0px", threshold: 0 },
+    );
+
+    sections.forEach((section) => observer.observe(section));
+    return () => observer.disconnect();
   }, []);
 
   return (
@@ -53,9 +81,18 @@ export function Navbar() {
               <li key={link.href}>
                 <Link
                   href={link.href}
-                  className="focus-ring text-sm text-muted transition-colors hover:text-foreground"
+                  aria-current={active === link.id ? "true" : undefined}
+                  className={`focus-ring relative text-sm transition-colors hover:text-foreground ${
+                    active === link.id ? "text-foreground" : "text-muted"
+                  }`}
                 >
                   {link.label}
+                  <span
+                    aria-hidden
+                    className={`absolute -bottom-1.5 left-0 h-px bg-accent transition-all duration-300 ${
+                      active === link.id ? "w-full" : "w-0"
+                    }`}
+                  />
                 </Link>
               </li>
             ))}
@@ -63,7 +100,7 @@ export function Navbar() {
 
           <Link
             href="/#contact"
-            className="focus-ring group hidden items-center gap-1.5 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-white transition-colors duration-300 hover:bg-accent/90 md:inline-flex"
+            className="focus-ring group hidden items-center gap-1.5 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-background transition-colors duration-300 hover:bg-accent/90 md:inline-flex"
           >
             Iniciar un proyecto
             <ArrowUpRight
@@ -106,7 +143,7 @@ export function Navbar() {
               <Link
                 href="/#contact"
                 onClick={() => setOpen(false)}
-                className="focus-ring mt-3 mb-2 inline-flex items-center justify-center gap-1.5 rounded-full bg-accent px-5 py-3.5 text-base font-medium text-white"
+                className="focus-ring mt-3 mb-2 inline-flex items-center justify-center gap-1.5 rounded-full bg-accent px-5 py-3.5 text-base font-medium text-background"
               >
                 Iniciar un proyecto <ArrowUpRight size={16} />
               </Link>

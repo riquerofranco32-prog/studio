@@ -149,7 +149,7 @@ export function Contact() {
               <div className="mt-8 flex flex-wrap items-center gap-5">
                 <button
                   type="submit"
-                  className="focus-ring group inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-medium text-white transition-colors duration-300 hover:bg-accent/90"
+                  className="focus-ring group inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-medium text-background transition-colors duration-300 hover:bg-accent/90"
                 >
                   Enviar mensaje
                   <ArrowRight
