@@ -89,10 +89,22 @@ no es un caso.
 **Acción**: por proyecto, un dato duro — pedidos procesados, tiempo de carga, ventas,
 usuarios. Reemplazar el texto placeholder en `data/projects.ts`.
 
-### 2.3 Nombres y fotos del equipo — PARCIAL
-Cargados Franco Riquero (Fundador · Desarrollo) y Federico Martín (Fundador · Diseño) con
-sus LinkedIn, y la tarjeta renderiza el link. **Falta**: fotos en `public/team/` — hoy cae a
-un placeholder que dice "FOTO" — y las bios.
+### 2.3 Equipo — HECHO (falta bio)
+Franco Riquero (Fundador · Desarrollo) y Federico Martín (Fundador · Diseño), con retratos y
+links a LinkedIn.
+
+La sección pasó de dos tarjetas a un **roster en filas**, tomando como referencia el patrón
+"Member List" de 21st.dev. El código fuente de esos componentes sigue detrás de un endpoint
+con acceso restringido — el mismo muro anotado en `hero.tsx` — así que está construido a
+medida con el sistema del sitio: mismo lenguaje que las filas de Servicios, número en mono,
+nombre en escala display, filete de acento al hacer hover, y el retrato siguiendo al cursor.
+
+Las fotos venían de LinkedIn en formatos distintos (una PNG 800×800 recortada en círculo con
+alfa, una JPG 800×800 a sangre). Se normalizaron a 600×600 aplanadas sobre `#0a0a0b`, el
+fondo exacto del sitio, y el marco del roster es circular — así las dos se ven iguales y la
+PNG bajó de 698 KB a 37 KB al perder el canal alfa.
+
+**Falta**: las bios (`bio` sigue vacío en `data/team.ts`; el roster todavía no las muestra).
 
 ### 2.4 Completar los cuatro casos flojos — MEDIO
 Apex AI, Altum Sci y Pravilo tienen `approach` y `design` en placeholder. La página

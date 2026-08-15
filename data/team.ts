@@ -1,14 +1,14 @@
 import { TeamMember, Testimonial } from "@/types";
 
-// Faltan las fotos (`imageUrl`) y las bios: la tarjeta cae a un placeholder mientras
-// estén vacías.
+// Los retratos son 600x600 aplanados sobre el fondo del sitio — el marco del roster
+// es circular, así que se recortan ahí. Falta cargar las bios.
 export const team: TeamMember[] = [
   {
     id: "founder-01",
     name: "Franco Riquero",
     role: "Fundador · Desarrollo",
     bio: "",
-    imageUrl: "",
+    imageUrl: "/team/franco-riquero.jpg",
     linkedin: "https://www.linkedin.com/in/franco-riquero-117492355/",
   },
   {
@@ -16,7 +16,7 @@ export const team: TeamMember[] = [
     name: "Federico Martín",
     role: "Fundador · Diseño",
     bio: "",
-    imageUrl: "",
+    imageUrl: "/team/federico-martin.jpg",
     linkedin: "https://www.linkedin.com/in/federico-martin-632223231/",
   },
 ];
