@@ -23,12 +23,12 @@ export function Process() {
                 onFocus={() => setActive(i)}
                 onClick={() => setActive(i)}
                 className={`focus-ring flex shrink-0 items-center gap-4 border-b border-border py-6 pr-10 text-left transition-colors md:w-72 md:border-b-0 md:border-l-2 md:pl-6 ${
-                  active === i ? "md:border-l-foreground" : "md:border-l-border"
+                  active === i ? "md:border-l-accent" : "md:border-l-border"
                 }`}
               >
                 <span
                   className={`font-mono text-sm transition-colors ${
-                    active === i ? "text-foreground" : "text-muted"
+                    active === i ? "text-accent" : "text-muted"
                   }`}
                 >
                   {step.number}
@@ -51,10 +51,10 @@ export function Process() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
             >
-              <p className="font-mono text-xs tracking-widest text-muted uppercase">
+              <p className="font-mono text-xs tracking-widest text-accent uppercase">
                 Paso {process[active].number}
               </p>
-              <h3 className="mt-4 text-3xl font-medium tracking-tight text-foreground md:text-4xl">
+              <h3 className="display mt-4 text-3xl text-foreground md:text-5xl">
                 {process[active].title}
               </h3>
               <p className="mt-4 max-w-md text-lg text-muted">

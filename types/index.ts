@@ -22,6 +22,8 @@ export interface Service {
   number: string;
   title: string;
   description: string;
+  /** Entregables concretos — se muestran como chips en la fila de servicio. */
+  deliverables?: string[];
 }
 
 export interface ProcessStep {

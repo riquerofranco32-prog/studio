@@ -1,6 +1,5 @@
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
-import { SITE } from "@/data/site";
 import { team } from "@/data/team";
 
 export function About() {
@@ -12,40 +11,40 @@ export function About() {
           title="Equipo chico. Pensamiento digital grande."
         />
 
-        <p className="mt-8 max-w-2xl text-xl leading-relaxed text-muted md:text-2xl">
-          Combinamos diseño, tecnología y estrategia para crear experiencias
-          digitales que se sienten tan bien como funcionan.
-        </p>
+        <div className="mt-12 grid grid-cols-1 gap-12 md:mt-16 md:grid-cols-12 md:gap-x-8 lg:gap-x-16">
+          <div className="md:col-span-7">
+            <p className="text-2xl leading-snug text-foreground md:text-[2rem]">
+              Combinamos diseño, tecnología y estrategia para crear experiencias
+              digitales que{" "}
+              <span className="text-accent">
+                se sienten tan bien como funcionan
+              </span>
+              .
+            </p>
+            <p className="mt-8 max-w-xl text-lg leading-relaxed text-muted">
+              Somos dos. Eso significa que hablás directo con quienes diseñan y
+              escriben el código de tu proyecto — sin capas intermedias, sin
+              equipos rotando, sin briefs que se pierden en el camino.
+            </p>
+          </div>
 
-        <div className="mt-16 grid grid-cols-3 gap-6 border-y border-border py-10 sm:max-w-xl">
-          <Stat value={SITE.stats.projects} label="Proyectos" />
-          <Stat value={SITE.stats.people} label="Personas" />
-          <Stat value={SITE.stats.years} label="" />
-        </div>
-
-        <div className="mt-16 grid grid-cols-1 gap-10 sm:grid-cols-2">
-          {team.map((member) => (
-            <div key={member.id} className="border-t border-border pt-6">
-              <div className="mb-5 aspect-square w-full max-w-[220px] bg-white/[0.03]" />
-              <p className="text-lg font-medium tracking-tight text-foreground">
-                {member.name ?? "Nombre a definir"}
-              </p>
-              <p className="mt-1 text-sm text-muted">{member.role}</p>
-            </div>
-          ))}
+          <div className="grid grid-cols-2 gap-6 md:col-span-5">
+            {team.map((member) => (
+              <div key={member.id} className="group">
+                <div className="relative mb-5 aspect-[4/5] w-full overflow-hidden rounded-xl border border-border bg-surface transition-colors duration-500 group-hover:border-accent/30">
+                  <span className="absolute inset-0 flex items-center justify-center font-mono text-[11px] tracking-widest text-muted/50 uppercase">
+                    Foto
+                  </span>
+                </div>
+                <p className="text-lg font-medium tracking-tight text-foreground">
+                  {member.name ?? "Nombre a definir"}
+                </p>
+                <p className="mt-1 text-sm text-muted">{member.role}</p>
+              </div>
+            ))}
+          </div>
         </div>
       </Container>
     </section>
-  );
-}
-
-function Stat({ value, label }: { value: string; label: string }) {
-  return (
-    <div>
-      <p className="text-3xl font-medium tracking-tight text-foreground md:text-4xl">
-        {value}
-      </p>
-      {label && <p className="mt-1 text-sm text-muted">{label}</p>}
-    </div>
   );
 }

@@ -5,7 +5,15 @@
   --foreground: #f5f5f4;
   --muted: #8a8a8e;
   --border: rgba(245, 245, 244, 0.1);
-  --accent: #f5f5f4;
+
+  /* Superficies elevadas — tarjetas, filas de servicio, campos de formulario. */
+  --surface: #101012;
+  --surface-2: #17171a;
+
+  /* Acento de marca. Único color saturado del sistema: se reserva para CTAs,
+     estados activos y una palabra por titular. */
+  --accent: #ff4d2e;
+  --accent-soft: rgba(255, 77, 46, 0.12);
 }
 
 @theme inline {
@@ -13,7 +21,10 @@
   --color-foreground: var(--foreground);
   --color-muted: var(--muted);
   --color-border: var(--border);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
   --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
@@ -34,8 +45,34 @@ body {
 }
 
 ::selection {
-  background: var(--foreground);
-  color: var(--background);
+  background: var(--accent);
+  color: var(--foreground);
+}
+
+/* Escala display: titulares de sección y hero. Peso alto + tracking negativo. */
+.display {
+  font-weight: 600;
+  letter-spacing: -0.035em;
+  line-height: 0.95;
+}
+
+/* Marquesina infinita: el track duplica su contenido, así que -50% cierra el loop. */
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee-track {
+  animation: marquee var(--marquee-duration, 40s) linear infinite;
+  width: max-content;
+}
+
+.marquee:hover .marquee-track {
+  animation-play-state: paused;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -56,7 +93,7 @@ body {
   outline: none;
 }
 .focus-ring:focus-visible {
-  outline: 2px solid var(--foreground);
+  outline: 2px solid var(--accent);
   outline-offset: 4px;
   border-radius: 2px;
 }

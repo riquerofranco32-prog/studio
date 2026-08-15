@@ -1,23 +1,25 @@
 import { Hero } from "@/components/sections/hero";
+import { Proof } from "@/components/sections/proof";
 import { SelectedWork } from "@/components/sections/selected-work";
 import { Services } from "@/components/sections/services";
 import { Process } from "@/components/sections/process";
 import { About } from "@/components/sections/about";
 import { Technology } from "@/components/sections/technology";
 import { Testimonials } from "@/components/sections/testimonials";
-import { FinalCta } from "@/components/sections/final-cta";
+import { Contact } from "@/components/sections/contact";
 
 export default function Home() {
   return (
     <>
       <Hero />
+      <Proof />
       <SelectedWork />
       <Services />
       <Process />
       <About />
       <Technology />
       <Testimonials />
-      <FinalCta />
+      <Contact />
     </>
   );
 }

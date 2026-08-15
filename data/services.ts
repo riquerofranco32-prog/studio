@@ -6,24 +6,28 @@ export const services: Service[] = [
     title: "Experiencias Digitales",
     description:
       "Landing pages, sitios corporativos y experiencias de marca inmersivas.",
+    deliverables: ["Landing pages", "Sitios corporativos", "Motion & 3D"],
   },
   {
     number: "02",
     title: "E-Commerce",
     description:
       "Catálogos, sistemas de pedidos, experiencias de compra y sitios enfocados en conversión.",
+    deliverables: ["Catálogos", "Checkout", "Panel de administración"],
   },
   {
     number: "03",
     title: "Productos Digitales",
     description:
       "SaaS, dashboards, paneles de administración y plataformas a medida.",
+    deliverables: ["SaaS", "Dashboards", "Design systems"],
   },
   {
     number: "04",
     title: "IA y Tecnología",
     description:
       "Integraciones de IA, automatizaciones, APIs y soluciones digitales a medida.",
+    deliverables: ["Integraciones de IA", "Automatizaciones", "APIs a medida"],
   },
 ];
 
@@ -49,6 +53,18 @@ export const process: ProcessStep[] = [
     title: "Lanzar",
     description: "Publicar, optimizar e iterar.",
   },
+];
+
+// Capacidades para la marquesina del hero — frases cortas, sin punto final.
+export const capabilities = [
+  "Estrategia de producto",
+  "Diseño de interfaz",
+  "Motion & interacción",
+  "Desarrollo web",
+  "E-commerce",
+  "Integraciones de IA",
+  "Identidad digital",
+  "Performance & SEO",
 ];
 
 export const technologies = [

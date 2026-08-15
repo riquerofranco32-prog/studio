@@ -46,10 +46,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    // Las variables de fuente van en <html>: Tailwind resuelve --font-sans/--font-mono
+    // en :root, así que definirlas en <body> las dejaba sin valor y todo caía al
+    // stack del sistema.
+    <html
+      lang="es"
+      className={`${geistSans.variable} ${geistMono.variable}`}
+    >
+      <body className="antialiased">
         <Navbar />
         <main>{children}</main>
         <Footer />

@@ -16,16 +16,23 @@ const links = [
 
 export function Footer() {
   return (
-    <footer className="border-t border-border py-16">
+    <footer className="border-t border-border pt-16">
       <Container>
         <div className="flex flex-col justify-between gap-12 md:flex-row">
           <div>
-            <p className="font-mono text-sm font-medium tracking-widest">
+            <p className="inline-flex items-center gap-2.5 font-mono text-sm font-medium tracking-widest">
+              <span aria-hidden className="h-2 w-2 rounded-full bg-accent" />
               {SITE.name}
             </p>
-            <p className="mt-3 max-w-xs text-sm text-muted">
+            <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted">
               Experiencias digitales. Construidas con intención.
             </p>
+            <a
+              href={`mailto:${SITE.email}`}
+              className="focus-ring mt-6 inline-block text-base text-foreground underline decoration-border underline-offset-4 transition-colors hover:text-accent hover:decoration-accent"
+            >
+              {SITE.email}
+            </a>
           </div>
 
           <div className="flex gap-16">
@@ -34,7 +41,7 @@ export function Footer() {
                 <li key={link.href}>
                   <Link
                     href={link.href}
-                    className="focus-ring text-sm text-muted transition-colors hover:text-foreground"
+                    className="focus-ring text-sm text-muted transition-colors hover:text-accent"
                   >
                     {link.label}
                   </Link>
@@ -47,7 +54,7 @@ export function Footer() {
                 href={SITE.social.instagram}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="focus-ring inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-foreground"
+                className="focus-ring inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-accent"
               >
                 <InstagramIcon size={14} /> Instagram
               </a>
@@ -55,7 +62,7 @@ export function Footer() {
                 href={SITE.social.linkedin}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="focus-ring inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-foreground"
+                className="focus-ring inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-accent"
               >
                 <LinkedinIcon size={14} /> LinkedIn
               </a>
@@ -63,7 +70,7 @@ export function Footer() {
                 href={SITE.social.github}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="focus-ring inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-foreground"
+                className="focus-ring inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-accent"
               >
                 <GithubIcon size={14} /> GitHub
               </a>
@@ -78,12 +85,19 @@ export function Footer() {
           </p>
           <Link
             href="/"
-            className="focus-ring inline-flex items-center gap-1 text-foreground"
+            className="focus-ring inline-flex items-center gap-1 text-foreground transition-colors hover:text-accent"
           >
             Hecho por {SITE.name} &#8599;
           </Link>
         </div>
       </Container>
+
+      {/* Wordmark de cierre: la marca ocupa el ancho completo y se corta abajo. */}
+      <div aria-hidden className="mt-10 overflow-hidden">
+        <p className="display translate-y-[0.18em] text-center text-[18vw] leading-none whitespace-nowrap text-foreground/[0.045]">
+          {SITE.name}
+        </p>
+      </div>
     </footer>
   );
 }

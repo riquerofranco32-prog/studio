@@ -42,8 +42,9 @@ export function Navbar() {
         >
           <Link
             href="/"
-            className="focus-ring font-mono text-sm font-medium tracking-widest"
+            className="focus-ring inline-flex items-center gap-2.5 font-mono text-sm font-medium tracking-widest"
           >
+            <span aria-hidden className="h-2 w-2 rounded-full bg-accent" />
             {SITE.name}
           </Link>
 
@@ -62,9 +63,13 @@ export function Navbar() {
 
           <Link
             href="/#contact"
-            className="focus-ring hidden items-center gap-1.5 text-sm text-foreground transition-opacity hover:opacity-70 md:inline-flex"
+            className="focus-ring group hidden items-center gap-1.5 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-white transition-colors duration-300 hover:bg-accent/90 md:inline-flex"
           >
-            Contacto <ArrowUpRight size={14} />
+            Iniciar un proyecto
+            <ArrowUpRight
+              size={14}
+              className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+            />
           </Link>
 
           <button
@@ -88,18 +93,23 @@ export function Navbar() {
             className="overflow-hidden border-b border-border bg-background md:hidden"
           >
             <Container className="flex flex-col gap-1 py-4">
-              {[...links, { href: "/#contact", label: "Contacto" }].map(
-                (link) => (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={() => setOpen(false)}
-                    className="focus-ring py-3 text-lg text-foreground"
-                  >
-                    {link.label}
-                  </Link>
-                ),
-              )}
+              {links.map((link) => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  onClick={() => setOpen(false)}
+                  className="focus-ring py-3 text-lg text-foreground"
+                >
+                  {link.label}
+                </Link>
+              ))}
+              <Link
+                href="/#contact"
+                onClick={() => setOpen(false)}
+                className="focus-ring mt-3 mb-2 inline-flex items-center justify-center gap-1.5 rounded-full bg-accent px-5 py-3.5 text-base font-medium text-white"
+              >
+                Iniciar un proyecto <ArrowUpRight size={16} />
+              </Link>
             </Container>
           </motion.div>
         )}

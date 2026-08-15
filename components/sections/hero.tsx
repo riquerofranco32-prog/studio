@@ -3,9 +3,11 @@
 import { useEffect, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import { ArrowDown, ArrowRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
-import { MagneticLink } from "@/components/ui/magnetic-link";
+import { ButtonLink } from "@/components/ui/button-link";
+import { Marquee } from "@/components/ui/marquee";
+import { capabilities } from "@/data/services";
 
 // ponytail: 21st.dev's "cinematic-landing-hero" component sits behind a Pro/access-gated
 // endpoint on their end (hasUserComponentAccess kept 503ing) — copying its source wasn't
@@ -33,7 +35,7 @@ export function Hero() {
         ...lineRefs,
         ".hero-sub",
         ".hero-cta",
-        ".hero-scroll",
+        ".hero-ticker",
       ];
 
       if (reduceMotion) {
@@ -63,7 +65,7 @@ export function Hero() {
         )
         .to(".hero-sub", { opacity: 1, y: 0, duration: 0.7 }, "-=0.5")
         .to(".hero-cta", { opacity: 1, y: 0, duration: 0.7 }, "-=0.5")
-        .to(".hero-scroll", { opacity: 1, duration: 0.5 }, "-=0.3");
+        .to(".hero-ticker", { opacity: 1, duration: 0.6 }, "-=0.3");
 
       gsap.to(gridRef.current, {
         yPercent: 15,
@@ -83,24 +85,36 @@ export function Hero() {
   return (
     <section
       ref={rootRef}
-      className="relative flex min-h-[100svh] flex-col justify-center overflow-hidden pt-20"
+      className="relative flex min-h-[100svh] flex-col overflow-hidden pt-28 pb-16"
     >
       <div
         ref={gridRef}
         aria-hidden
         className="pointer-events-none absolute inset-0 [background-image:linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] [background-size:64px_64px] opacity-40"
       />
+      {/* Resplandor de acento: única fuente de color del hero. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute -right-40 top-1/3 h-[500px] w-[500px] rounded-full bg-foreground/[0.03] blur-3xl"
+        className="pointer-events-none absolute -right-32 top-1/4 h-[560px] w-[560px] rounded-full bg-accent/[0.09] blur-[140px]"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -left-40 bottom-0 h-[420px] w-[420px] rounded-full bg-foreground/[0.03] blur-3xl"
       />
 
-      <Container className="relative">
-        <p className="hero-kicker mb-6 -translate-y-4 font-mono text-xs tracking-widest text-muted uppercase opacity-0">
-          Estudio de producto digital y tecnología creativa
+      {/* En mobile el titular ocupa casi todo el alto: centrar recortaría la primera
+          línea detrás del navbar, así que el contenido arranca arriba y sólo se
+          centra cuando hay aire de sobra. */}
+      <Container className="relative flex flex-1 flex-col justify-start md:justify-center">
+        <p className="hero-kicker mb-8 flex -translate-y-4 items-center gap-2.5 font-mono text-xs tracking-widest text-muted uppercase opacity-0">
+          <span className="relative flex h-2 w-2">
+            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
+            <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
+          </span>
+          Disponibles para nuevos proyectos
         </p>
 
-        <h1 className="max-w-3xl text-[2.75rem] leading-[1.05] font-medium tracking-tight text-foreground sm:max-w-4xl sm:text-6xl md:max-w-5xl md:text-7xl">
+        <h1 className="display max-w-3xl text-[2.6rem] text-foreground sm:max-w-4xl sm:text-6xl md:max-w-6xl md:text-[6.5rem]">
           <span className="block overflow-hidden">
             <span ref={line1Ref} className="block">
               Construimos
@@ -113,36 +127,49 @@ export function Hero() {
           </span>
           <span className="block overflow-hidden">
             <span ref={line3Ref} className="block">
-              para marcas que avanzan.
+              para marcas que{" "}
+              <span className="text-accent">avanzan.</span>
             </span>
           </span>
         </h1>
 
-        <p className="hero-sub mt-8 max-w-md -translate-y-4 text-lg text-muted opacity-0">
-          Estrategia, diseño y tecnología — desde la primera idea hasta el
-          producto final.
-        </p>
+        <div className="mt-12 flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
+          <p className="hero-sub max-w-md -translate-y-4 text-lg leading-relaxed text-muted opacity-0 md:text-xl">
+            Estrategia, diseño y tecnología — desde la primera idea hasta el
+            producto final.
+          </p>
 
-        <div className="hero-cta mt-10 flex -translate-y-4 flex-wrap items-center gap-x-8 gap-y-4 opacity-0">
-          <MagneticLink
-            href="#work"
-            className="text-sm font-medium text-foreground"
-          >
-            Ver nuestro trabajo <ArrowRight size={15} />
-          </MagneticLink>
-          <MagneticLink
-            href="#contact"
-            className="text-sm text-muted hover:text-foreground"
-          >
-            Iniciar un proyecto <ArrowRight size={15} />
-          </MagneticLink>
+          <div className="hero-cta flex -translate-y-4 flex-wrap items-center gap-3 opacity-0">
+            <ButtonLink href="/#contact">
+              Iniciar un proyecto
+              <ArrowRight
+                size={16}
+                className="transition-transform duration-300 group-hover:translate-x-1"
+              />
+            </ButtonLink>
+            <ButtonLink href="/#work" variant="secondary">
+              Ver nuestro trabajo
+              <ArrowUpRight
+                size={16}
+                className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+              />
+            </ButtonLink>
+          </div>
         </div>
       </Container>
 
-      <div className="hero-scroll absolute bottom-10 left-1/2 -translate-x-1/2 opacity-0">
-        <div className="animate-bounce text-muted">
-          <ArrowDown size={16} />
-        </div>
+      <div className="hero-ticker relative mt-16 border-y border-border py-5 opacity-0">
+        <Marquee duration={45}>
+          {capabilities.map((item) => (
+            <span
+              key={item}
+              className="flex items-center gap-8 pr-8 font-mono text-xs tracking-widest text-muted uppercase"
+            >
+              {item}
+              <span className="text-accent">/</span>
+            </span>
+          ))}
+        </Marquee>
       </div>
     </section>
   );

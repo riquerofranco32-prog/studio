@@ -29,7 +29,7 @@ export function ProjectCard({
       className={className}
     >
       <Link href={`/work/${project.slug}`} className="focus-ring group block">
-        <div className="relative aspect-[4/3] overflow-hidden bg-white/[0.03]">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-surface">
           <div className="absolute inset-0 flex items-center justify-center font-mono text-xs text-muted/60">
             {project.image ? (
               <Image
@@ -48,10 +48,21 @@ export function ProjectCard({
               {project.name}
             </span>
           </div>
-          <div className="absolute inset-0 bg-gradient-to-t from-background/70 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
-          <div className="absolute right-4 top-4 flex h-9 w-9 -translate-y-2 items-center justify-center rounded-full bg-foreground text-background opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-            <ArrowUpRight size={16} />
-          </div>
+
+          {/* Velo inferior: sostiene la etiqueta "Ver caso" al hacer hover. */}
+          <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+
+          <span className="absolute left-4 top-4 rounded-full border border-white/15 bg-background/70 px-3 py-1.5 font-mono text-[11px] tracking-wide text-foreground backdrop-blur-md">
+            {project.year}
+          </span>
+
+          <span className="absolute right-4 top-4 flex h-10 w-10 -translate-y-2 items-center justify-center rounded-full bg-accent text-white opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
+            <ArrowUpRight size={18} />
+          </span>
+
+          <span className="absolute bottom-5 left-5 translate-y-3 text-sm font-medium text-foreground opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
+            Ver caso de estudio →
+          </span>
         </div>
 
         <div className="mt-5 flex items-start justify-between gap-4">
@@ -60,11 +71,11 @@ export function ProjectCard({
               <span className="font-mono text-xs text-muted">
                 {project.number}
               </span>
-              <h3 className="text-xl font-medium tracking-tight text-foreground transition-opacity group-hover:opacity-70">
+              <h3 className="text-xl font-medium tracking-tight text-foreground transition-colors duration-300 group-hover:text-accent md:text-2xl">
                 {project.name}
               </h3>
             </div>
-            <p className="mt-1 text-sm text-muted">{project.category}</p>
+            <p className="mt-2 text-sm text-muted">{project.category}</p>
           </div>
         </div>
       </Link>
