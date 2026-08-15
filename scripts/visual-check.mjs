@@ -1,0 +1,188 @@
+/**
+ * Verificación óptica medida de la landing.
+ *
+ *   npm run visual-check                      (contra http://localhost:3000)
+ *   npm run visual-check -- https://tu-url    (contra un deploy)
+ *
+ * Levanta Chrome headless, recorre la página en cuatro breakpoints y reporta
+ * números, no impresiones: tamaños tipográficos y colores computados, overflow
+ * horizontal y texto recortado por ancestros con `overflow: hidden`. Guarda las
+ * capturas en `.visual-check/` (ignorado por git).
+ *
+ * Usa el Chrome que ya cachea Puppeteer en la máquina. Si no existe, correr:
+ *   npx puppeteer browsers install chrome
+ */
+import { existsSync, mkdirSync, readdirSync } from "node:fs";
+import { homedir } from "node:os";
+import { join } from "node:path";
+import puppeteer from "puppeteer-core";
+
+const URL = process.argv[2] ?? "http://localhost:3000";
+const OUT = ".visual-check";
+
+const BREAKPOINTS = [
+  { label: "desktop", width: 1440, height: 900 },
+  { label: "laptop", width: 1280, height: 800 },
+  { label: "tablet", width: 768, height: 1024 },
+  { label: "mobile", width: 390, height: 844 },
+];
+
+function findChrome() {
+  if (process.env.CHROME_PATH) return process.env.CHROME_PATH;
+  const root = join(homedir(), ".cache", "puppeteer", "chrome");
+  if (!existsSync(root)) return null;
+  for (const dir of readdirSync(root)) {
+    for (const bin of [
+      join(root, dir, "chrome-win64", "chrome.exe"),
+      join(root, dir, "chrome-linux64", "chrome"),
+      join(
+        root,
+        dir,
+        "chrome-mac-arm64",
+        "Google Chrome for Testing.app",
+        "Contents",
+        "MacOS",
+        "Google Chrome for Testing",
+      ),
+    ]) {
+      if (existsSync(bin)) return bin;
+    }
+  }
+  return null;
+}
+
+const executablePath = findChrome();
+if (!executablePath) {
+  console.error(
+    "No se encontró Chrome. Correr `npx puppeteer browsers install chrome` o exportar CHROME_PATH.",
+  );
+  process.exit(1);
+}
+
+mkdirSync(OUT, { recursive: true });
+
+const browser = await puppeteer.launch({
+  executablePath,
+  headless: true,
+  args: ["--hide-scrollbars", "--force-color-profile=srgb"],
+});
+
+const page = await browser.newPage();
+const consoleErrors = [];
+page.on("console", (m) => m.type() === "error" && consoleErrors.push(m.text()));
+page.on("pageerror", (e) => consoleErrors.push(String(e)));
+
+const report = {};
+
+for (const { label, width, height } of BREAKPOINTS) {
+  await page.setViewport({ width, height, deviceScaleFactor: 1 });
+  await page.goto(URL, { waitUntil: "networkidle0", timeout: 60000 });
+  // Deja correr el timeline de GSAP y los reveals por viewport.
+  await new Promise((r) => setTimeout(r, 2000));
+  await page.evaluate(async () => {
+    // scroll-behavior: smooth dejaría el scroll a mitad de camino al capturar.
+    document.documentElement.style.scrollBehavior = "auto";
+    const step = window.innerHeight * 0.8;
+    for (let y = 0; y < document.body.scrollHeight; y += step) {
+      window.scrollTo(0, y);
+      await new Promise((r) => setTimeout(r, 200));
+    }
+    window.scrollTo(0, 0);
+    await new Promise((r) => setTimeout(r, 250));
+    window.scrollTo(0, 0);
+  });
+  await new Promise((r) => setTimeout(r, 900));
+
+  await page.screenshot({ path: `${OUT}/${label}-fold.png` });
+  await page.screenshot({ path: `${OUT}/${label}-full.png`, fullPage: true });
+
+  report[label] = await page.evaluate((vw) => {
+    const computed = (sel, props) => {
+      const el = document.querySelector(sel);
+      if (!el) return null;
+      const s = getComputedStyle(el);
+      return Object.fromEntries(props.map((p) => [p, s.getPropertyValue(p)]));
+    };
+
+    const clippedByAncestor = (el) => {
+      let p = el.parentElement;
+      while (p && p !== document.documentElement) {
+        const s = getComputedStyle(p);
+        // `auto`/`scroll` cuentan como contenidos: son scrollers horizontales
+        // intencionales (la lista de pasos del proceso en mobile, por ejemplo).
+        if (s.overflowX !== "visible") return true;
+        p = p.parentElement;
+      }
+      return false;
+    };
+
+    const clipped = [];
+    for (const el of document.querySelectorAll("h1,h2,h3,p,span,li,a,button")) {
+      const parent = el.parentElement;
+      if (!parent || parent.className.toString().includes("marquee")) continue;
+      const ps = getComputedStyle(parent);
+      if (ps.overflow !== "hidden" && ps.overflowX !== "hidden") continue;
+      if (el.getBoundingClientRect().width > parent.clientWidth + 1) {
+        clipped.push({
+          text: el.textContent.trim().slice(0, 40),
+          elW: Math.round(el.getBoundingClientRect().width),
+          parentW: parent.clientWidth,
+        });
+      }
+    }
+
+    const overflowing = [];
+    for (const el of document.querySelectorAll("*")) {
+      const r = el.getBoundingClientRect();
+      if (r.right <= vw + 1 || r.width === 0 || r.height === 0) continue;
+      if (clippedByAncestor(el)) continue;
+      overflowing.push({
+        sel:
+          el.tagName.toLowerCase() +
+          (el.id ? `#${el.id}` : "") +
+          (typeof el.className === "string" && el.className
+            ? `.${el.className.split(" ").slice(0, 4).join(".")}`
+            : ""),
+        right: Math.round(r.right),
+      });
+    }
+
+    return {
+      docHeight: document.body.scrollHeight,
+      scrollWidth: document.documentElement.scrollWidth,
+      viewportWidth: vw,
+      h1: computed("h1", [
+        "font-family",
+        "font-size",
+        "font-weight",
+        "letter-spacing",
+        "line-height",
+      ]),
+      accent: computed("h1 .text-accent", ["color"]),
+      body: computed("body", ["background-color", "color", "font-family"]),
+      clipped,
+      overflowing: overflowing.slice(0, 8),
+    };
+  }, width);
+}
+
+await browser.close();
+
+console.log(JSON.stringify({ url: URL, consoleErrors, report }, null, 2));
+
+const failures = [
+  consoleErrors.length && `${consoleErrors.length} errores de consola`,
+  ...BREAKPOINTS.map(({ label }) => {
+    const r = report[label];
+    if (r.scrollWidth > r.viewportWidth + 1)
+      return `${label}: overflow horizontal (${r.scrollWidth}px)`;
+    if (r.clipped.length) return `${label}: ${r.clipped.length} texto(s) recortado(s)`;
+    return null;
+  }),
+].filter(Boolean);
+
+if (failures.length) {
+  console.error(`\nFALLA:\n  ${failures.join("\n  ")}`);
+  process.exit(1);
+}
+console.error(`\nOK — ${BREAKPOINTS.length} breakpoints limpios. Capturas en ${OUT}/`);
