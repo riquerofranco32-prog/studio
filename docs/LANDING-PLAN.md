@@ -5,8 +5,9 @@ producto/tecnología con una landing que resuelve bien tres cosas que a esta le 
 color de marca con intención, prueba social arriba del scroll, y un cierre de contacto
 que no es sólo un `mailto:`.
 
-Estado a 2026-08-14. Implementados: toda la Fase 1, más 3.1 (imagen OG), 3.4 (navbar con
-sección activa) y el contraste de 4.5. El resto es backlog priorizado.
+Estado a 2026-08-15. Implementados: toda la Fase 1, más 3.1 (imagen OG), 3.4 (navbar con
+sección activa), el contraste de 4.5, 4.3 (imágenes) y 4.4 (bundle). El resto es backlog
+priorizado, y lo que queda arriba de todo está bloqueado por contenido, no por código.
 
 ---
 
@@ -88,11 +89,10 @@ no es un caso.
 **Acción**: por proyecto, un dato duro — pedidos procesados, tiempo de carga, ventas,
 usuarios. Reemplazar el texto placeholder en `data/projects.ts`.
 
-### 2.3 Nombres y fotos del equipo — ALTO impacto
-`team` tiene `name: null` y el bloque muestra "Nombre a definir" con un placeholder gris. En
-un estudio de dos personas, las caras SON el diferencial.
-**Acción**: nombres, roles, fotos en `public/team/`, links de LinkedIn. Los campos ya están
-cableados de punta a punta.
+### 2.3 Nombres y fotos del equipo — PARCIAL
+Cargados Franco Riquero y Federico Martín con sus LinkedIn, y la tarjeta ahora renderiza el
+link. **Falta**: fotos en `public/team/` (hoy cae a un placeholder), bios, y el reparto real
+de roles — los dos dicen "Fundador" a secas.
 
 ### 2.4 Completar los cuatro casos flojos — MEDIO
 Apex AI, Altum Sci y Pravilo tienen `approach` y `design` en placeholder. La página
@@ -150,13 +150,35 @@ schema en `supabase/schema.sql` no la tiene todavía) + notificación por mail. 
 Hoy `/#work` es el único listado y los CTAs "ver todo" no tienen dónde ir. Una ruta `/work`
 con filtro por categoría abre espacio para más casos sin alargar la home.
 
-### 4.3 Optimización de imágenes
-Los screenshots son JPG de 36-151 KB. Convertir a AVIF/WebP y servir dos tamaños vía
-`next/image` baja bastante el LCP en mobile.
+### 4.3 Optimización de imágenes — HECHO
+Dos cambios, los dos medidos:
 
-### 4.4 Presupuesto de performance
-Medir con Lighthouse en producción. GSAP + ScrollTrigger + Framer Motion son tres librerías
-de animación; probablemente se pueda sacar una.
+- **AVIF activado.** El default de Next es `formats: ['image/webp']` a secas. Con AVIF, las
+  seis tarjetas pesan **74.7 KB contra 112.4 KB en WebP — 33% menos** a los mismos anchos.
+  El navegador cae solo a WebP si no lo soporta.
+- **`sizes` por tarjeta.** Todas declaraban `50vw`, pero la grilla las pone a 8, 6 y 4
+  columnas. A 1440px eso hacía que las seis pidieran el bucket de 750px: las dos grandes se
+  renderizan a 870px (imagen más chica que el hueco, se veía blanda) y las dos chicas a
+  422px (bytes de más). Ahora cada tarjeta declara su ancho real y el navegador baja
+  1080 / 750 / 640 según corresponde.
+
+Las fuentes son JPG de ~1568×749, tamaño razonable — no hacía falta tocarlas.
+
+### 4.4 Presupuesto de performance — GSAP FUERA
+GSAP se usaba en un solo archivo (`hero.tsx`): la timeline de entrada y el paralaje de la
+grilla. Framer Motion, en cinco. Se sacó GSAP:
+
+- La secuencia de entrada pasó a keyframes CSS (`.hero-line` / `.hero-rise` en `globals.css`)
+  con `animation-delay` por línea. Cero JS y corre fuera del hilo principal.
+- El paralaje usa `useScroll` + `useTransform` de Framer Motion, que ya estaba en el bundle.
+
+**847 KB → 744 KB de chunks JS (-103 KB, -12%)**, sin rastro de `ScrollTrigger` en el build.
+
+De paso apareció un bug de accesibilidad: el bloque global de `prefers-reduced-motion`
+anulaba `animation-duration` pero no `animation-delay`, así que el contenido del hero habría
+quedado invisible 1.4s para quien pide menos movimiento. Agregado `animation-delay: 0s`.
+
+Sigue pendiente medir con Lighthouse contra producción.
 
 ### 4.5 Accesibilidad — CONTRASTE HECHO, RESTO PENDIENTE
 Ratios medidos contra WCAG:

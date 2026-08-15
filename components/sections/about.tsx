@@ -1,3 +1,4 @@
+import { LinkedinIcon } from "@/components/ui/brand-icons";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { team } from "@/data/team";
@@ -40,6 +41,18 @@ export function About() {
                   {member.name ?? "Nombre a definir"}
                 </p>
                 <p className="mt-1 text-sm text-muted">{member.role}</p>
+                {member.linkedin && (
+                  <a
+                    href={member.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="focus-ring mt-3 inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-accent"
+                  >
+                    <LinkedinIcon size={14} />
+                    LinkedIn
+                    <span className="sr-only"> de {member.name}</span>
+                  </a>
+                )}
               </div>
             ))}
           </div>

@@ -12,10 +12,13 @@ export function ProjectCard({
   project,
   className = "",
   priority = false,
+  sizes = "(min-width: 768px) 50vw, 100vw",
 }: {
   project: Project;
   className?: string;
   priority?: boolean;
+  /** Ancho real que ocupa la tarjeta — lo define el layout de la grilla. */
+  sizes?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const visible = useInView(ref, 0.15);
@@ -37,7 +40,7 @@ export function ProjectCard({
                 alt={`${project.name} preview`}
                 fill
                 priority={priority}
-                sizes="(min-width: 768px) 50vw, 100vw"
+                sizes={sizes}
                 className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                 onError={(e) => {
                   (e.currentTarget as HTMLImageElement).style.display = "none";

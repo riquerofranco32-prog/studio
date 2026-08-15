@@ -5,14 +5,20 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { ProjectCard } from "@/components/work/project-card";
 import { projects } from "@/data/projects";
 
-const spans = [
-  "md:col-span-8",
-  "md:col-span-4",
-  "md:col-span-8",
-  "md:col-span-4",
-  "md:col-span-6",
-  "md:col-span-6",
+// El ancho de columna y la pista de `sizes` viven juntos a propósito: si se
+// cambia el span y la pista queda vieja, el navegador baja una imagen del tamaño
+// equivocado y no lo avisa nadie. Anchos reales con el contenedor en su máximo
+// (1320px útiles, gap de 24px): 8 cols = 872px, 6 = 648px, 4 = 424px.
+const layout = [
+  { span: "md:col-span-8", sizes: "(min-width: 1440px) 880px, (min-width: 768px) 67vw, 100vw" },
+  { span: "md:col-span-4", sizes: "(min-width: 1440px) 430px, (min-width: 768px) 33vw, 100vw" },
+  { span: "md:col-span-8", sizes: "(min-width: 1440px) 880px, (min-width: 768px) 67vw, 100vw" },
+  { span: "md:col-span-4", sizes: "(min-width: 1440px) 430px, (min-width: 768px) 33vw, 100vw" },
+  { span: "md:col-span-6", sizes: "(min-width: 1440px) 660px, (min-width: 768px) 50vw, 100vw" },
+  { span: "md:col-span-6", sizes: "(min-width: 1440px) 660px, (min-width: 768px) 50vw, 100vw" },
 ];
+
+const fallbackLayout = layout[4];
 
 export function SelectedWork() {
   const sorted = [...projects].sort((a, b) => a.order - b.order);
@@ -36,14 +42,18 @@ export function SelectedWork() {
         </div>
 
         <div className="mt-16 grid grid-cols-1 gap-x-6 gap-y-14 md:grid-cols-12">
-          {sorted.map((project, i) => (
-            <ProjectCard
-              key={project.slug}
-              project={project}
-              priority={i === 0}
-              className={spans[i] ?? "md:col-span-6"}
-            />
-          ))}
+          {sorted.map((project, i) => {
+            const { span, sizes } = layout[i] ?? fallbackLayout;
+            return (
+              <ProjectCard
+                key={project.slug}
+                project={project}
+                priority={i === 0}
+                className={span}
+                sizes={sizes}
+              />
+            );
+          })}
         </div>
       </Container>
     </section>

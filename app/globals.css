@@ -56,6 +56,45 @@ body {
   line-height: 0.95;
 }
 
+/* Entrada del hero. Antes era una timeline de GSAP; en CSS no cuesta JS y el
+   navegador la corre fuera del hilo principal. `both` mantiene el estado inicial
+   durante el delay. */
+@keyframes hero-line {
+  from {
+    clip-path: inset(0 0 100% 0);
+  }
+  to {
+    clip-path: inset(0 0 0% 0);
+  }
+}
+
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-line,
+.hero-rise {
+  animation-fill-mode: both;
+  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.hero-line {
+  animation-name: hero-line;
+  animation-duration: 0.9s;
+}
+
+.hero-rise {
+  animation-name: hero-rise;
+  animation-duration: 0.7s;
+}
+
 /* Marquesina infinita: el track duplica su contenido, así que -50% cierra el loop. */
 @keyframes marquee {
   from {
@@ -84,6 +123,9 @@ body {
   *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+    /* Sin esto, un delay de 1.6s deja el contenido del hero invisible ese tiempo:
+       la animación dura nada, pero el delay sigue vigente. */
+    animation-delay: 0s !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
   }

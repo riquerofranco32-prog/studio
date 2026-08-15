@@ -1,95 +1,45 @@
 "use client";
 
-import { useEffect, useRef } from "react";
-import gsap from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { useRef } from "react";
+import { motion, useReducedMotion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Marquee } from "@/components/ui/marquee";
 import { capabilities } from "@/data/services";
 
-// ponytail: 21st.dev's "cinematic-landing-hero" component sits behind a Pro/access-gated
-// endpoint on their end (hasUserComponentAccess kept 503ing) — copying its source wasn't
-// possible. This is a bespoke GSAP reveal + scroll parallax built in its spirit instead.
-if (typeof window !== "undefined") {
-  gsap.registerPlugin(ScrollTrigger);
-}
+// La entrada del hero es una secuencia de CSS puro (ver .hero-line/.hero-rise en
+// globals.css) en vez de una timeline de GSAP: mismo resultado, sin la librería
+// en el bundle. El paralaje sí necesita JS y usa framer-motion, que ya está acá
+// por el navbar, las tarjetas y RevealText.
+const SEQUENCE = {
+  kicker: "0.05s",
+  line1: "0.35s",
+  line2: "0.55s",
+  line3: "0.75s",
+  sub: "1.05s",
+  cta: "1.2s",
+  ticker: "1.4s",
+};
 
 export function Hero() {
   const rootRef = useRef<HTMLElement>(null);
-  const gridRef = useRef<HTMLDivElement>(null);
-  const line1Ref = useRef<HTMLSpanElement>(null);
-  const line2Ref = useRef<HTMLSpanElement>(null);
-  const line3Ref = useRef<HTMLSpanElement>(null);
+  const reduceMotion = useReducedMotion();
 
-  useEffect(() => {
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-
-    const ctx = gsap.context(() => {
-      const lineRefs = [line1Ref.current, line2Ref.current, line3Ref.current];
-      const revealTargets = [
-        ".hero-kicker",
-        ...lineRefs,
-        ".hero-sub",
-        ".hero-cta",
-        ".hero-ticker",
-      ];
-
-      if (reduceMotion) {
-        gsap.set(revealTargets, { opacity: 1, y: 0, clipPath: "none" });
-        return;
-      }
-
-      gsap.set(lineRefs, { clipPath: "inset(0 0 100% 0)" });
-
-      const tl = gsap.timeline({ defaults: { ease: "power4.out" } });
-
-      tl.to(".hero-kicker", { opacity: 1, y: 0, duration: 0.6 })
-        .to(
-          line1Ref.current,
-          { clipPath: "inset(0 0 0% 0)", duration: 0.9 },
-          "-=0.2",
-        )
-        .to(
-          line2Ref.current,
-          { clipPath: "inset(0 0 0% 0)", duration: 0.9 },
-          "-=0.7",
-        )
-        .to(
-          line3Ref.current,
-          { clipPath: "inset(0 0 0% 0)", duration: 0.9 },
-          "-=0.7",
-        )
-        .to(".hero-sub", { opacity: 1, y: 0, duration: 0.7 }, "-=0.5")
-        .to(".hero-cta", { opacity: 1, y: 0, duration: 0.7 }, "-=0.5")
-        .to(".hero-ticker", { opacity: 1, duration: 0.6 }, "-=0.3");
-
-      gsap.to(gridRef.current, {
-        yPercent: 15,
-        ease: "none",
-        scrollTrigger: {
-          trigger: rootRef.current,
-          start: "top top",
-          end: "bottom top",
-          scrub: true,
-        },
-      });
-    }, rootRef);
-
-    return () => ctx.revert();
-  }, []);
+  const { scrollYProgress } = useScroll({
+    target: rootRef,
+    offset: ["start start", "end start"],
+  });
+  const gridY = useTransform(scrollYProgress, [0, 1], ["0%", "15%"]);
 
   return (
     <section
       ref={rootRef}
       className="relative flex min-h-[100svh] flex-col overflow-hidden pt-28 pb-16"
     >
-      <div
-        ref={gridRef}
+      <motion.div
         aria-hidden
+        style={reduceMotion ? undefined : { y: gridY }}
         className="pointer-events-none absolute inset-0 [background-image:linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] [background-size:64px_64px] opacity-40"
       />
       {/* Resplandor de acento: única fuente de color del hero. */}
@@ -106,7 +56,10 @@ export function Hero() {
           línea detrás del navbar, así que el contenido arranca arriba y sólo se
           centra cuando hay aire de sobra. */}
       <Container className="relative flex flex-1 flex-col justify-start md:justify-center">
-        <p className="hero-kicker mb-8 flex -translate-y-4 items-center gap-2.5 font-mono text-xs tracking-widest text-muted uppercase opacity-0">
+        <p
+          className="hero-rise mb-8 flex items-center gap-2.5 font-mono text-xs tracking-widest text-muted uppercase"
+          style={{ animationDelay: SEQUENCE.kicker }}
+        >
           <span className="relative flex h-2 w-2">
             <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
             <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
@@ -116,30 +69,44 @@ export function Hero() {
 
         <h1 className="display max-w-3xl text-[2.6rem] text-foreground sm:max-w-4xl sm:text-6xl md:max-w-6xl md:text-[6.5rem]">
           <span className="block overflow-hidden">
-            <span ref={line1Ref} className="block">
+            <span
+              className="hero-line block"
+              style={{ animationDelay: SEQUENCE.line1 }}
+            >
               Construimos
             </span>
           </span>
           <span className="block overflow-hidden">
-            <span ref={line2Ref} className="block">
+            <span
+              className="hero-line block"
+              style={{ animationDelay: SEQUENCE.line2 }}
+            >
               experiencias digitales
             </span>
           </span>
           <span className="block overflow-hidden">
-            <span ref={line3Ref} className="block">
-              para marcas que{" "}
-              <span className="text-accent">avanzan.</span>
+            <span
+              className="hero-line block"
+              style={{ animationDelay: SEQUENCE.line3 }}
+            >
+              para marcas que <span className="text-accent">avanzan.</span>
             </span>
           </span>
         </h1>
 
         <div className="mt-12 flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
-          <p className="hero-sub max-w-md -translate-y-4 text-lg leading-relaxed text-muted opacity-0 md:text-xl">
+          <p
+            className="hero-rise max-w-md text-lg leading-relaxed text-muted md:text-xl"
+            style={{ animationDelay: SEQUENCE.sub }}
+          >
             Estrategia, diseño y tecnología — desde la primera idea hasta el
             producto final.
           </p>
 
-          <div className="hero-cta flex -translate-y-4 flex-wrap items-center gap-3 opacity-0">
+          <div
+            className="hero-rise flex flex-wrap items-center gap-3"
+            style={{ animationDelay: SEQUENCE.cta }}
+          >
             <ButtonLink href="/#contact">
               Iniciar un proyecto
               <ArrowRight
@@ -158,7 +125,10 @@ export function Hero() {
         </div>
       </Container>
 
-      <div className="hero-ticker relative mt-16 border-y border-border py-5 opacity-0">
+      <div
+        className="hero-rise relative mt-16 border-y border-border py-5"
+        style={{ animationDelay: SEQUENCE.ticker }}
+      >
         <Marquee duration={45}>
           {capabilities.map((item) => (
             <span
