@@ -1,5 +1,6 @@
 import { Container } from "@/components/ui/container";
 import { Marquee } from "@/components/ui/marquee";
+import { CountUp } from "@/components/ui/count-up";
 import { projects } from "@/data/projects";
 import { SITE } from "@/data/site";
 
@@ -45,7 +46,7 @@ export function Proof() {
               <dt className="sr-only">{stat.label}</dt>
               <dd>
                 <span className="display block text-5xl text-foreground md:text-6xl">
-                  {stat.value}
+                  <CountUp value={stat.value} />
                 </span>
                 <span className="mt-3 block text-sm text-muted">
                   {stat.label}

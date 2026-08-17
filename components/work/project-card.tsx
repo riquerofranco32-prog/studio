@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { motion } from "framer-motion";
+import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { useRef } from "react";
 import { useInView } from "@/lib/use-in-view";
@@ -23,6 +23,18 @@ export function ProjectCard({
   const ref = useRef<HTMLDivElement>(null);
   const visible = useInView(ref, 0.15);
 
+  // Spotlight que sigue el cursor: sólo mueve dos motion values, sin spring
+  // (el gradiente en sí ya "suaviza" el movimiento visualmente).
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+  const spotlightBackground = useMotionTemplate`radial-gradient(220px circle at ${mouseX}px ${mouseY}px, var(--accent-soft), transparent 70%)`;
+
+  function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    mouseX.set(e.clientX - rect.left);
+    mouseY.set(e.clientY - rect.top);
+  }
+
   return (
     <motion.div
       ref={ref}
@@ -32,7 +44,15 @@ export function ProjectCard({
       className={className}
     >
       <Link href={`/work/${project.slug}`} className="focus-ring group block">
-        <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-surface">
+        <div
+          onMouseMove={handleMouseMove}
+          className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-surface"
+        >
+          <motion.div
+            aria-hidden
+            style={{ background: spotlightBackground }}
+            className="pointer-events-none absolute inset-0 z-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+          />
           <div className="absolute inset-0 flex items-center justify-center font-mono text-xs text-muted/60">
             {project.image ? (
               <Image

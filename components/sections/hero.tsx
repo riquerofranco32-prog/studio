@@ -15,6 +15,7 @@ import { Marquee } from "@/components/ui/marquee";
 import { capabilities } from "@/data/services";
 import { projects } from "@/data/projects";
 import { SITE } from "@/data/site";
+import { SpinningCircularText } from "@/components/ui/spinning-circular-text";
 
 // WebGL puro: no hay nada que renderizar en el servidor, y mezclar SSR con un
 // hook que resuelve distinto en servidor/cliente (useReducedMotion) rompía la
@@ -74,6 +75,25 @@ export function Hero() {
         aria-hidden
         className="pointer-events-none absolute -left-40 bottom-0 h-[420px] w-[420px] rounded-full bg-foreground/[0.03] blur-3xl"
       />
+
+      {/* Badge circular: mismo espíritu que el "15 YEARS" de DHNN — un sello
+          de estudio, no decoración porque sí. Sólo desktop, igual que el widget. */}
+      <div
+        className="hero-rise absolute bottom-24 left-8 z-10 hidden lg:block"
+        style={{ animationDelay: SEQUENCE.widget }}
+      >
+        <div className="relative grid place-items-center">
+          <SpinningCircularText
+            text={`SE7EN STUDIO • ${SITE.stats.years} • `}
+            fontSize="0.95rem"
+            className="text-muted"
+          />
+          <span
+            aria-hidden
+            className="absolute h-2.5 w-2.5 rounded-full bg-accent"
+          />
+        </div>
+      </div>
 
       {/* Widget de stats: sólo en desktop, hay lugar de sobra a la derecha del
           titular. En mobile el hero ya está apretado, no vale la pena sumar peso. */}
