@@ -40,6 +40,16 @@ export const metadata: Metadata = {
   },
 };
 
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "ProfessionalService",
+  name: SITE.name,
+  description: SITE.description,
+  url: SITE.url,
+  email: SITE.email,
+  sameAs: [SITE.social.instagram, SITE.social.linkedin, SITE.social.github],
+};
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -49,11 +59,14 @@ export default function RootLayout({
     // Las variables de fuente van en <html>: Tailwind resuelve --font-sans/--font-mono
     // en :root, así que definirlas en <body> las dejaba sin valor y todo caía al
     // stack del sistema.
-    <html
-      lang="es"
-      className={`${geistSans.variable} ${geistMono.variable}`}
-    >
+    <html lang="es" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="antialiased">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationJsonLd),
+          }}
+        />
         <Navbar />
         <main>{children}</main>
         <Footer />

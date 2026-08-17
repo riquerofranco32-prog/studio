@@ -6,6 +6,7 @@ import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { RevealText } from "@/components/ui/reveal-text";
 import { getProjectBySlug, projects } from "@/data/projects";
+import { SITE } from "@/data/site";
 
 export function generateStaticParams() {
   return projects.map((p) => ({ slug: p.slug }));
@@ -20,15 +21,33 @@ export async function generateMetadata({
   const project = getProjectBySlug(slug);
   if (!project) return {};
 
+  const title = `${project.name} — ${project.category}`;
+
   return {
-    title: `${project.name} — ${project.category}`,
+    title,
     description: project.shortDescription,
+    alternates: { canonical: `/work/${project.slug}` },
     openGraph: {
-      title: `${project.name} — ${project.category}`,
+      title,
+      description: project.shortDescription,
+      url: `${SITE.url}/work/${project.slug}`,
+      images: [project.image],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title,
       description: project.shortDescription,
       images: [project.image],
     },
   };
+}
+
+// getProjectBySlug ya cubre 404 en la página; acá solo se usa para armar
+// el link de "siguiente proyecto" en el orden de `data/projects.ts`.
+function getNextProject(currentSlug: string) {
+  const sorted = [...projects].sort((a, b) => a.order - b.order);
+  const index = sorted.findIndex((p) => p.slug === currentSlug);
+  return sorted[(index + 1) % sorted.length];
 }
 
 function Field({
@@ -58,9 +77,25 @@ export default async function CaseStudyPage({
   const { slug } = await params;
   const project = getProjectBySlug(slug);
   if (!project) notFound();
+  const nextProject = getNextProject(project.slug);
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CreativeWork",
+    name: project.name,
+    description: project.shortDescription,
+    url: `${SITE.url}/work/${project.slug}`,
+    image: `${SITE.url}${project.image}`,
+    creator: { "@type": "Organization", name: SITE.name, url: SITE.url },
+    dateCreated: project.year,
+  };
 
   return (
     <article className="pt-32 pb-24 md:pt-40">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Container>
         <Link
           href="/#work"
@@ -123,7 +158,7 @@ export default async function CaseStudyPage({
           )}
         </div>
 
-        <div className="mt-8 border-t border-border pt-10">
+        <div className="mt-8 flex flex-wrap items-center justify-between gap-6 border-t border-border pt-10">
           <a
             href={project.url}
             target="_blank"
@@ -132,6 +167,17 @@ export default async function CaseStudyPage({
           >
             Sitio en vivo <ArrowUpRight size={20} />
           </a>
+
+          <Link
+            href={`/work/${nextProject.slug}`}
+            className="focus-ring group inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-foreground"
+          >
+            Siguiente proyecto — {nextProject.name}
+            <ArrowUpRight
+              size={14}
+              className="transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+            />
+          </Link>
         </div>
       </Container>
     </article>
