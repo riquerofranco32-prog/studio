@@ -77,6 +77,7 @@ export function PhosphorShader({ className }: { className?: string }) {
 
     let disposed = false;
     let rafId = 0;
+    let running = false;
     const start = performance.now();
 
     const vao = gl.createVertexArray();
@@ -106,7 +107,7 @@ export function PhosphorShader({ className }: { className?: string }) {
     const uTime = gl.getUniformLocation(program, "iTime");
 
     const resize = () => {
-      const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+      const dpr = Math.max(1, Math.min(1.5, window.devicePixelRatio || 1));
       const w = Math.max(1, Math.floor(canvas.clientWidth * dpr));
       const h = Math.max(1, Math.floor(canvas.clientHeight * dpr));
       if (canvas.width !== w || canvas.height !== h) {
@@ -120,7 +121,7 @@ export function PhosphorShader({ className }: { className?: string }) {
     resize();
 
     function tick(now: number) {
-      if (disposed) return;
+      if (disposed || !running) return;
       gl!.useProgram(program);
       if (uResolution)
         gl!.uniform3f(uResolution, canvas!.width, canvas!.height, 1);
@@ -129,11 +130,25 @@ export function PhosphorShader({ className }: { className?: string }) {
       gl!.drawArrays(gl!.TRIANGLES, 0, 3);
       rafId = requestAnimationFrame(tick);
     }
-    rafId = requestAnimationFrame(tick);
+
+    // 80 iteraciones de raymarching por pixel: caro para dejarlo corriendo
+    // cuando el hero ni siquiera está en pantalla. Se pausa solo.
+    const io = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting && !running) {
+        running = true;
+        rafId = requestAnimationFrame(tick);
+      } else if (!entry.isIntersecting && running) {
+        running = false;
+        cancelAnimationFrame(rafId);
+      }
+    });
+    io.observe(canvas);
 
     return () => {
       disposed = true;
+      running = false;
       cancelAnimationFrame(rafId);
+      io.disconnect();
       ro.disconnect();
       gl.deleteBuffer(vbo);
       gl.deleteVertexArray(vao);

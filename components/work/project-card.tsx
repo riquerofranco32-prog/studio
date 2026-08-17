@@ -24,13 +24,21 @@ export function ProjectCard({
   const visible = useInView(ref, 0.15);
 
   // Spotlight que sigue el cursor: sólo mueve dos motion values, sin spring
-  // (el gradiente en sí ya "suaviza" el movimiento visualmente).
+  // (el gradiente en sí ya "suaviza" el movimiento visualmente). El rect se
+  // cachea en mouseenter en vez de leerlo en cada mousemove — getBoundingClientRect
+  // fuerza layout, y un mousemove dispara decenas de eventos por segundo.
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
+  const rectRef = useRef<DOMRect | null>(null);
   const spotlightBackground = useMotionTemplate`radial-gradient(220px circle at ${mouseX}px ${mouseY}px, var(--accent-soft), transparent 70%)`;
 
+  function handleMouseEnter(e: React.MouseEvent<HTMLDivElement>) {
+    rectRef.current = e.currentTarget.getBoundingClientRect();
+  }
+
   function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
-    const rect = e.currentTarget.getBoundingClientRect();
+    const rect = rectRef.current;
+    if (!rect) return;
     mouseX.set(e.clientX - rect.left);
     mouseY.set(e.clientY - rect.top);
   }
@@ -45,6 +53,7 @@ export function ProjectCard({
     >
       <Link href={`/work/${project.slug}`} className="focus-ring group block">
         <div
+          onMouseEnter={handleMouseEnter}
           onMouseMove={handleMouseMove}
           className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-surface"
         >

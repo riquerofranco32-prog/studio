@@ -47,15 +47,18 @@ body {
 
 /* Grano sutil sobre todo el sitio — el mismo detalle "táctil premium" que
    comparten vicio.com, paisanos.io y dhnn.com. SVG feTurbulence puro, sin
-   imagen ni librería: ~150 bytes de data URI. */
+   imagen ni librería: ~150 bytes de data URI.
+   ponytail: sin mix-blend-mode — con position:fixed cubriendo toda la
+   página, forzaba recomposición cara en cada frame de todo lo que anima
+   debajo (marquees, shader, hovers), sentido site-wide como lag. Opacidad
+   lisa da el mismo grano visual sin el costo de blending. */
 body::after {
   content: "";
   position: fixed;
   inset: 0;
   z-index: 9999;
   pointer-events: none;
-  opacity: 0.035;
-  mix-blend-mode: overlay;
+  opacity: 0.05;
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
