@@ -22,7 +22,7 @@ export function Proof() {
         </p>
       </Container>
 
-      <div className="mt-10">
+      <div className="mt-10 border-y border-border py-8">
         <Marquee duration={38}>
           {brands.map((project) => (
             <span
@@ -44,7 +44,7 @@ export function Proof() {
             <div key={stat.label}>
               <dt className="sr-only">{stat.label}</dt>
               <dd>
-                <span className="display block text-4xl text-foreground md:text-5xl">
+                <span className="display block text-5xl text-foreground md:text-6xl">
                   {stat.value}
                 </span>
                 <span className="mt-3 block text-sm text-muted">

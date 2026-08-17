@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef } from "react";
+import dynamic from "next/dynamic";
 import {
   motion,
   useReducedMotion,
@@ -12,6 +13,16 @@ import { Container } from "@/components/ui/container";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Marquee } from "@/components/ui/marquee";
 import { capabilities } from "@/data/services";
+import { projects } from "@/data/projects";
+import { SITE } from "@/data/site";
+
+// WebGL puro: no hay nada que renderizar en el servidor, y mezclar SSR con un
+// hook que resuelve distinto en servidor/cliente (useReducedMotion) rompía la
+// hidratación. ssr:false lo saca del árbol server-rendered por completo.
+const PhosphorShader = dynamic(
+  () => import("@/components/ui/phosphor-shader").then((m) => m.PhosphorShader),
+  { ssr: false },
+);
 
 // La entrada del hero es una secuencia de CSS puro (ver .hero-line/.hero-rise en
 // globals.css) en vez de una timeline de GSAP: mismo resultado, sin la librería
@@ -24,6 +35,7 @@ const SEQUENCE = {
   line3: "0.75s",
   sub: "1.05s",
   cta: "1.2s",
+  widget: "1.2s",
   ticker: "1.4s",
 };
 
@@ -42,6 +54,12 @@ export function Hero() {
       ref={rootRef}
       className="relative flex min-h-[100svh] flex-col overflow-hidden pt-28 pb-16"
     >
+      {/* Shader de fondo: capa de textura por debajo del grid, apagado y en
+          escala de grises para no competir con el acento naranja de la marca. */}
+      <div className="pointer-events-none absolute inset-0 opacity-25 grayscale">
+        <PhosphorShader className="h-full w-full" />
+      </div>
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-background/40 to-background" />
       <motion.div
         aria-hidden
         style={reduceMotion ? undefined : { y: gridY }}
@@ -56,6 +74,32 @@ export function Hero() {
         aria-hidden
         className="pointer-events-none absolute -left-40 bottom-0 h-[420px] w-[420px] rounded-full bg-foreground/[0.03] blur-3xl"
       />
+
+      {/* Widget de stats: sólo en desktop, hay lugar de sobra a la derecha del
+          titular. En mobile el hero ya está apretado, no vale la pena sumar peso. */}
+      <div
+        className="hero-rise absolute right-8 top-28 z-10 hidden w-52 rounded-xl border border-border bg-background/70 p-5 backdrop-blur-md lg:block"
+        style={{ animationDelay: SEQUENCE.widget }}
+      >
+        <dl className="flex flex-col gap-4">
+          <div>
+            <dt className="font-mono text-[11px] tracking-widest text-muted uppercase">
+              Proyectos
+            </dt>
+            <dd className="display mt-1 text-3xl text-foreground">
+              {projects.length}
+            </dd>
+          </div>
+          <div className="border-t border-border pt-4">
+            <dt className="font-mono text-[11px] tracking-widest text-muted uppercase">
+              Estudio
+            </dt>
+            <dd className="mt-1 text-sm text-muted">
+              {SITE.stats.people} personas · {SITE.stats.years}
+            </dd>
+          </div>
+        </dl>
+      </div>
 
       {/* En mobile el titular ocupa casi todo el alto: centrar recortaría la primera
           línea detrás del navbar, así que el contenido arranca arriba y sólo se
