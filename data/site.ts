@@ -6,7 +6,7 @@ export const SITE = {
     "Un estudio de dos personas de producto digital y tecnología creativa. Diseñamos y construimos experiencias digitales para marcas que avanzan.",
   url: "https://se7enstudio.com.ar",
   email: "riquerofranco32@gmail.com",
-  whatsapp: "https://wa.me/5490000000000",
+  whatsapp: "https://wa.me/5492994247985",
   social: {
     instagram: "https://instagram.com/se7enstudio",
     linkedin: "https://linkedin.com/company/se7enstudio",

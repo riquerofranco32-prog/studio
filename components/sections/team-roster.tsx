@@ -15,8 +15,7 @@ import { TeamMember } from "@/types";
 /**
  * Roster en filas, en el mismo lenguaje que la lista de Servicios: la fila es el
  * elemento, no la tarjeta. Si el miembro tiene foto, aparece siguiendo al cursor;
- * si no, la fila se resuelve sola con el estado en acento — que es el caso hoy,
- * porque `imageUrl` está vacío en data/team.ts.
+ * si no, la fila se resuelve sola con el estado en acento.
  */
 export function TeamRoster({ members }: { members: TeamMember[] }) {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -97,6 +96,11 @@ export function TeamRoster({ members }: { members: TeamMember[] }) {
 
             <span className="text-base text-muted md:col-span-4 md:text-lg">
               {member.role}
+              {member.bio && (
+                <span className="mt-1 block text-sm leading-relaxed text-muted/70">
+                  {member.bio}
+                </span>
+              )}
             </span>
 
             <span className="flex items-center gap-2 text-sm text-muted md:col-span-1 md:justify-end">

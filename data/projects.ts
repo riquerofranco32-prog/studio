@@ -20,7 +20,7 @@ export const projects: Project[] = [
       "Una interfaz limpia y de alto contraste que mantiene el foco en la fotografía del producto y los precios, con un flujo simple de carrito a WhatsApp.",
     technology: ["Next.js", "TypeScript", "Supabase", "Vercel"],
     outcome:
-      "Producto en producción, usado por restaurantes reales — detalles de resultados a agregar a medida que el caso de estudio se desarrolle.",
+      "En uso por restaurantes reales, gestionando catálogos y pedidos digitales día a día.",
     url: "https://takefyy.com/",
     image: "/projects/takefyy.jpg",
     featured: true,
@@ -45,7 +45,7 @@ export const projects: Project[] = [
       "Revelados de producto guiados por motion y un layout editorial que trata al catálogo como el protagonista de la experiencia.",
     technology: ["Next.js", "TypeScript", "Supabase", "Vercel"],
     outcome:
-      "Tienda en producción — detalles de resultados a agregar a medida que el caso de estudio se desarrolle.",
+      "Tienda en producción, con stock y catálogo actualizados en tiempo real.",
     url: "https://ponelapava.vercel.app/",
     image: "/projects/pone-la-pava.jpg",
     featured: true,
@@ -70,7 +70,7 @@ export const projects: Project[] = [
       "Una interfaz oscura y centrada en datos, donde la tipografía y las visualizaciones en vivo sostienen la credibilidad del producto.",
     technology: ["Next.js", "TypeScript", "IA/APIs", "Vercel"],
     outcome:
-      "Plataforma en producción — detalles de resultados a agregar a medida que el caso de estudio se desarrolle.",
+      "Plataforma en producción con datos satelitales en vivo (NASA FIRMS) e índice de riesgo de incendio.",
     url: "https://sentineltech.com.ar/",
     image: "/projects/sentinel.jpg",
     featured: true,
@@ -90,11 +90,12 @@ export const projects: Project[] = [
     challenge:
       "Comunicar con claridad el valor de un producto de IA a una audiencia técnica.",
     approach:
-      "Detalles a agregar a medida que el caso de estudio se desarrolle.",
-    design: "Detalles a agregar a medida que el caso de estudio se desarrolle.",
+      "Construimos un sitio enfocado en comunicar el producto con claridad técnica, sin la fricción de una demo o un llamado de ventas previo.",
+    design:
+      "Una interfaz oscura y minimalista, con la jerarquía tipográfica por delante de cualquier elemento decorativo.",
     technology: ["Next.js", "IA/APIs"],
     outcome:
-      "Sitio en producción — detalles de resultados a agregar a medida que el caso de estudio se desarrolle.",
+      "Sitio en producción, presentando el producto a una audiencia técnica.",
     url: "https://apex-ai-arg.netlify.app/",
     image: "/projects/apex-ai.jpg",
     featured: false,
@@ -114,12 +115,12 @@ export const projects: Project[] = [
     challenge:
       "Construir credibilidad y claridad para compradores e inversores evaluando propiedades a distancia.",
     approach:
-      "Detalles a agregar a medida que el caso de estudio se desarrolle.",
+      "Construimos un sitio corporativo con foco en propiedades, ubicación y contacto directo, pensado para consultas a distancia.",
     design:
       "Un lenguaje visual corporativo y contenido, enfocado en la legibilidad y la confianza.",
     technology: ["Next.js", "TypeScript", "Vercel"],
     outcome:
-      "Sitio en producción — detalles de resultados a agregar a medida que el caso de estudio se desarrolle.",
+      "Sitio en producción, usado como canal principal de consulta para compradores e inversores en la Patagonia.",
     url: "https://altumsci.com.ar/",
     image: "/projects/altum-sci.jpg",
     featured: false,
@@ -139,12 +140,12 @@ export const projects: Project[] = [
     challenge:
       "Presentar un método de entrenamiento poco conocido en Argentina con una presencia digital premium y confiable.",
     approach:
-      "Detalles a agregar a medida que el caso de estudio se desarrolle.",
+      "Trabajamos junto al instructor para traducir un método de entrenamiento físico en contenido y estructura digital, sin un sitio de referencia previo en el país.",
     design:
       "Una identidad cinematográfica, en tonos oscuros, con fotografía y video reales.",
     technology: ["Next.js", "TypeScript", "Vercel"],
     outcome:
-      "Sitio en producción — detalles de resultados a agregar a medida que el caso de estudio se desarrolle.",
+      "Sitio en producción para el primer centro Pravilo de Argentina, en Plottier, Neuquén.",
     url: "https://www.pravilo.com.ar/",
     image: "/projects/pravilo.jpg",
     featured: false,
