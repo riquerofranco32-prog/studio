@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import dynamic from "next/dynamic";
 import {
   motion,
@@ -42,7 +42,16 @@ const SEQUENCE = {
 
 export function Hero() {
   const rootRef = useRef<HTMLElement>(null);
-  const reduceMotion = useReducedMotion();
+
+  // useReducedMotion() resuelve distinto en el primer render del cliente vs.
+  // el del servidor (null en SSR, valor real ni bien monta) — eso rompía la
+  // hidratación cada vez que el navegador tenía reduced-motion activo. Arranca
+  // en false en ambos lados y se corrige recién después de montar.
+  const prefersReducedMotion = useReducedMotion();
+  const [reduceMotion, setReduceMotion] = useState(false);
+  useEffect(() => {
+    setReduceMotion(!!prefersReducedMotion);
+  }, [prefersReducedMotion]);
 
   const { scrollYProgress } = useScroll({
     target: rootRef,
