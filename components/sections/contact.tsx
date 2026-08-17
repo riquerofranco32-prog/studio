@@ -85,18 +85,24 @@ export function Contact() {
                 icon={MessageCircle}
                 label="WhatsApp"
               />
-              <div className="mt-2 flex gap-6">
-                <DirectLink
-                  href={SITE.social.instagram}
-                  icon={InstagramIcon}
-                  label="Instagram"
-                />
-                <DirectLink
-                  href={SITE.social.linkedin}
-                  icon={LinkedinIcon}
-                  label="LinkedIn"
-                />
-              </div>
+              {(SITE.social.instagram || SITE.social.linkedin) && (
+                <div className="mt-2 flex gap-6">
+                  {SITE.social.instagram && (
+                    <DirectLink
+                      href={SITE.social.instagram}
+                      icon={InstagramIcon}
+                      label="Instagram"
+                    />
+                  )}
+                  {SITE.social.linkedin && (
+                    <DirectLink
+                      href={SITE.social.linkedin}
+                      icon={LinkedinIcon}
+                      label="LinkedIn"
+                    />
+                  )}
+                </div>
+              )}
             </div>
           </div>
 
@@ -122,11 +128,7 @@ export function Contact() {
               </div>
 
               <div className="mt-6">
-                <Field
-                  name="company"
-                  label="Empresa"
-                  placeholder="Opcional"
-                />
+                <Field name="company" label="Empresa" placeholder="Opcional" />
               </div>
 
               <div className="mt-6">

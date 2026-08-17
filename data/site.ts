@@ -7,10 +7,13 @@ export const SITE = {
   url: "https://se7enstudio.com.ar",
   email: "riquerofranco32@gmail.com",
   whatsapp: "https://wa.me/5492994247985",
+  // ponytail: sin cuentas de estudio propias todavía (instagram.com/se7enstudio,
+  // linkedin.com/company/se7enstudio y github.com/se7enstudio no existen o no son
+  // nuestras) — completar cuando el estudio tenga redes reales.
   social: {
-    instagram: "https://instagram.com/se7enstudio",
-    linkedin: "https://linkedin.com/company/se7enstudio",
-    github: "https://github.com/se7enstudio",
+    instagram: undefined as string | undefined,
+    linkedin: undefined as string | undefined,
+    github: undefined as string | undefined,
   },
   stats: {
     projects: "6+",

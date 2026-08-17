@@ -50,30 +50,36 @@ export function Footer() {
             </ul>
 
             <div className="flex flex-col gap-3">
-              <a
-                href={SITE.social.instagram}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="focus-ring inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-accent"
-              >
-                <InstagramIcon size={14} /> Instagram
-              </a>
-              <a
-                href={SITE.social.linkedin}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="focus-ring inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-accent"
-              >
-                <LinkedinIcon size={14} /> LinkedIn
-              </a>
-              <a
-                href={SITE.social.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="focus-ring inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-accent"
-              >
-                <GithubIcon size={14} /> GitHub
-              </a>
+              {SITE.social.instagram && (
+                <a
+                  href={SITE.social.instagram}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="focus-ring inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-accent"
+                >
+                  <InstagramIcon size={14} /> Instagram
+                </a>
+              )}
+              {SITE.social.linkedin && (
+                <a
+                  href={SITE.social.linkedin}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="focus-ring inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-accent"
+                >
+                  <LinkedinIcon size={14} /> LinkedIn
+                </a>
+              )}
+              {SITE.social.github && (
+                <a
+                  href={SITE.social.github}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="focus-ring inline-flex items-center gap-2 text-sm text-muted transition-colors hover:text-accent"
+                >
+                  <GithubIcon size={14} /> GitHub
+                </a>
+              )}
             </div>
           </div>
         </div>

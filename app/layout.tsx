@@ -47,7 +47,11 @@ const organizationJsonLd = {
   description: SITE.description,
   url: SITE.url,
   email: SITE.email,
-  sameAs: [SITE.social.instagram, SITE.social.linkedin, SITE.social.github],
+  sameAs: [
+    SITE.social.instagram,
+    SITE.social.linkedin,
+    SITE.social.github,
+  ].filter((url): url is string => Boolean(url)),
 };
 
 export default function RootLayout({
