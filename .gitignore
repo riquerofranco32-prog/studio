@@ -44,3 +44,7 @@ next-env.d.ts
 
 # capturas de npm run visual-check
 /.visual-check
+
+# línea de base de npm run bundle-size — es una medición de la máquina de cada
+# quien, no un número compartido
+/.bundle-size.json

@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "visual-check": "node scripts/visual-check.mjs"
+    "visual-check": "node scripts/visual-check.mjs",
+    "bundle-size": "node scripts/bundle-size.mjs",
+    "motion-check": "node scripts/motion-check.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.3",

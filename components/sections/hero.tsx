@@ -1,17 +1,13 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef } from "react";
 import dynamic from "next/dynamic";
-import {
-  motion,
-  useReducedMotion,
-  useScroll,
-  useTransform,
-} from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Marquee } from "@/components/ui/marquee";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { capabilities } from "@/data/services";
 import { projects } from "@/data/projects";
 import { SITE } from "@/data/site";
@@ -43,15 +39,11 @@ const SEQUENCE = {
 export function Hero() {
   const rootRef = useRef<HTMLElement>(null);
 
-  // useReducedMotion() resuelve distinto en el primer render del cliente vs.
-  // el del servidor (null en SSR, valor real ni bien monta) — eso rompía la
-  // hidratación cada vez que el navegador tenía reduced-motion activo. Arranca
-  // en false en ambos lados y se corrige recién después de montar.
-  const prefersReducedMotion = useReducedMotion();
-  const [reduceMotion, setReduceMotion] = useState(false);
-  useEffect(() => {
-    setReduceMotion(!!prefersReducedMotion);
-  }, [prefersReducedMotion]);
+  // El paralaje escribe una MotionValue a mano, así que no pasa por el gate de
+  // <MotionProvider> y necesita el suyo. El hook propio (useSyncExternalStore)
+  // resuelve false en servidor y en el primer render del cliente, así que la
+  // hidratación coincide sin el useState + useEffect que había acá.
+  const reduceMotion = useReducedMotion();
 
   const { scrollYProgress } = useScroll({
     target: rootRef,

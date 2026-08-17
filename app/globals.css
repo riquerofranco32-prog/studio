@@ -14,6 +14,22 @@
      estados activos y una palabra por titular. */
   --accent: #ff4d2e;
   --accent-soft: rgba(255, 77, 46, 0.12);
+
+  /* Motion. UNA curva y UNA escala para todo el sitio: así lo que anima se
+     siente de la misma familia, y cambiar el ritmo del sitio es cambiar estas
+     líneas y nada más.
+     Convivían dos curvas sin motivo — esta es la que ya usaban el navbar, las
+     tarjetas, RevealText y el roster; se retiró cubic-bezier(0.16, 1, 0.3, 1),
+     que sólo estaba en el hero y en el contador.
+     El espejo en JS vive en lib/motion.ts: framer-motion no lee var(--…). */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+
+  --dur-fast: 0.4s; /* color, chips, estados chicos */
+  --dur-base: 0.55s; /* reveal de una tarjeta o un bloque */
+  --dur-slow: 0.7s; /* reveal de una línea de texto */
+  --dur-hero: 0.9s; /* entrada del hero, la única que se toma su tiempo */
+
+  --stagger: 90ms; /* cascada entre hermanos */
 }
 
 @theme inline {
@@ -100,17 +116,17 @@ body::after {
 .hero-line,
 .hero-rise {
   animation-fill-mode: both;
-  animation-timing-function: cubic-bezier(0.16, 1, 0.3, 1);
+  animation-timing-function: var(--ease);
 }
 
 .hero-line {
   animation-name: hero-line;
-  animation-duration: 0.9s;
+  animation-duration: var(--dur-hero);
 }
 
 .hero-rise {
   animation-name: hero-rise;
-  animation-duration: 0.7s;
+  animation-duration: var(--dur-slow);
 }
 
 @keyframes spin-ccw {

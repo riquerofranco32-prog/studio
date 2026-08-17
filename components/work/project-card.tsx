@@ -6,6 +6,7 @@ import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { useRef } from "react";
 import { useInView } from "@/lib/use-in-view";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { Project } from "@/types";
 
 export function ProjectCard({
@@ -22,6 +23,12 @@ export function ProjectCard({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const visible = useInView(ref, 0.15);
+
+  // El spotlight escribe MotionValues a mano, así que <MotionProvider> no lo
+  // toca: un elemento que persigue el cursor es justo lo que la preferencia
+  // pide evitar, y hay que apagarlo acá. Mismo criterio que el retrato del
+  // roster en team-roster.tsx.
+  const reduceMotion = useReducedMotion();
 
   // Spotlight que sigue el cursor: sólo mueve dos motion values, sin spring
   // (el gradiente en sí ya "suaviza" el movimiento visualmente). El rect se
@@ -53,15 +60,17 @@ export function ProjectCard({
     >
       <Link href={`/work/${project.slug}`} className="focus-ring group block">
         <div
-          onMouseEnter={handleMouseEnter}
-          onMouseMove={handleMouseMove}
+          onMouseEnter={reduceMotion ? undefined : handleMouseEnter}
+          onMouseMove={reduceMotion ? undefined : handleMouseMove}
           className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-surface"
         >
-          <motion.div
-            aria-hidden
-            style={{ background: spotlightBackground }}
-            className="pointer-events-none absolute inset-0 z-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
-          />
+          {!reduceMotion && (
+            <motion.div
+              aria-hidden
+              style={{ background: spotlightBackground }}
+              className="pointer-events-none absolute inset-0 z-10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+            />
+          )}
           <div className="absolute inset-0 flex items-center justify-center font-mono text-xs text-muted/60">
             {project.image ? (
               <Image
