@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { Navbar } from "@/components/sections/navbar";
 import { Footer } from "@/components/sections/footer";
 import { MotionProvider } from "@/components/providers/motion-provider";
+import { SmoothScroll } from "@/components/providers/smooth-scroll";
 import { SITE } from "@/data/site";
 import "./globals.css";
 
@@ -72,6 +73,7 @@ export default function RootLayout({
             __html: JSON.stringify(organizationJsonLd),
           }}
         />
+        <SmoothScroll />
         <MotionProvider>
           <Navbar />
           <main>{children}</main>

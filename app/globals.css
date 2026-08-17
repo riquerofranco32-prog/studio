@@ -49,8 +49,21 @@
   border-color: var(--border);
 }
 
-html {
-  scroll-behavior: smooth;
+/* Lenis toma el rol que tenía `scroll-behavior: smooth` acá: esa regla se
+   pisaba con la restauración de scroll del navegador y con las navegaciones del
+   router, y ahora el suavizado lo maneja
+   components/providers/smooth-scroll.tsx. Sin JS los anchors saltan
+   instantáneo, que es el comportamiento correcto.
+
+   Esta es la única regla de lenis.css que el sitio necesita — sin ella el
+   documento no puede crecer y el scroll queda clavado. El resto del stylesheet
+   (`.lenis-stopped`, `[data-lenis-prevent]`, el fix de iframes) cubre casos que
+   este sitio hoy no tiene: bloquear el scroll para un modal, scrollers
+   anidados, iframes embebidos. Está en node_modules/lenis/dist/lenis.css si
+   alguno aparece. */
+html.lenis,
+html.lenis body {
+  height: auto;
 }
 
 body {
@@ -168,9 +181,6 @@ body::after {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  html {
-    scroll-behavior: auto;
-  }
   *,
   *::before,
   *::after {
