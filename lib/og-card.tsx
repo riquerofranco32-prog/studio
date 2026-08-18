@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { ImageResponse } from "next/og";
 import { SITE } from "@/data/site";
 
@@ -13,6 +15,13 @@ const FOREGROUND = "#f5f5f4";
 const MUTED = "#8a8a8e";
 const ACCENT = "#ff4d2e";
 const BORDER = "rgba(245, 245, 244, 0.1)";
+
+// Satori no resuelve rutas del sitio: necesita los bytes. Se leen una sola vez
+// al cargar el módulo, y esto corre en build —- /opengraph-image y
+// /twitter-image se prerenderizan estáticos, no por request.
+const SIMBOLO = `data:image/png;base64,${readFileSync(
+  join(process.cwd(), "public/logo-simbolo.png"),
+).toString("base64")}`;
 
 export function renderSocialCard() {
   return new ImageResponse(
@@ -43,15 +52,15 @@ export function renderSocialCard() {
         />
 
         <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-          <div
-            style={{
-              width: 14,
-              height: 14,
-              borderRadius: 14,
-              background: ACCENT,
-              display: "flex",
-            }}
-          />
+          {/* El símbolo de marca en vez del punto de acento: es el mismo
+              lockup que el navbar y el footer, y esta tarjeta es lo que se ve
+              al compartir el sitio. */}
+          {/* next/image no existe dentro de Satori: sólo entiende un subconjunto
+              de HTML, y <img> con los bytes embebidos es la única forma. La regla
+              apunta al LCP de una página real, que no aplica a una imagen que se
+              genera en el servidor. */}
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={SIMBOLO} width={46} height={46} alt="" />
           <div
             style={{
               fontSize: 24,
