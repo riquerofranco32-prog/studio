@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import {
   GithubIcon,
   InstagramIcon,
@@ -22,10 +23,16 @@ export function Footer() {
         <Reveal>
           <div className="flex flex-col justify-between gap-12 md:flex-row">
             <div>
-              <p className="inline-flex items-center gap-2.5 font-mono text-sm font-medium tracking-widest">
-                <span aria-hidden className="h-2 w-2 rounded-full bg-accent" />
-                {SITE.name}
-              </p>
+              <Image
+                src="/logo.png"
+                alt={SITE.name}
+                width={800}
+                height={224}
+                // Sin `sizes` Next asume que la imagen puede ocupar todo el ancho y
+                // sirve la variante de 1920px para un logo que se pinta a ~115px.
+                sizes="120px"
+                className="h-8 w-auto"
+              />
               <p className="mt-4 max-w-xs text-sm leading-relaxed text-muted">
                 Experiencias digitales. Construidas con intención.
               </p>

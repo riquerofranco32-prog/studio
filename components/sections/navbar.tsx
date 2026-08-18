@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X, ArrowUpRight } from "lucide-react";
@@ -71,12 +72,22 @@ export function Navbar() {
             scrolled ? "h-16" : "h-20"
           }`}
         >
-          <Link
-            href="/"
-            className="focus-ring inline-flex items-center gap-2.5 font-mono text-sm font-medium tracking-widest"
-          >
-            <span aria-hidden className="h-2 w-2 rounded-full bg-accent" />
-            {SITE.name}
+          <Link href="/" className="focus-ring inline-flex items-center">
+            {/* El PNG viene recortado a su caja de contenido, así que el alto
+                fijo alcanza para alinearlo ópticamente sin ajustes. El alt lleva
+                el nombre porque acá el logo ES el texto: sin él, el link al home
+                no tendría nombre accesible. */}
+            <Image
+              src="/logo.png"
+              alt={SITE.name}
+              width={800}
+              height={224}
+              // Sin `sizes` Next asume que la imagen puede ocupar todo el ancho y
+              // sirve la variante de 1920px para un logo que se pinta a ~115px.
+              sizes="120px"
+              priority
+              className="h-7 w-auto"
+            />
           </Link>
 
           <ul className="hidden items-center gap-10 md:flex">
