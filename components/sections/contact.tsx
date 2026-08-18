@@ -4,6 +4,7 @@ import { useState, FormEvent } from "react";
 import { ArrowRight, Mail, MessageCircle } from "lucide-react";
 import { InstagramIcon, LinkedinIcon } from "@/components/ui/brand-icons";
 import { Container } from "@/components/ui/container";
+import { Magnetic } from "@/components/ui/magnetic";
 import { RevealText } from "@/components/ui/reveal-text";
 import { SITE } from "@/data/site";
 
@@ -149,16 +150,18 @@ export function Contact() {
               </div>
 
               <div className="mt-8 flex flex-wrap items-center gap-5">
-                <button
-                  type="submit"
-                  className="focus-ring group inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-medium text-background transition-colors duration-300 hover:bg-accent/90"
-                >
-                  Enviar mensaje
-                  <ArrowRight
-                    size={16}
-                    className="transition-transform duration-300 group-hover:translate-x-1"
-                  />
-                </button>
+                <Magnetic>
+                  <button
+                    type="submit"
+                    className="focus-ring group inline-flex items-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-medium text-background transition-colors duration-300 hover:bg-accent/90"
+                  >
+                    Enviar mensaje
+                    <ArrowRight
+                      size={16}
+                      className="transition-transform duration-300 group-hover:translate-x-1"
+                    />
+                  </button>
+                </Magnetic>
 
                 {sent ? (
                   <p aria-live="polite" className="text-sm text-foreground">

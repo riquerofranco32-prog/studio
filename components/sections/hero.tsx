@@ -7,6 +7,7 @@ import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Marquee } from "@/components/ui/marquee";
+import { Magnetic } from "@/components/ui/magnetic";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { capabilities } from "@/data/services";
 import { projects } from "@/data/projects";
@@ -179,20 +180,24 @@ export function Hero() {
             className="hero-rise flex flex-wrap items-center gap-3"
             style={{ animationDelay: SEQUENCE.cta }}
           >
-            <ButtonLink href="/#contact">
-              Iniciar un proyecto
-              <ArrowRight
-                size={16}
-                className="transition-transform duration-300 group-hover:translate-x-1"
-              />
-            </ButtonLink>
-            <ButtonLink href="/#work" variant="secondary">
-              Ver nuestro trabajo
-              <ArrowUpRight
-                size={16}
-                className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-              />
-            </ButtonLink>
+            <Magnetic>
+              <ButtonLink href="/#contact">
+                Iniciar un proyecto
+                <ArrowRight
+                  size={16}
+                  className="transition-transform duration-300 group-hover:translate-x-1"
+                />
+              </ButtonLink>
+            </Magnetic>
+            <Magnetic>
+              <ButtonLink href="/#work" variant="secondary">
+                Ver nuestro trabajo
+                <ArrowUpRight
+                  size={16}
+                  className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                />
+              </ButtonLink>
+            </Magnetic>
           </div>
         </div>
       </Container>

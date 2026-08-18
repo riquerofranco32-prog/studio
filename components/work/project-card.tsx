@@ -7,6 +7,7 @@ import { ArrowUpRight } from "lucide-react";
 import { useRef } from "react";
 import { Reveal } from "@/components/ui/reveal";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
+import { MD, useMediaQuery } from "@/lib/use-media-query";
 import { Project } from "@/types";
 
 export function ProjectCard({
@@ -24,6 +25,10 @@ export function ProjectCard({
   /** Posición dentro de su fila de la grilla, para escalonar el reveal. */
   index?: number;
 }) {
+  // Debajo de md la grilla colapsa a una columna y cada tarjeta entra sola:
+  // ahí el escalonado no escalona nada, es latencia pura después de que la
+  // tarjeta ya está en pantalla. Mismo criterio que usar i % 2 en vez de i.
+  const cascada = useMediaQuery(MD) ? index : 0;
 
   // El spotlight escribe MotionValues a mano, así que <MotionProvider> no lo
   // toca: un elemento que persigue el cursor es justo lo que la preferencia
@@ -52,7 +57,7 @@ export function ProjectCard({
   }
 
   return (
-    <Reveal index={index} className={className}>
+    <Reveal index={cascada} className={className}>
       <Link href={`/work/${project.slug}`} className="focus-ring group block">
         <div
           onMouseEnter={reduceMotion ? undefined : handleMouseEnter}

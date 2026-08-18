@@ -207,6 +207,104 @@ const pageC = await open("no-preference", "/#contact");
 const anchorC = await measureTop(pageC, "contact");
 await pageC.close();
 
+// ── Pin del Proceso: ¿se desincroniza del scroll suavizado de Lenis? ────────
+// El pin es CSS sticky (lo mueve el compositor) y el paso activo sale de
+// useScroll (lo lee JS). Si Lenis escribiera la posición después de que framer
+// la lee, el paso cambiaría un frame tarde respecto de lo que se ve. Se mide en
+// dos regímenes: en reposo tras asentar, y DURANTE un scroll continuo.
+const pagePin = await open("no-preference");
+const pin = await pagePin.evaluate(async () => {
+  const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+  const el = document.querySelector('[data-pin="process"]');
+  if (!el) return { error: "no se encontró [data-pin=process]" };
+
+  const pasos = document.querySelectorAll("[data-pin] button").length;
+  const rendered = () => {
+    const btns = [...document.querySelectorAll("[data-pin] button")];
+    return btns.findIndex((b) => b.getAttribute("aria-current") === "step");
+  };
+  const geom = () => {
+    const top = el.offsetTop;
+    const range = el.offsetHeight - window.innerHeight;
+    return { top, range };
+  };
+  const esperado = (y) => {
+    const { top, range } = geom();
+    const prog = Math.max(0, Math.min(1, (y - top) / range));
+    return Math.min(Math.floor(prog * pasos), pasos - 1);
+  };
+
+  // 1. En reposo: parar en el medio de la banda de cada paso.
+  const reposo = [];
+  for (let i = 0; i < pasos; i++) {
+    const { top, range } = geom();
+    const y = Math.round(top + (range * (i + 0.5)) / pasos);
+    window.scrollTo(0, y);
+    await sleep(1100);
+    const sticky = el.firstElementChild.getBoundingClientRect().top;
+    reposo.push({
+      paso: i,
+      scrollY: Math.round(window.scrollY),
+      esperado: esperado(window.scrollY),
+      renderizado: rendered(),
+      stickyTop: Math.round(sticky),
+    });
+  }
+
+  // 2. En movimiento: scroll continuo por rueda a lo largo del pin, muestreando
+  //    posición y paso renderizado en el mismo frame.
+  const { top } = geom();
+  window.scrollTo(0, top);
+  await sleep(1100);
+  let desfasajes = 0;
+  let muestras = 0;
+  let maxDesfasaje = 0;
+  for (let i = 0; i < 40; i++) {
+    window.dispatchEvent(
+      new WheelEvent("wheel", { deltaY: 200, bubbles: true, cancelable: true }),
+    );
+    await new Promise((r) => requestAnimationFrame(() => r()));
+    const e = esperado(window.scrollY);
+    const r = rendered();
+    if (r !== -1) {
+      muestras++;
+      if (e !== r) {
+        desfasajes++;
+        maxDesfasaje = Math.max(maxDesfasaje, Math.abs(e - r));
+      }
+    }
+  }
+
+  return {
+    pasos,
+    reposo,
+    enMovimiento: { muestras, desfasajes, maxDesfasaje },
+    docHeight: document.body.scrollHeight,
+  };
+});
+
+await pagePin.close();
+
+// El pin estira el documento; el IntersectionObserver del navbar usa una banda
+// de -45%/-50% del viewport, que es relativa y no debería inmutarse. Se
+// comprueba en la sección que quedó DESPUÉS del pin.
+//
+// Va en una página limpia a propósito: hacerlo sobre la misma pestaña que venía
+// de barrer el pin a fuerza de rueda dejaba inercia pendiente en Lenis, que
+// después pisaba el scrollTo y movía la página fuera de #about. El primer
+// intento reportó un falso negativo por eso.
+const pageNav = await open("no-preference");
+const navTrasPin = await pageNav.evaluate(async () => {
+  const about = document.getElementById("about");
+  window.scrollTo(0, about.offsetTop + 200);
+  await new Promise((r) => setTimeout(r, 1300));
+  return [...document.querySelectorAll("header nav a")]
+    .filter((a) => a.getAttribute("aria-current") === "true")
+    .map((a) => a.getAttribute("href"));
+});
+await pageNav.close();
+
+
 await browser.close();
 
 // ── Reporte ─────────────────────────────────────────────────────────────────
@@ -240,6 +338,28 @@ console.log(`  A. home → /#work (Lenis)           : ${anchorA} px  ${ok(near(a
 console.log(`  B. /work/takefyy → /#work (router) : ${anchorB} px  ${ok(near(anchorB))}`);
 console.log(`  C. carga directa /#contact (nativo): ${anchorC} px  ${ok(near(anchorC))}`);
 console.log(`\n  errores de consola (todas las pasadas): ${allConsoleErrors.length}`);
+
+console.log(`
+${line}`);
+console.log("PIN DEL PROCESO — sticky + useScroll conviviendo con Lenis");
+console.log(line);
+if (pin.error) {
+  console.log(`  ${pin.error}`);
+} else {
+  console.log(`  docHeight con el pin               : ${pin.docHeight} px`);
+  console.log("  en reposo:   paso  scrollY   esperado  renderizado   sticky.top");
+  for (const r of pin.reposo) {
+    const ok2 = r.esperado === r.renderizado ? '✓' : '✗';
+    console.log(
+      `               ${String(r.paso).padStart(5)}${String(r.scrollY).padStart(9)}${String(r.esperado).padStart(11)}${String(r.renderizado).padStart(13)}${String(r.stickyTop).padStart(13)}px  ${ok2}`,
+    );
+  }
+  const m = pin.enMovimiento;
+  console.log(
+    `  en movimiento                     : ${m.desfasajes}/${m.muestras} muestras desfasadas (máx ${m.maxDesfasaje} paso/s)`,
+  );
+}
+console.log(`  navbar activo después del pin      : ${JSON.stringify(navTrasPin)}`);
 
 // ── Veredicto ───────────────────────────────────────────────────────────────
 const fail = [];
@@ -278,6 +398,31 @@ for (const [nombre, valor] of [
       `ancla ${nombre}: aterrizó en ${valor}px, se esperaba ~${ANCHOR_OFFSET}px — el navbar fijo tapa el borde de la sección`,
     );
 }
+
+if (pin.error) fail.push(`pin: ${pin.error}`);
+else {
+  for (const r of pin.reposo) {
+    if (r.esperado !== r.renderizado)
+      fail.push(
+        `pin en reposo: en scrollY ${r.scrollY} corresponde el paso ${r.esperado} y se está mostrando el ${r.renderizado}`,
+      );
+    // El bloque pineado tiene que quedar clavado arriba del viewport.
+    if (Math.abs(r.stickyTop) > 2)
+      fail.push(`pin en reposo: el bloque sticky se despegó (top ${r.stickyTop}px, esperado 0)`);
+  }
+  // Durante el scroll continuo se tolera desfasaje de 1 paso —- es el frame
+  // que tarda React en commitear el estado —- pero no que sea la norma.
+  const m = pin.enMovimiento;
+  if (m.muestras === 0) fail.push('pin: no se pudo leer el paso activo durante el scroll');
+  else if (m.maxDesfasaje > 1)
+    fail.push(`pin en movimiento: el paso llegó a desfasarse ${m.maxDesfasaje} posiciones`);
+  else if (m.desfasajes / m.muestras > 0.35)
+    fail.push(
+      `pin en movimiento: ${m.desfasajes} de ${m.muestras} muestras desfasadas (${Math.round((m.desfasajes / m.muestras) * 100)}%) — el paso activo va sistemáticamente atrás del scroll`,
+    );
+}
+if (navTrasPin.length === 0)
+  fail.push('el IntersectionObserver del navbar dejó de marcar sección después del pin');
 
 if (allConsoleErrors.length) fail.push(`${allConsoleErrors.length} errores de consola`);
 

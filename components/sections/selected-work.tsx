@@ -2,6 +2,7 @@ import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { ButtonLink } from "@/components/ui/button-link";
+import { Magnetic } from "@/components/ui/magnetic";
 import { ProjectCard } from "@/components/work/project-card";
 import { projects } from "@/data/projects";
 
@@ -37,13 +38,15 @@ export function SelectedWork() {
             title="Trabajo seleccionado."
             subtitle={`${sorted.length} experiencias digitales que diseñamos y construimos.`}
           />
-          <ButtonLink href="/#contact" variant="secondary" className="shrink-0">
-            Quiero algo así
-            <ArrowRight
-              size={16}
-              className="transition-transform duration-300 group-hover:translate-x-1"
-            />
-          </ButtonLink>
+          <Magnetic className="shrink-0">
+            <ButtonLink href="/#contact" variant="secondary">
+              Quiero algo así
+              <ArrowRight
+                size={16}
+                className="transition-transform duration-300 group-hover:translate-x-1"
+              />
+            </ButtonLink>
+          </Magnetic>
         </div>
 
         <div className="mt-16 grid grid-cols-1 gap-x-6 gap-y-14 md:grid-cols-12">

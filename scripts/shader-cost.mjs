@@ -142,6 +142,79 @@ for (const rate of THROTTLES) {
   filas.push({ rate, con, sin, habia });
 }
 
+// ── Costo propio del pin del Proceso ────────────────────────────────────────
+// El pin es CSS sticky (compositor) más un useScroll que lee progreso y setea
+// estado. La pregunta es si eso cuesta frames por su cuenta. Se compara contra
+// Servicios, una sección sin nada atado al scroll. En las dos el hero está
+// fuera de pantalla, así que el shader está pausado por su IntersectionObserver
+// y no contamina la medición.
+const pin = [];
+for (const rate of [1, 4]) {
+  await client.send("Emulation.setCPUThrottlingRate", { rate: 1 });
+  await page.goto(URL, { waitUntil: "networkidle0", timeout: 60000 });
+  await new Promise((r) => setTimeout(r, 3000));
+
+  const posiciones = await page.evaluate(() => {
+    const pinEl = document.querySelector('[data-pin="process"]');
+    const services = document.getElementById("services");
+    return {
+      // Mitad del recorrido pineado: el paso activo está cambiando ahí.
+      pin: pinEl ? Math.round(pinEl.offsetTop + (pinEl.offsetHeight - window.innerHeight) / 2) : null,
+      plano: services ? services.offsetTop + 200 : null,
+      hayPin: !!pinEl,
+    };
+  });
+
+  await client.send("Emulation.setCPUThrottlingRate", { rate });
+
+  const medirEn = async (y) => {
+    await page.evaluate((t) => window.scrollTo(0, t), y);
+    await new Promise((r) => setTimeout(r, 1500));
+    return measure(page, SAMPLE_MS);
+  };
+
+  const plano = await medirEn(posiciones.plano);
+  // Barrer despacio el pin mientras se mide: quieto no cambia de paso y no se
+  // estaría midiendo el trabajo que interesa.
+  const enPin = await page.evaluate(async (y) => {
+    window.scrollTo(0, y);
+    await new Promise((r) => setTimeout(r, 1200));
+    return true;
+  }, posiciones.pin).then(async () => {
+    const medicion = page.evaluate(async (duration) => {
+      const deltas = [];
+      let last = performance.now();
+      const end = last + duration;
+      await new Promise((resolve) => {
+        const tick = (now) => {
+          deltas.push(now - last);
+          last = now;
+          // Rueda suave todo el tiempo: fuerza al pin a recalcular progreso y
+          // a cambiar de paso durante la medición.
+          window.dispatchEvent(new WheelEvent("wheel", { deltaY: 24, bubbles: true, cancelable: true }));
+          if (now < end) requestAnimationFrame(tick);
+          else resolve();
+        };
+        requestAnimationFrame(tick);
+      });
+      deltas.shift();
+      const sorted = [...deltas].sort((a, b) => a - b);
+      const at = (q) => sorted[Math.floor(sorted.length * q)] ?? 0;
+      return {
+        frames: deltas.length,
+        fps: +(1000 / (deltas.reduce((a, b) => a + b, 0) / deltas.length)).toFixed(1),
+        medianaMs: +at(0.5).toFixed(2),
+        p95Ms: +at(0.95).toFixed(2),
+        peorMs: +at(0.999).toFixed(2),
+        framesLargos: +((deltas.filter((d) => d > 16.7).length / deltas.length) * 100).toFixed(1),
+      };
+    }, SAMPLE_MS);
+    return medicion;
+  });
+
+  pin.push({ rate, plano, enPin, hayPin: posiciones.hayPin });
+}
+
 await client.send("Emulation.setCPUThrottlingRate", { rate: 1 });
 await browser.close();
 
@@ -165,6 +238,27 @@ for (const { rate, con, sin, habia } of filas) {
   const pct = sin.medianaMs ? Math.round((dif / sin.medianaMs) * 100) : 0;
   console.log(`\n  costo del shader en la mediana de frame: ${dif >= 0 ? "+" : ""}${dif} ms (${pct >= 0 ? "+" : ""}${pct}%)`);
   console.log("");
+}
+
+console.log(line);
+console.log("PIN DEL PROCESO — costo propio, con el hero (y el shader) fuera de pantalla");
+console.log(line);
+for (const { rate, plano, enPin, hayPin } of pin) {
+  if (!hayPin) {
+    console.log(`  CPU ×${rate}: no se encontró [data-pin=process]`);
+    continue;
+  }
+  console.log(`  CPU throttling ×${rate}`);
+  console.log("                    fps    mediana     p95     peor   frames >16.7ms");
+  const fila = (etq, m) =>
+    console.log(
+      `  ${etq.padEnd(16)}${String(m.fps).padStart(6)}${String(m.medianaMs).padStart(10)}ms${String(m.p95Ms).padStart(8)}ms${String(m.peorMs).padStart(8)}ms${String(m.framesLargos).padStart(12)}%`,
+    );
+  fila("sección plana", plano);
+  fila("pin scrolleando", enPin);
+  const dif = +(enPin.medianaMs - plano.medianaMs).toFixed(2);
+  console.log(`  → costo propio del pin: ${dif >= 0 ? "+" : ""}${dif} ms por frame
+`);
 }
 
 console.log(line);
