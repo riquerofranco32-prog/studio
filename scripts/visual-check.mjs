@@ -77,8 +77,22 @@ const report = {};
 for (const { label, width, height } of BREAKPOINTS) {
   await page.setViewport({ width, height, deviceScaleFactor: 1 });
   await page.goto(URL, { waitUntil: "networkidle0", timeout: 60000 });
-  // Deja correr el timeline de GSAP y los reveals por viewport.
-  await new Promise((r) => setTimeout(r, 2000));
+
+  // Esperar a la tipografía, no a un reloj. Las métricas de texto cambian
+  // cuando termina el font-swap, y medir antes daba solapamientos fantasma:
+  // contra producción apareció uno en 1 de 5 corridas que no se reproducía,
+  // porque por red el swap cae más tarde que en localhost y el timeout fijo
+  // de 2s a veces no alcanzaba. document.fonts.ready es la señal exacta.
+  // Un test que falla 1 de 5 se termina ignorando, y acá el detector de
+  // solapamientos ya encontró tres bugs reales.
+  await page.evaluate(async () => {
+    await document.fonts.ready;
+  });
+
+  // Lo único que queda por esperar después de las fuentes son los reveals por
+  // viewport, que son de duración conocida: 0.55s el de las tarjetas más 90ms
+  // de cascada (ver --dur-base y --stagger en globals.css).
+  await new Promise((r) => setTimeout(r, 800));
   await page.evaluate(async () => {
     // scroll-behavior: smooth dejaría el scroll a mitad de camino al capturar.
     document.documentElement.style.scrollBehavior = "auto";
