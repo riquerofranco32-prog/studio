@@ -149,8 +149,19 @@ async function run(preference) {
     }
   }
 
+  // Censo de lo que se apaga por JS. No lo cubre el muestreo de transform:
+  // estos elementos no animan más despacio bajo reduced-motion, directamente
+  // no se montan. El <canvas> del shader además dibuja píxeles, no estilos,
+  // así que un diff de computed styles nunca lo vería.
+  const gates = await page.evaluate(() => ({
+    shader: document.querySelectorAll("canvas").length,
+    ping: document.querySelectorAll(".animate-ping").length,
+    spotlight: document.querySelectorAll('a[href^="/work/"] div[style*="radial-gradient"]').length,
+    roster: document.querySelectorAll('img[src*="/team/"]').length,
+  }));
+
   await page.close();
-  return { movers: [...movers.values()], opacityOnly, consoleErrors };
+  return { movers: [...movers.values()], opacityOnly, consoleErrors, gates };
 }
 
 console.log(`\nURL: ${URL}`);
@@ -185,6 +196,21 @@ for (const m of test.movers) {
   console.log(`        ${m.transform}`);
 }
 
+console.log(`
+${line}`);
+console.log("GATES POR JS — elementos que no se montan bajo reduced-motion");
+console.log(line);
+console.log("  elemento              control   reduce");
+for (const k of Object.keys(control.gates)) {
+  const c = control.gates[k];
+  const t = test.gates[k];
+  // Si el control tampoco lo vio, no hay nada que apagar: decir 'apagado'
+  // ahí sería reportar un éxito que no se midió.
+  const estado =
+    c === 0 ? '— no observado' : t === 0 ? '✓ apagado' : c === t ? '✗ sigue montado' : '✗ parcial';
+  console.log(`  ${k.padEnd(20)}  ${String(c).padStart(5)}   ${String(t).padStart(5)}   ${estado}`);
+}
+
 const failures = [];
 if (control.movers.length === 0) {
   failures.push(
@@ -196,6 +222,15 @@ if (test.movers.length > 0) {
     `${test.movers.length} elemento(s) siguen moviéndose con reduced-motion activo`,
   );
 }
+// El shader, el ping y el spotlight se apagan por JS: bajo reduced-motion
+// tienen que desaparecer del DOM, no sólo dejar de animar.
+for (const k of ["shader", "ping", "spotlight"]) {
+  if (control.gates[k] === 0)
+    failures.push(`el control no encontró ningún "${k}" — el censo no está midiendo nada`);
+  else if (test.gates[k] !== 0)
+    failures.push(`"${k}" sigue montado con reduced-motion (${test.gates[k]} elemento/s)`);
+}
+
 if (test.consoleErrors.length) {
   failures.push(`${test.consoleErrors.length} errores de consola con reduced-motion`);
 }

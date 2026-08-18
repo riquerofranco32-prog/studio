@@ -32,10 +32,12 @@ export function SmoothScroll() {
       // sistema en iOS y es la fuente principal de reportes de "se siente raro"
       // en mobile; la inercia del dedo ya la da el navegador.
       syncTouch: false,
-      // Compensa el navbar fijo (h-16 = 64px cuando está scrolleado): sin esto
-      // el anchor deja la sección pegada al borde y el navbar le come el borde
-      // superior.
-      anchors: { offset: -80 },
+      // Sin offset a propósito: la compensación del navbar fijo vive en el
+      // scroll-margin-top de globals.css. Lenis lo respeta (lenis.mjs:783), y
+      // ahí también lo respetan el salto nativo al cargar con hash y el router
+      // de Next — que es donde el offset de acá no llegaba. Poner las dos cosas
+      // las suma y deja las secciones 160px abajo.
+      anchors: true,
       autoRaf: true,
       // Al ir a otra ruta, cortar la inercia: si no, la página nueva hereda la
       // velocidad que traía la anterior.

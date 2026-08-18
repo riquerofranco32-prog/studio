@@ -64,7 +64,7 @@ export function Contact() {
                 en la columna de 5/12 o "Construyámosla." se corta a la derecha. */}
             <h2 className="display text-[2.6rem] text-foreground sm:text-5xl md:text-[3.4rem] lg:text-[4rem]">
               <RevealText>¿Tenés una idea?</RevealText>
-              <RevealText delay={0.08}>
+              <RevealText index={1}>
                 <span className="text-accent">Construyámosla.</span>
               </RevealText>
             </h2>

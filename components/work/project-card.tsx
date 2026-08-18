@@ -5,7 +5,7 @@ import Image from "next/image";
 import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { useRef } from "react";
-import { useInView } from "@/lib/use-in-view";
+import { Reveal } from "@/components/ui/reveal";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { Project } from "@/types";
 
@@ -14,15 +14,16 @@ export function ProjectCard({
   className = "",
   priority = false,
   sizes = "(min-width: 768px) 50vw, 100vw",
+  index = 0,
 }: {
   project: Project;
   className?: string;
   priority?: boolean;
   /** Ancho real que ocupa la tarjeta — lo define el layout de la grilla. */
   sizes?: string;
+  /** Posición dentro de su fila de la grilla, para escalonar el reveal. */
+  index?: number;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const visible = useInView(ref, 0.15);
 
   // El spotlight escribe MotionValues a mano, así que <MotionProvider> no lo
   // toca: un elemento que persigue el cursor es justo lo que la preferencia
@@ -51,13 +52,7 @@ export function ProjectCard({
   }
 
   return (
-    <motion.div
-      ref={ref}
-      initial={{ opacity: 0, y: 32 }}
-      animate={visible ? { opacity: 1, y: 0 } : { opacity: 0, y: 32 }}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-      className={className}
-    >
+    <Reveal index={index} className={className}>
       <Link href={`/work/${project.slug}`} className="focus-ring group block">
         <div
           onMouseEnter={reduceMotion ? undefined : handleMouseEnter}
@@ -120,6 +115,6 @@ export function ProjectCard({
           </div>
         </div>
       </Link>
-    </motion.div>
+    </Reveal>
   );
 }

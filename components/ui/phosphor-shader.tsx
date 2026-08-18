@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
-import { useReducedMotion } from "framer-motion";
+import { useReducedMotion } from "@/lib/use-reduced-motion";
 
 // Shader de "Phosphor" (xordev, 21st.dev) adaptado para vivir absoluto dentro
 // del hero en vez de fullscreen fijo. WebGL2 puro, sin three.js ni deps nuevas.

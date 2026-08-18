@@ -10,7 +10,8 @@
     "visual-check": "node scripts/visual-check.mjs",
     "bundle-size": "node scripts/bundle-size.mjs",
     "motion-check": "node scripts/motion-check.mjs",
-    "scroll-check": "node scripts/scroll-check.mjs"
+    "scroll-check": "node scripts/scroll-check.mjs",
+    "shader-cost": "node scripts/shader-cost.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.3",

@@ -3,15 +3,25 @@
 import { motion } from "framer-motion";
 import { ReactNode, useRef } from "react";
 import { useInView } from "@/lib/use-in-view";
+import { DUR, EASE, STAGGER } from "@/lib/motion";
 
+/**
+ * Reveal de titulares: la línea entera sube desde detrás de una máscara, en vez
+ * del fade + 16px de <Reveal>. Se reserva para la escala display — en texto
+ * chico el enmascarado se lee como un glitch, no como intención.
+ *
+ * El movimiento es `y`, una clave posicional, así que <MotionProvider> lo
+ * descarta bajo reduced-motion y el texto aparece en su lugar sin viajar.
+ */
 export function RevealText({
   children,
-  delay = 0,
+  index = 0,
   className = "",
   as: Tag = "div",
 }: {
   children: ReactNode;
-  delay?: number;
+  /** Posición en la cascada. El delay sale de acá: index * 90ms. */
+  index?: number;
   className?: string;
   as?: "div" | "h1" | "h2" | "h3" | "p" | "span";
 }) {
@@ -23,7 +33,7 @@ export function RevealText({
       <motion.div
         initial={{ y: "110%" }}
         animate={{ y: visible ? "0%" : "110%" }}
-        transition={{ duration: 0.8, delay, ease: [0.22, 1, 0.36, 1] }}
+        transition={{ duration: DUR.slow, delay: index * STAGGER, ease: EASE }}
       >
         <Tag className={className}>{children}</Tag>
       </motion.div>

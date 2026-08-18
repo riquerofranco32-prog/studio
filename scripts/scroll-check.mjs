@@ -1,5 +1,5 @@
 /**
- * Test de no-regresión del scroll suave (Lenis).
+ * Test de no-regresión del scroll suave (Lenis) y de las anclas de navegación.
  *
  *   npm run scroll-check                      (contra http://localhost:3000)
  *   npm run scroll-check -- https://tu-url    (contra un deploy)
@@ -14,9 +14,19 @@
  *   3. el IntersectionObserver del navbar marca la sección activa
  *   4. el useScroll/useTransform del hero sigue aplicando el paralaje
  *   5. los reveals por viewport siguen disparando
- *   6. los anchors /#work aterrizan con el offset del navbar fijo
- *   7. con prefers-reduced-motion, lerp se fuerza a 1: el scroll sigue al
- *      input 1:1 y no queda inercia
+ *   6. con prefers-reduced-motion, lerp se fuerza a 1: el scroll sigue al
+ *      input 1:1, medido como curva de asentamiento contra el modo normal
+ *
+ * Y las anclas por los TRES caminos por los que se puede llegar a una, que es
+ * lo que obligó a mover la compensación del navbar de un offset de JS a
+ * scroll-margin-top en CSS:
+ *
+ *   A. click dentro de la misma ruta   → lo intercepta Lenis
+ *   B. click viniendo de otra ruta     → lo resuelve el router de Next
+ *   C. carga directa con el hash       → salto nativo del navegador
+ *
+ * El offset de Lenis sólo cubría A. scroll-margin-top cubre los tres, y por eso
+ * las dos cosas juntas no van: se suman.
  *
  * Sale con código 1 si algo de eso deja de cumplirse.
  */
@@ -26,8 +36,10 @@ import { join } from "node:path";
 import puppeteer from "puppeteer-core";
 
 const URL = process.argv[2] ?? "http://localhost:3000";
-/** Alto del navbar fijo scrolleado (h-16) + aire. Espeja anchors.offset del provider. */
+/** Espeja el scroll-margin-top de las anclas en globals.css. */
 const ANCHOR_OFFSET = 80;
+/** El navbar cambia de alto al scrollear (h-20 → h-16), de ahí la tolerancia. */
+const ANCHOR_TOLERANCE = 12;
 
 function findChrome() {
   if (process.env.CHROME_PATH) return process.env.CHROME_PATH;
@@ -67,18 +79,19 @@ const browser = await puppeteer.launch({
   args: ["--hide-scrollbars", "--force-color-profile=srgb"],
 });
 
-async function open(preference) {
+const allConsoleErrors = [];
+
+async function open(preference, path = "") {
   const page = await browser.newPage();
-  const consoleErrors = [];
-  page.on("console", (m) => m.type() === "error" && consoleErrors.push(m.text()));
-  page.on("pageerror", (e) => consoleErrors.push(String(e)));
+  page.on("console", (m) => m.type() === "error" && allConsoleErrors.push(m.text()));
+  page.on("pageerror", (e) => allConsoleErrors.push(String(e)));
   await page.emulateMediaFeatures([
     { name: "prefers-reduced-motion", value: preference },
   ]);
   await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
-  await page.goto(URL, { waitUntil: "networkidle0", timeout: 60000 });
+  await page.goto(URL + path, { waitUntil: "networkidle0", timeout: 60000 });
   await new Promise((r) => setTimeout(r, 2500));
-  return { page, consoleErrors };
+  return page;
 }
 
 /**
@@ -86,7 +99,7 @@ async function open(preference) {
  * completó en el primer frame. Es la medida que distingue "suavizado" de
  * "1:1", y sirve para los dos modos.
  */
-const SETTLE = async (page) =>
+const settleCurve = (page) =>
   page.evaluate(async () => {
     const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
     window.scrollTo(0, 0);
@@ -107,12 +120,11 @@ const SETTLE = async (page) =>
     };
   });
 
-// ── Pasada normal ───────────────────────────────────────────────────────────
-const { page, consoleErrors } = await open("no-preference");
+// ── Scroll: pasada normal ───────────────────────────────────────────────────
+const page = await open("no-preference");
+const settleNormal = await settleCurve(page);
 
-const settleNormal = await SETTLE(page);
-
-const normal = await page.evaluate(async (offset) => {
+const normal = await page.evaluate(async () => {
   const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
   const out = {};
 
@@ -142,21 +154,6 @@ const normal = await page.evaluate(async (offset) => {
   out.headerScrolledStyle = document
     .querySelector("header")
     .className.includes("bg-background/80");
-
-  // Anchor del navbar: es un <Link href="/#work">, mismo pathname, así que lo
-  // toma Lenis y tiene que aplicar el offset del navbar fijo.
-  const workLink = [...document.querySelectorAll("header nav a")].find(
-    (a) => a.getAttribute("href") === "/#work",
-  );
-  workLink.click();
-  await sleep(2200);
-  const work = document.getElementById("work");
-  out.anchor = {
-    hash: location.hash,
-    sectionTop: Math.round(work.getBoundingClientRect().top),
-    esperado: offset,
-  };
-
   out.navActive = [...document.querySelectorAll("header nav a")]
     .filter((a) => a.getAttribute("aria-current") === "true")
     .map((a) => a.getAttribute("href"));
@@ -167,22 +164,59 @@ const normal = await page.evaluate(async (offset) => {
     .map((c) => getComputedStyle(c.closest("[style]") ?? c.parentElement).opacity);
 
   return out;
-}, ANCHOR_OFFSET);
-
+});
 await page.close();
 
-// ── Pasada con reduced-motion ───────────────────────────────────────────────
-const { page: page2, consoleErrors: consoleErrors2 } = await open("reduce");
-
-const settleReduced = await SETTLE(page2);
-
+// ── Scroll: pasada con reduced-motion ───────────────────────────────────────
+const page2 = await open("reduce");
+const settleReduced = await settleCurve(page2);
 await page2.close();
+
+// ── Anclas: los tres caminos ────────────────────────────────────────────────
+const measureTop = (page, id) =>
+  page.evaluate((sel) => {
+    const el = document.getElementById(sel);
+    return el ? Math.round(el.getBoundingClientRect().top) : null;
+  }, id);
+
+// A. Click dentro de la misma ruta → lo intercepta Lenis.
+const pageA = await open("no-preference");
+await pageA.evaluate(async () => {
+  document.querySelector('header nav a[href="/#work"]').click();
+  await new Promise((r) => setTimeout(r, 2400));
+});
+const anchorA = await measureTop(pageA, "work");
+await pageA.close();
+
+// B. Click viniendo de otra ruta → Lenis NO interviene (distinto pathname),
+//    lo resuelve el router de Next.
+const pageB = await open("no-preference", "/work/takefyy");
+await pageB.evaluate(async () => {
+  const link = [...document.querySelectorAll("a")].find(
+    (a) => a.getAttribute("href") === "/#work",
+  );
+  link.click();
+  await new Promise((r) => setTimeout(r, 3000));
+});
+const anchorB = await measureTop(pageB, "work");
+await pageB.close();
+
+// C. Carga directa con el hash en la URL → salto nativo del navegador, sin
+//    click que interceptar. Es el caso que ningún offset de JS puede cubrir.
+const pageC = await open("no-preference", "/#contact");
+const anchorC = await measureTop(pageC, "contact");
+await pageC.close();
+
 await browser.close();
 
-const line = "─".repeat(72);
+// ── Reporte ─────────────────────────────────────────────────────────────────
+const line = "─".repeat(74);
+const pct = (r) => Math.round(r * 100);
+const ok = (v) => (v ? "✓" : "✗");
+
 console.log(`\nURL: ${URL}\n`);
 console.log(line);
-console.log("SCROLL NORMAL (prefers-reduced-motion: no-preference)");
+console.log("SCROLL (prefers-reduced-motion: no-preference)");
 console.log(line);
 console.log(`  Lenis activo (html.lenis)          : ${normal.lenisActive}`);
 console.log(`  eventos scroll nativos disparados  : ${normal.nativeScrollEvents}`);
@@ -191,16 +225,23 @@ console.log(`  paralaje del hero (useScroll)      : ${normal.gridTransformAt0} �
 console.log(`  navbar en estado scrolleado        : ${normal.headerScrolledStyle}`);
 console.log(`  navbar sección activa (IO)         : ${JSON.stringify(normal.navActive)}`);
 console.log(`  opacidad de las tarjetas (reveals) : ${JSON.stringify(normal.cardOpacities)}`);
-console.log(`  anchor /#work → hash               : ${normal.anchor.hash}`);
-console.log(`  anchor /#work → top de la sección  : ${normal.anchor.sectionTop} px (esperado ~${normal.anchor.esperado})`);
-console.log(`  errores de consola                 : ${consoleErrors.length}`);
-console.log(`  curva de asentamiento              : ${settleNormal.early}px en el 1er frame de ${settleNormal.settled}px totales (${Math.round(settleNormal.ratio * 100)}%)`);
-console.log(`\n${line}`);
-console.log("REDUCED-MOTION (Lenis fuerza lerp: 1 → el scroll sigue al input 1:1)");
-console.log(line);
-console.log(`  curva de asentamiento              : ${settleReduced.early}px en el 1er frame de ${settleReduced.settled}px totales (${Math.round(settleReduced.ratio * 100)}%)`);
-console.log(`  errores de consola                 : ${consoleErrors2.length}`);
+console.log(`  curva de asentamiento              : ${settleNormal.early}px de ${settleNormal.settled}px en el 1er frame (${pct(settleNormal.ratio)}%)`);
 
+console.log(`\n${line}`);
+console.log("SCROLL (prefers-reduced-motion: reduce → Lenis fuerza lerp 1)");
+console.log(line);
+console.log(`  curva de asentamiento              : ${settleReduced.early}px de ${settleReduced.settled}px en el 1er frame (${pct(settleReduced.ratio)}%)`);
+
+const near = (v) => v !== null && Math.abs(v - ANCHOR_OFFSET) <= ANCHOR_TOLERANCE;
+console.log(`\n${line}`);
+console.log(`ANCLAS — top de la sección tras el salto (esperado ~${ANCHOR_OFFSET}px)`);
+console.log(line);
+console.log(`  A. home → /#work (Lenis)           : ${anchorA} px  ${ok(near(anchorA))}`);
+console.log(`  B. /work/takefyy → /#work (router) : ${anchorB} px  ${ok(near(anchorB))}`);
+console.log(`  C. carga directa /#contact (nativo): ${anchorC} px  ${ok(near(anchorC))}`);
+console.log(`\n  errores de consola (todas las pasadas): ${allConsoleErrors.length}`);
+
+// ── Veredicto ───────────────────────────────────────────────────────────────
 const fail = [];
 if (!normal.lenisActive) fail.push("Lenis no se inicializó (falta html.lenis)");
 if (normal.nativeScrollEvents === 0)
@@ -214,27 +255,31 @@ if (normal.navActive.length === 0)
   fail.push("el IntersectionObserver del navbar no marcó ninguna sección activa");
 if (!normal.cardOpacities.includes("1"))
   fail.push("ninguna tarjeta llegó a opacidad 1 — los reveals no dispararon");
-if (normal.anchor.hash !== "#work")
-  fail.push(`el anchor no dejó el hash en #work (quedó "${normal.anchor.hash}")`);
-// Tolerancia de 12px: el navbar cambia de alto al scrollear (h-20 → h-16).
-if (Math.abs(normal.anchor.sectionTop - ANCHOR_OFFSET) > 12)
-  fail.push(
-    `el anchor aterrizó en ${normal.anchor.sectionTop}px, se esperaba ~${ANCHOR_OFFSET}px (navbar fijo tapando la sección)`,
-  );
+
 // Las dos caras del mismo hecho, y una hace de control de la otra: si el modo
 // normal NO suavizara, la aserción de reduced-motion pasaría por casualidad.
 if (settleNormal.ratio > 0.75)
   fail.push(
-    `sin reduced-motion el scroll llegó al ${Math.round(settleNormal.ratio * 100)}% en el primer frame: no hay suavizado, Lenis no está interpolando`,
+    `sin reduced-motion el scroll llegó al ${pct(settleNormal.ratio)}% en el primer frame: no hay suavizado, Lenis no está interpolando`,
   );
 if (settleReduced.ratio < 0.9)
   fail.push(
-    `con reduced-motion el scroll llegó sólo al ${Math.round(settleReduced.ratio * 100)}% en el primer frame: debería seguir al input 1:1 (lerp forzado a 1)`,
+    `con reduced-motion el scroll llegó sólo al ${pct(settleReduced.ratio)}% en el primer frame: debería seguir al input 1:1 (lerp forzado a 1)`,
   );
-if (consoleErrors.length)
-  fail.push(`${consoleErrors.length} errores de consola en la pasada normal`);
-if (consoleErrors2.length)
-  fail.push(`${consoleErrors2.length} errores de consola con reduced-motion`);
+
+for (const [nombre, valor] of [
+  ["A (click misma ruta, Lenis)", anchorA],
+  ["B (click desde otra ruta, router de Next)", anchorB],
+  ["C (carga directa con hash, nativo)", anchorC],
+]) {
+  if (valor === null) fail.push(`ancla ${nombre}: la sección no existe en el DOM`);
+  else if (!near(valor))
+    fail.push(
+      `ancla ${nombre}: aterrizó en ${valor}px, se esperaba ~${ANCHOR_OFFSET}px — el navbar fijo tapa el borde de la sección`,
+    );
+}
+
+if (allConsoleErrors.length) fail.push(`${allConsoleErrors.length} errores de consola`);
 
 console.log("");
 if (fail.length) {
@@ -242,6 +287,5 @@ if (fail.length) {
   process.exit(1);
 }
 console.error(
-  "OK — scroll nativo, IO y useScroll intactos, anchors con offset, y sin inercia bajo reduced-motion.",
+  "OK — scroll nativo, IO y useScroll intactos, anclas compensadas por los tres caminos, y sin inercia bajo reduced-motion.",
 );
-

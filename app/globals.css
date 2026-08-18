@@ -66,6 +66,20 @@ html.lenis body {
   height: auto;
 }
 
+/* Anclas de navegación. El navbar es fixed (h-16 = 64px scrolleado), así que
+   sin esto el salto deja el borde superior de la sección tapado por la barra.
+   Va en CSS y no como offset de Lenis porque scroll-margin-top lo respetan los
+   tres caminos por los que se puede llegar a un ancla: el scrollTo de Lenis
+   (lenis.mjs:783), el salto del router de Next al venir de otra ruta, y el
+   salto nativo del navegador al abrir la URL con el hash puesto. El offset de
+   Lenis sólo cubría el primero. Una de las dos, nunca las dos: se suman. */
+#work,
+#services,
+#about,
+#contact {
+  scroll-margin-top: 80px;
+}
+
 body {
   background: var(--background);
   color: var(--foreground);

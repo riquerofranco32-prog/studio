@@ -20,6 +20,11 @@ const layout = [
 
 const fallbackLayout = layout[4];
 
+// La grilla son tres filas de dos, asi que la posicion dentro de la fila es
+// i % 2 — y la cascada escalona lo que entra junto. Con i a secas la ultima
+// tarjeta esperaria 450ms despues de ya estar en pantalla, que no se lee como
+// cascada sino como demora.
+
 export function SelectedWork() {
   const sorted = [...projects].sort((a, b) => a.order - b.order);
 
@@ -51,6 +56,7 @@ export function SelectedWork() {
                 priority={i === 0}
                 className={span}
                 sizes={sizes}
+                index={i % 2}
               />
             );
           })}
