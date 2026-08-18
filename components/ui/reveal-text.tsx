@@ -16,26 +16,22 @@ import { DUR, EASE, STAGGER } from "@/lib/motion";
 export function RevealText({
   children,
   index = 0,
-  className = "",
-  as: Tag = "div",
 }: {
   children: ReactNode;
   /** Posición en la cascada. El delay sale de acá: index * 90ms. */
   index?: number;
-  className?: string;
-  as?: "div" | "h1" | "h2" | "h3" | "p" | "span";
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const visible = useInView(ref);
 
   return (
-    <div ref={ref} className="overflow-hidden">
+    <div ref={ref} className="line-mask">
       <motion.div
         initial={{ y: "110%" }}
         animate={{ y: visible ? "0%" : "110%" }}
         transition={{ duration: DUR.slow, delay: index * STAGGER, ease: EASE }}
       >
-        <Tag className={className}>{children}</Tag>
+        {children}
       </motion.div>
     </div>
   );

@@ -150,6 +150,44 @@ for (const { label, width, height } of BREAKPOINTS) {
     // este script pasaba limpio: miraba texto más ancho que un ancestro con
     // overflow:hidden y desbordes del borde derecho, pero nunca dos elementos
     // encima del otro. Esto cubre ese hueco.
+    // Recorte VERTICAL de la tinta. El detector de `clipped` de abajo compara
+    // anchos, así que no veía este caso: un ancestro con overflow:hidden cuya
+    // caja es más baja que la tinta de la fuente le come la panza a p, g, q e y.
+    // Pasó desapercibido en producción en el titular del hero — 18px comidos a
+    // 104px de fuente — porque los cuatro breakpoints daban limpio.
+    const sheared = [];
+    {
+      const rango = document.createRange();
+      for (const el of document.querySelectorAll("h1,h2,h3,p,span,a,li,dd")) {
+        if (!el.textContent.trim()) continue;
+        // Sólo interesa el ancestro que realmente recorta.
+        let clipper = el.parentElement;
+        while (clipper && clipper !== document.documentElement) {
+          const st = getComputedStyle(clipper);
+          if (st.overflow === "hidden" || st.overflowY === "hidden") break;
+          clipper = clipper.parentElement;
+        }
+        if (!clipper || clipper === document.documentElement) continue;
+        // El wordmark del footer se recorta a propósito: sangra por abajo.
+        if (clipper.closest("footer")) continue;
+
+        rango.selectNodeContents(el);
+        const rects = [...rango.getClientRects()];
+        if (!rects.length) continue;
+        const inkBottom = Math.max(...rects.map((r) => r.bottom));
+        const caja = clipper.getBoundingClientRect().bottom;
+        // 1.5px de tolerancia: el redondeo subpíxel no es un recorte.
+        const comido = inkBottom - caja;
+        if (comido > 1.5) {
+          sheared.push({
+            texto: el.textContent.trim().slice(0, 30),
+            px: Math.round(comido),
+            fontSize: getComputedStyle(el).fontSize,
+          });
+        }
+      }
+    }
+
     const overlapping = [];
     {
       const legibles = [...document.querySelectorAll("p,h1,h2,h3,li,dd,dt")].filter(
@@ -219,6 +257,7 @@ for (const { label, width, height } of BREAKPOINTS) {
       accent: computed("h1 .text-accent", ["color"]),
       body: computed("body", ["background-color", "color", "font-family"]),
       clipped,
+      sheared: sheared.slice(0, 8),
       overlapping: overlapping.slice(0, 8),
       overflowing: overflowing.slice(0, 8),
     };
@@ -236,6 +275,8 @@ const failures = [
     if (r.scrollWidth > r.viewportWidth + 1)
       return `${label}: overflow horizontal (${r.scrollWidth}px)`;
     if (r.clipped.length) return `${label}: ${r.clipped.length} texto(s) recortado(s)`;
+    if (r.sheared.length)
+      return `${label}: ${r.sheared.length} texto(s) con la tinta recortada por abajo — p.ej. "${r.sheared[0].texto}" pierde ${r.sheared[0].px}px a ${r.sheared[0].fontSize}`;
     if (r.overlapping.length)
       return `${label}: ${r.overlapping.length} solapamiento(s) de texto — p.ej. "${r.overlapping[0].a}" sobre "${r.overlapping[0].b}" (${r.overlapping[0].px}px)`;
     return null;

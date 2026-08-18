@@ -99,7 +99,7 @@ export function Hero() {
         </p>
 
         <h1 className="display max-w-3xl text-[2.6rem] text-foreground sm:max-w-4xl sm:text-6xl md:max-w-6xl md:text-[6.5rem]">
-          <span className="block overflow-hidden">
+          <span className="line-mask block">
             <span
               className="hero-line block"
               style={{ animationDelay: SEQUENCE.line1 }}
@@ -107,7 +107,7 @@ export function Hero() {
               Construimos
             </span>
           </span>
-          <span className="block overflow-hidden">
+          <span className="line-mask block">
             <span
               className="hero-line block"
               style={{ animationDelay: SEQUENCE.line2 }}
@@ -115,7 +115,7 @@ export function Hero() {
               experiencias digitales
             </span>
           </span>
-          <span className="block overflow-hidden">
+          <span className="line-mask block">
             <span
               className="hero-line block"
               style={{ animationDelay: SEQUENCE.line3 }}

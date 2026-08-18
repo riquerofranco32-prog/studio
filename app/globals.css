@@ -140,6 +140,23 @@ body::after {
   }
 }
 
+/* Máscara de reveal por línea, para el titular del hero y para RevealText.
+   Las dos animaciones necesitan recortar la línea —- una con clip-path, la otra
+   con un translateY —- y las dos recortaban en el borde de la caja de línea.
+   Con .display esa caja mide 0.95em y la tinta de Geist llega a ~1.31em, así
+   que a la panza de p, g, q e y le comían 18px a 104px de fuente. Se veía en
+   producción en "experiencias digitales" y en "para marcas que".
+   El padding del hijo le da lugar a la tinta dentro de la zona recortada; el
+   margen negativo del wrapper devuelve exactamente ese alto para que el
+   interlineado no cambie. */
+.line-mask {
+  overflow: hidden;
+  margin-bottom: -0.3em;
+}
+.line-mask > * {
+  padding-bottom: 0.3em;
+}
+
 .hero-line,
 .hero-rise {
   animation-fill-mode: both;
