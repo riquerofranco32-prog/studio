@@ -11,7 +11,8 @@
     "bundle-size": "node scripts/bundle-size.mjs",
     "motion-check": "node scripts/motion-check.mjs",
     "scroll-check": "node scripts/scroll-check.mjs",
-    "shader-cost": "node scripts/shader-cost.mjs"
+    "shader-cost": "node scripts/shader-cost.mjs",
+    "shader-levers": "node scripts/shader-cost.mjs --levers"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.3",

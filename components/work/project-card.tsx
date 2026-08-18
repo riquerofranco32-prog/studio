@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { motion, useMotionTemplate, useMotionValue } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import { useRef } from "react";
+import { useRef, ViewTransition } from "react";
 import { Reveal } from "@/components/ui/reveal";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { MD, useMediaQuery } from "@/lib/use-media-query";
@@ -28,13 +28,20 @@ export function ProjectCard({
   // Debajo de md la grilla colapsa a una columna y cada tarjeta entra sola:
   // ahí el escalonado no escalona nada, es latencia pura después de que la
   // tarjeta ya está en pantalla. Mismo criterio que usar i % 2 en vez de i.
-  const cascada = useMediaQuery(MD) ? index : 0;
+  const esDesktop = useMediaQuery(MD);
+  const cascada = esDesktop ? index : 0;
 
   // El spotlight escribe MotionValues a mano, así que <MotionProvider> no lo
   // toca: un elemento que persigue el cursor es justo lo que la preferencia
   // pide evitar, y hay que apagarlo acá. Mismo criterio que el retrato del
   // roster en team-roster.tsx.
   const reduceMotion = useReducedMotion();
+
+  // El clip sólo existe si hay archivos, hay hover de verdad y nadie pidió
+  // menos movimiento. Sin clip la tarjeta se queda con el JPG, que es el
+  // estado por defecto y el que se ve hoy.
+  const videoRef = useRef<HTMLVideoElement>(null);
+  const conVideo = Boolean(project.video) && esDesktop && !reduceMotion;
 
   // Spotlight que sigue el cursor: sólo mueve dos motion values, sin spring
   // (el gradiente en sí ya "suaviza" el movimiento visualmente). El rect se
@@ -47,6 +54,18 @@ export function ProjectCard({
 
   function handleMouseEnter(e: React.MouseEvent<HTMLDivElement>) {
     rectRef.current = e.currentTarget.getBoundingClientRect();
+    // play() devuelve una promesa que rechaza si el cursor se va antes de que
+    // el clip esté listo. Es esperable, no un error: se traga.
+    videoRef.current?.play().catch(() => {});
+  }
+
+  function handleMouseLeave() {
+    const v = videoRef.current;
+    if (!v) return;
+    v.pause();
+    // Volver a 0 para que el próximo hover empiece el loop desde el principio
+    // en vez de retomarlo por la mitad.
+    v.currentTime = 0;
   }
 
   function handleMouseMove(e: React.MouseEvent<HTMLDivElement>) {
@@ -58,10 +77,15 @@ export function ProjectCard({
 
   return (
     <Reveal index={cascada} className={className}>
-      <Link href={`/work/${project.slug}`} className="focus-ring group block">
+      <Link
+        href={`/work/${project.slug}`}
+        transitionTypes={["nav-forward"]}
+        className="focus-ring group block"
+      >
         <div
           onMouseEnter={reduceMotion ? undefined : handleMouseEnter}
           onMouseMove={reduceMotion ? undefined : handleMouseMove}
+          onMouseLeave={conVideo ? handleMouseLeave : undefined}
           className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-surface"
         >
           {!reduceMotion && (
@@ -73,18 +97,49 @@ export function ProjectCard({
           )}
           <div className="absolute inset-0 flex items-center justify-center font-mono text-xs text-muted/60">
             {project.image ? (
-              <Image
-                src={project.image}
-                alt={`${project.name} preview`}
-                fill
-                priority={priority}
-                sizes={sizes}
-                className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.04]"
-                onError={(e) => {
-                  (e.currentTarget as HTMLImageElement).style.display = "none";
-                }}
-              />
+              // El nombre tiene que ser el mismo acá y en el hero del caso de
+              // estudio: es lo que le dice a React que son el mismo objeto.
+              // `default="none"` evita que esta imagen haga su propio crossfade
+              // en cualquier transición ajena, y `share="morph"` es obligatorio
+              // junto con él — sin share explícito el par deja de morphear en
+              // silencio (doc local: view-transitions.md).
+              <ViewTransition
+                name={`project-${project.slug}`}
+                share="morph"
+                default="none"
+              >
+                <Image
+                  src={project.image}
+                  alt={`${project.name} preview`}
+                  fill
+                  priority={priority}
+                  sizes={sizes}
+                  className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).style.display = "none";
+                  }}
+                />
+              </ViewTransition>
             ) : null}
+            {conVideo && project.video && (
+              // preload="none": no baja un byte hasta el primer hover. El poster
+              // es el mismo JPG de la tarjeta, así que el corte entre imagen y
+              // clip es invisible.
+              <video
+                ref={videoRef}
+                aria-hidden
+                muted
+                loop
+                playsInline
+                preload="none"
+                poster={project.image}
+                className="absolute inset-0 h-full w-full object-cover object-top opacity-0 transition-opacity duration-500 group-hover:opacity-100"
+              >
+                <source src={project.video.webm} type="video/webm" />
+                <source src={project.video.mp4} type="video/mp4" />
+              </video>
+            )}
+
             <span className="pointer-events-none absolute inset-0 -z-10 flex items-center justify-center">
               {project.name}
             </span>

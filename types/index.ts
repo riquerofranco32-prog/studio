@@ -13,6 +13,16 @@ export interface Project {
   outcome?: string;
   url: string;
   image: string;
+  /**
+   * Clip mudo de hover para la tarjeta de la grilla. Opcional: si falta, la
+   * tarjeta se queda con `image` fija, que es el estado por defecto.
+   * Las rutas se resuelven desde /public — ver public/projects/video/README.md
+   * para formato, duración y peso.
+   */
+  video?: {
+    mp4: string;
+    webm: string;
+  };
   featured: boolean;
   order: number;
   size: "large" | "medium" | "small";

@@ -1,3 +1,4 @@
+import { PageTransition } from "@/components/ui/page-transition";
 import { Hero } from "@/components/sections/hero";
 import { Proof } from "@/components/sections/proof";
 import { SelectedWork } from "@/components/sections/selected-work";
@@ -10,7 +11,7 @@ import { Contact } from "@/components/sections/contact";
 
 export default function Home() {
   return (
-    <>
+    <PageTransition>
       <Hero />
       <Proof />
       <SelectedWork />
@@ -20,6 +21,6 @@ export default function Home() {
       <Technology />
       <Testimonials />
       <Contact />
-    </>
+    </PageTransition>
   );
 }

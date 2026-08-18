@@ -208,6 +208,124 @@ body::after {
   }
 }
 
+/* ─── View Transitions ──────────────────────────────────────────────────────
+   La transición home → /work/[slug]. El morph del thumbnail al hero del caso
+   se declara en JSX (components/work/project-card.tsx y app/work/[slug]/page.tsx
+   comparten el mismo `name`); acá va sólo lo que es CSS. */
+
+/* El morph. 400ms es suficiente para registrarlo sin que se vuelva lento, y el
+   blur al 30% del recorrido tapa los artefactos de interpolar píxeles entre dos
+   recortes distintos de la misma imagen. */
+::view-transition-group(.morph) {
+  animation-duration: 400ms;
+}
+::view-transition-image-pair(.morph) {
+  animation-name: morph-blur;
+}
+@keyframes morph-blur {
+  30% {
+    filter: blur(3px);
+  }
+}
+
+/* Deslizamiento direccional del contenido de la página. El viejo se va rápido
+   para no competir por la atención; el nuevo entra más suave y espera a que el
+   anterior termine de salir. */
+::view-transition-old(.nav-forward) {
+  --slide: -60px;
+  animation:
+    150ms ease-in both vt-fade reverse,
+    400ms ease-in-out both vt-slide reverse;
+}
+::view-transition-new(.nav-forward) {
+  --slide: 60px;
+  animation:
+    210ms ease-out 150ms both vt-fade,
+    400ms ease-in-out both vt-slide;
+}
+::view-transition-old(.nav-back) {
+  --slide: 60px;
+  animation:
+    150ms ease-in both vt-fade reverse,
+    400ms ease-in-out both vt-slide reverse;
+}
+::view-transition-new(.nav-back) {
+  --slide: -60px;
+  animation:
+    210ms ease-out 150ms both vt-fade,
+    400ms ease-in-out both vt-slide;
+}
+
+@keyframes vt-fade {
+  from {
+    opacity: 0;
+    filter: blur(3px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+@keyframes vt-slide {
+  from {
+    translate: var(--slide);
+  }
+  to {
+    translate: 0;
+  }
+}
+
+/* Anclajes. Los dos son position:fixed, así que sin nombre propio quedan
+   dentro del snapshot de la raíz y se deslizan junto con el contenido — el
+   navbar perdería el punto de referencia espacial, y el grano, que cubre toda
+   la pantalla a z-9999, se vería doblado y barriendo durante la transición.
+   Nombrarlos los saca de ese snapshot y les da un grupo propio, que acá se
+   congela.
+   El display:none sobre el snapshot viejo evita el destello de ver los dos
+   a la vez. */
+.site-header {
+  view-transition-name: site-header;
+}
+body::after {
+  view-transition-name: site-grain;
+}
+
+::view-transition-group(site-header) {
+  animation: none;
+  z-index: 100;
+}
+::view-transition-group(site-grain) {
+  animation: none;
+  z-index: 200;
+}
+::view-transition-old(site-header),
+::view-transition-old(site-grain) {
+  display: none;
+}
+::view-transition-new(site-header),
+::view-transition-new(site-grain) {
+  animation: none;
+}
+
+/* Mientras corre la transición, el overlay se come los clicks. Dejarlos pasar
+   evita perder un tap hecho a mitad de la animación. */
+::view-transition {
+  pointer-events: none;
+}
+
+/* El deslizamiento direccional simula movimiento físico atravesando el
+   viewport: es el disparador más común de mareo. Bajo la preferencia, el
+   contenido se cambia de golpe, que es el comportamiento por defecto del
+   navegador sin transiciones. */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation-duration: 0s !important;
+    animation-delay: 0s !important;
+  }
+}
+
 .focus-ring {
   outline: none;
 }

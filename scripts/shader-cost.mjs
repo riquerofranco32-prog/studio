@@ -25,12 +25,14 @@
  * software y no representa a ningún dispositivo real. El número que decide es
  * el que se mide a mano en un Android.
  */
-import { existsSync, readdirSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { homedir } from "node:os";
 import { join } from "node:path";
 import puppeteer from "puppeteer-core";
 
-const URL = process.argv[2] ?? "http://localhost:3000";
+const args = process.argv.slice(2);
+const LEVERS = args.includes("--levers");
+const URL = args.find((a) => !a.startsWith("--")) ?? "http://localhost:3000";
 const THROTTLES = [1, 4, 6];
 const SAMPLE_MS = 3000;
 
@@ -101,6 +103,146 @@ const measure = (page, ms) =>
       framesLargos: +((deltas.filter((d) => d > 16.7).length / deltas.length) * 100).toFixed(1),
     };
   }, ms);
+
+if (LEVERS) {
+  // ── Palancas del shader, medidas sin tocar el componente ──────────────────
+  // El GLSL sale del archivo real (components/ui/phosphor-shader.tsx), se le
+  // aplican las variantes por texto y cada una corre en un canvas propio del
+  // mismo tamaño que el hero. Es un micro-benchmark del shader, no de la
+  // página: aísla exactamente lo que las palancas cambian, y los deltas
+  // relativos entre variantes son lo que sirve para decidir.
+  const src = readFileSync("components/ui/phosphor-shader.tsx", "utf8");
+  const frag = src.slice(src.indexOf("#version 300 es"), src.indexOf("`;", src.indexOf("#version 300 es")));
+  const vert = src.slice(src.lastIndexOf("#version 300 es"), src.lastIndexOf("`;"));
+
+  const variantes = [
+    { nombre: "base (80 iter, DPR 1.5)", iter: 80, escala: 1.5 },
+    { nombre: "40 iteraciones", iter: 40, escala: 1.5 },
+    { nombre: "DPR 1.0", iter: 80, escala: 1.0 },
+    { nombre: "media resolución (DPR 0.75)", iter: 80, escala: 0.75 },
+  ];
+
+  const lp = await browser.newPage();
+  await lp.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
+  await lp.goto("about:blank");
+
+  const out = [];
+  for (const v of variantes) {
+    // 8e1 es como está escrito el 80 en el fuente.
+    // GLSL tipa estricto: el contador es float, asi que 40 tiene que ser 40.0.
+    const fragVar = frag.replace("i++ < 8e1", `i++ < ${v.iter}.0`);
+    const r = await lp.evaluate(
+      async (fragSrc, vertSrc, escala, ms) => {
+        const cv = document.createElement("canvas");
+        cv.width = Math.floor(1440 * escala);
+        cv.height = Math.floor(900 * escala);
+        document.body.appendChild(cv);
+        const gl = cv.getContext("webgl2");
+        if (!gl) return { error: "sin WebGL2" };
+
+        const compile = (type, s) => {
+          const sh = gl.createShader(type);
+          gl.shaderSource(sh, s);
+          gl.compileShader(sh);
+          if (!gl.getShaderParameter(sh, gl.COMPILE_STATUS))
+            throw new Error(gl.getShaderInfoLog(sh));
+          return sh;
+        };
+        const prog = gl.createProgram();
+        gl.attachShader(prog, compile(gl.VERTEX_SHADER, vertSrc));
+        gl.attachShader(prog, compile(gl.FRAGMENT_SHADER, fragSrc));
+        gl.linkProgram(prog);
+        if (!gl.getProgramParameter(prog, gl.LINK_STATUS))
+          return { error: gl.getProgramInfoLog(prog) };
+
+        const vao = gl.createVertexArray();
+        const vbo = gl.createBuffer();
+        gl.bindVertexArray(vao);
+        gl.bindBuffer(gl.ARRAY_BUFFER, vbo);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1, -1, 3, -1, -1, 3]), gl.STATIC_DRAW);
+        gl.enableVertexAttribArray(0);
+        gl.vertexAttribPointer(0, 2, gl.FLOAT, false, 0, 0);
+        gl.viewport(0, 0, cv.width, cv.height);
+
+        const uRes = gl.getUniformLocation(prog, "iResolution");
+        const uTime = gl.getUniformLocation(prog, "iTime");
+        const t0 = performance.now();
+        const deltas = [];
+        let last = performance.now();
+
+        await new Promise((resolve) => {
+          const tick = (now) => {
+            deltas.push(now - last);
+            last = now;
+            gl.useProgram(prog);
+            if (uRes) gl.uniform3f(uRes, cv.width, cv.height, 1);
+            if (uTime) gl.uniform1f(uTime, (now - t0) / 1000);
+            gl.bindVertexArray(vao);
+            gl.drawArrays(gl.TRIANGLES, 0, 3);
+            if (now - t0 < ms) requestAnimationFrame(tick);
+            else resolve();
+          };
+          requestAnimationFrame(tick);
+        });
+        // Forzar el vaciado de la cola de GPU: sin esto se mide el encolado,
+        // no el dibujado.
+        gl.finish();
+        cv.remove();
+
+        deltas.shift();
+        const sorted = [...deltas].sort((a, b) => a - b);
+        const at = (q) => sorted[Math.floor(sorted.length * q)] ?? 0;
+        return {
+          px: cv.width * cv.height,
+          fps: +(1000 / (deltas.reduce((a, b) => a + b, 0) / deltas.length)).toFixed(1),
+          medianaMs: +at(0.5).toFixed(2),
+          p95Ms: +at(0.95).toFixed(2),
+        };
+      },
+      fragVar,
+      vert,
+      v.escala,
+      SAMPLE_MS,
+    );
+    out.push({ ...v, ...r });
+  }
+  const lpRenderer = lp.evaluate(() => {
+    const gl = document.createElement("canvas").getContext("webgl2");
+    if (!gl) return "sin WebGL2";
+    const info = gl.getExtension("WEBGL_debug_renderer_info");
+    return info ? gl.getParameter(info.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
+  });
+  const rendValue = await lpRenderer;
+  await lp.close();
+  await browser.close();
+
+  const l = "─".repeat(78);
+  const rend = rendValue;
+  console.log(`Renderer WebGL: ${rend}`);
+  console.log("PALANCAS DEL SHADER — micro-benchmark, NADA aplicado al código");
+  console.log("");
+  console.log(l);
+  console.log("  variante                        píxeles     fps   mediana    vs base");
+  console.log(l);
+  const base = out[0];
+  for (const v of out) {
+    if (v.error) {
+      console.log(`  ${v.nombre.padEnd(30)} ERROR: ${v.error}`);
+      continue;
+    }
+    const delta = +(v.medianaMs - base.medianaMs).toFixed(2);
+    const pct = base.medianaMs ? Math.round((delta / base.medianaMs) * 100) : 0;
+    console.log(
+      `  ${v.nombre.padEnd(30)}${(v.px / 1e6).toFixed(2)}M${String(v.fps).padStart(8)}${String(v.medianaMs).padStart(9)}ms${(v === base ? "        —" : `${delta > 0 ? "+" : ""}${delta}ms (${pct > 0 ? "+" : ""}${pct}%)`).padStart(18)}`,
+    );
+  }
+  console.log(l);
+  console.log("Micro-benchmark del fragment shader aislado, a 1440×900 lógicos. No");
+  console.log("incluye el resto de la página, así que los valores absolutos son más");
+  console.log("bajos que los de la corrida normal; lo que vale es el delta entre filas.");
+  console.log(l);
+  process.exit(0);
+}
 
 const page = await browser.newPage();
 await page.setViewport({ width: 1440, height: 900, deviceScaleFactor: 1 });
