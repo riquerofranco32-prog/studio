@@ -8,8 +8,8 @@ nada.
 
 Dos archivos por proyecto, con el slug exacto de `data/projects.ts`:
 
-    public/projects/video/<slug>.mp4
-    public/projects/video/<slug>.webm
+    public/projects/videos/<slug>.mp4
+    public/projects/videos/<slug>.webm
 
 Y hay que declararlos en `data/projects.ts`:
 
@@ -18,8 +18,8 @@ Y hay que declararlos en `data/projects.ts`:
   slug: "takefyy",
   image: "/projects/takefyy.jpg",
   video: {
-    mp4: "/projects/video/takefyy.mp4",
-    webm: "/projects/video/takefyy.webm",
+    mp4: "/projects/videos/takefyy.mp4",
+    webm: "/projects/videos/takefyy.webm",
   },
   // …
 }
@@ -58,9 +58,18 @@ Si un clip se pasa del techo de peso, subir el `-crf` antes que bajar la
 resolución: en un loop de 5 segundos a 1280×960 el ruido de compresión se nota
 mucho menos que la falta de nitidez.
 
-## Qué NO hay que hacer
+## Los clips se usan en dos lugares, con reglas distintas
 
-- **Nada de autoplay.** Los clips tienen `preload="none"` y arrancan recién en
-  hover: no bajan un solo byte hasta que alguien pasa el cursor.
-- **Nada en mobile.** No hay hover en touch, así que la tarjeta ni monta el
-  `<video>`. Tampoco se muestran con `prefers-reduced-motion`.
+**Fila de productos del hero** (`components/sections/hero-showcase.tsx`):
+autoplay en loop, se ven solos. Los bytes se bajan en la primera carga —
+`preload` no sirve para evitarlo, con autoplay el navegador lo ignora (medido:
+`preload="metadata"` baja exactamente lo mismo que `preload="auto"`). Por eso
+el peso de cada clip importa tanto acá.
+
+**Grilla de Trabajo** (`components/work/project-card.tsx`): `preload="none"` y
+play en hover. No baja un solo byte hasta que alguien pasa el cursor, y en
+touch ni monta el `<video>`.
+
+En los dos casos: nada con `prefers-reduced-motion`, y ninguno usa el atributo
+`poster` — debajo está el `<Image>` de Next, que sirve AVIF al ancho real.
+Poner `poster` además bajaría el JPG crudo.

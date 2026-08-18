@@ -116,15 +116,14 @@ export function ProjectCard({
                   sizes={sizes}
                   className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.04]"
                   onError={(e) => {
-                    (e.currentTarget as HTMLImageElement).style.display = "none";
+                    (e.currentTarget as HTMLImageElement).style.display =
+                      "none";
                   }}
                 />
               </ViewTransition>
             ) : null}
             {conVideo && project.video && (
-              // preload="none": no baja un byte hasta el primer hover. El poster
-              // es el mismo JPG de la tarjeta, así que el corte entre imagen y
-              // clip es invisible.
+              // preload="none": no baja un byte hasta el primer hover.
               <video
                 ref={videoRef}
                 aria-hidden
@@ -132,7 +131,9 @@ export function ProjectCard({
                 loop
                 playsInline
                 preload="none"
-                poster={project.image}
+                // Sin `poster`: debajo ya está el <Image> de Next con AVIF y
+                // el ancho correcto. El atributo bajaría además el JPG crudo —
+                // medido, 289 KB contra 21.6 KB para las mismas tres tarjetas.
                 className="absolute inset-0 h-full w-full object-cover object-top opacity-0 transition-opacity duration-500 group-hover:opacity-100"
               >
                 <source src={project.video.webm} type="video/webm" />

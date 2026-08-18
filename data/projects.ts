@@ -48,6 +48,10 @@ export const projects: Project[] = [
       "Tienda en producción, con stock y catálogo actualizados en tiempo real.",
     url: "https://ponelapava.vercel.app/",
     image: "/projects/pone-la-pava.jpg",
+    video: {
+      mp4: "/projects/videos/pone-la-pava.mp4",
+      webm: "/projects/videos/pone-la-pava.webm",
+    },
     featured: true,
     order: 2,
     size: "medium",
@@ -73,6 +77,10 @@ export const projects: Project[] = [
       "Plataforma en producción con datos satelitales en vivo (NASA FIRMS) e índice de riesgo de incendio.",
     url: "https://sentineltech.com.ar/",
     image: "/projects/sentinel.jpg",
+    video: {
+      mp4: "/projects/videos/sentinel.mp4",
+      webm: "/projects/videos/sentinel.webm",
+    },
     featured: true,
     order: 3,
     size: "large",
@@ -148,6 +156,10 @@ export const projects: Project[] = [
       "Sitio en producción para el primer centro Pravilo de Argentina, en Plottier, Neuquén.",
     url: "https://www.pravilo.com.ar/",
     image: "/projects/pravilo.jpg",
+    video: {
+      mp4: "/projects/videos/pravilo.mp4",
+      webm: "/projects/videos/pravilo.webm",
+    },
     featured: false,
     order: 6,
     size: "small",

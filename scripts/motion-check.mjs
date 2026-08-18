@@ -154,7 +154,10 @@ async function run(preference) {
   // no se montan. El <canvas> del shader además dibuja píxeles, no estilos,
   // así que un diff de computed styles nunca lo vería.
   const gates = await page.evaluate(() => ({
-    shader: document.querySelectorAll("canvas").length,
+    // El shader dejó de estar en el hero con el rediseño; el componente sigue
+    // en el repo pero sin importadores. Lo que ocupa su lugar como cosa que
+    // "se apaga por JS y no se ve en un diff de estilos" son los clips.
+    heroVideo: document.querySelectorAll("[data-hero-cards] video").length,
     ping: document.querySelectorAll(".animate-ping").length,
     spotlight: document.querySelectorAll('a[href^="/work/"] div[style*="radial-gradient"]').length,
     roster: document.querySelectorAll('img[src*="/team/"]').length,
@@ -224,7 +227,7 @@ if (test.movers.length > 0) {
 }
 // El shader, el ping y el spotlight se apagan por JS: bajo reduced-motion
 // tienen que desaparecer del DOM, no sólo dejar de animar.
-for (const k of ["shader", "ping", "spotlight"]) {
+for (const k of ["heroVideo", "ping", "spotlight"]) {
   if (control.gates[k] === 0)
     failures.push(`el control no encontró ningún "${k}" — el censo no está midiendo nada`);
   else if (test.gates[k] !== 0)

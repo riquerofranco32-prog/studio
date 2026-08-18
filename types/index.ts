@@ -16,7 +16,7 @@ export interface Project {
   /**
    * Clip mudo de hover para la tarjeta de la grilla. Opcional: si falta, la
    * tarjeta se queda con `image` fija, que es el estado por defecto.
-   * Las rutas se resuelven desde /public — ver public/projects/video/README.md
+   * Las rutas se resuelven desde /public — ver public/projects/videos/README.md
    * para formato, duración y peso.
    */
   video?: {

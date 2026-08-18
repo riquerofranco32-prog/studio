@@ -131,6 +131,50 @@ for (const { label, width, height } of BREAKPOINTS) {
       }
     }
 
+    // Solapamiento entre bloques de texto. El sello circular del hero pisó el
+    // párrafo del subtítulo durante semanas en producción, a 1024/1280/1440, y
+    // este script pasaba limpio: miraba texto más ancho que un ancestro con
+    // overflow:hidden y desbordes del borde derecho, pero nunca dos elementos
+    // encima del otro. Esto cubre ese hueco.
+    const overlapping = [];
+    {
+      const legibles = [...document.querySelectorAll("p,h1,h2,h3,li,dd,dt")].filter(
+        (el) => {
+          const r = el.getBoundingClientRect();
+          const st = getComputedStyle(el);
+          return (
+            r.width > 24 &&
+            r.height > 8 &&
+            st.visibility !== "hidden" &&
+            st.opacity !== "0" &&
+            el.textContent.trim().length > 0
+          );
+        },
+      );
+      const solapa = (a, b) => {
+        const x = Math.min(a.right, b.right) - Math.max(a.left, b.left);
+        const y = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+        // 4px de tolerancia: los descendientes tipográficos se rozan de más.
+        return x > 4 && y > 4 ? { x: Math.round(x), y: Math.round(y) } : null;
+      };
+      for (let i = 0; i < legibles.length; i++) {
+        for (let j = i + 1; j < legibles.length; j++) {
+          const a = legibles[i];
+          const b = legibles[j];
+          // Anidados o hermanos de la misma caja: su superposición es el flujo
+          // normal del documento, no un bug.
+          if (a.contains(b) || b.contains(a)) continue;
+          const s = solapa(a.getBoundingClientRect(), b.getBoundingClientRect());
+          if (!s) continue;
+          overlapping.push({
+            a: a.textContent.trim().slice(0, 32),
+            b: b.textContent.trim().slice(0, 32),
+            px: `${s.x}x${s.y}`,
+          });
+        }
+      }
+    }
+
     const overflowing = [];
     for (const el of document.querySelectorAll("*")) {
       const r = el.getBoundingClientRect();
@@ -161,6 +205,7 @@ for (const { label, width, height } of BREAKPOINTS) {
       accent: computed("h1 .text-accent", ["color"]),
       body: computed("body", ["background-color", "color", "font-family"]),
       clipped,
+      overlapping: overlapping.slice(0, 8),
       overflowing: overflowing.slice(0, 8),
     };
   }, width);
@@ -177,6 +222,8 @@ const failures = [
     if (r.scrollWidth > r.viewportWidth + 1)
       return `${label}: overflow horizontal (${r.scrollWidth}px)`;
     if (r.clipped.length) return `${label}: ${r.clipped.length} texto(s) recortado(s)`;
+    if (r.overlapping.length)
+      return `${label}: ${r.overlapping.length} solapamiento(s) de texto — p.ej. "${r.overlapping[0].a}" sobre "${r.overlapping[0].b}" (${r.overlapping[0].px}px)`;
     return null;
   }),
 ].filter(Boolean);
