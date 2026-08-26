@@ -33,7 +33,6 @@ const SEQUENCE = {
  * cantidad que reciba.
  */
 const SHOWCASE = [...projects]
-  .filter((p) => p.video)
   .sort((a, b) => a.order - b.order)
   .slice(0, 4);
 

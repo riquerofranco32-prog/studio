@@ -1,4 +1,4 @@
-import { ProcessStep, Service } from "@/types";
+import { ProcessStep, Service, TechStackItem } from "@/types";
 
 export const services: Service[] = [
   {
@@ -91,4 +91,67 @@ export const technologies = [
   "Vercel",
   "IA",
   "APIs",
+];
+
+export const techStack: TechStackItem[] = [
+  {
+    name: "Next.js 16 (Turbopack)",
+    category: "frontend",
+    description: "Server Components, streaming SSR y compilación instantánea.",
+    badge: "Full-Stack Framework",
+  },
+  {
+    name: "React 19 & TypeScript",
+    category: "frontend",
+    description: "Tipado estricto, 0 errores en runtime y arquitectura escalable.",
+    badge: "Core UI",
+  },
+  {
+    name: "Tailwind CSS v4",
+    category: "frontend",
+    description: "Motor CSS moderno y ultraligero sin sobrecarga de estilos.",
+    badge: "Design Tokens",
+  },
+  {
+    name: "Framer Motion & Lenis",
+    category: "frontend",
+    description: "Animaciones a 60 FPS aceleradas por hardware y scroll inercial suave.",
+    badge: "Motion System",
+  },
+  {
+    name: "Supabase (PostgreSQL)",
+    category: "backend",
+    description: "Base de datos relacional con RLS, subscripciones Realtime y Auth.",
+    badge: "Database & Auth",
+  },
+  {
+    name: "Vercel Edge Network",
+    category: "backend",
+    description: "Distribución global en el Edge con tiempos de respuesta < 50ms.",
+    badge: "Cloud Infra",
+  },
+  {
+    name: "OpenAI & Anthropic LLMs",
+    category: "ai",
+    description: "Integración de inteligencia artificial conversacional y asistentes.",
+    badge: "AI Models",
+  },
+  {
+    name: "Pipelines de Datos en Vivo",
+    category: "ai",
+    description: "Integración de datos satelitales (NASA), scrapers y APIs externas.",
+    badge: "Data Stream",
+  },
+  {
+    name: "Figma Design Systems",
+    category: "design",
+    description: "Componentes atómicos, guías de estilo y prototipado interactivo.",
+    badge: "UI / UX",
+  },
+  {
+    name: "Dirección de Arte & Shaders",
+    category: "design",
+    description: "Tipografía de exhibición, Canvas/WebGL sutil y micro-interacciones.",
+    badge: "Creative Tech",
+  },
 ];

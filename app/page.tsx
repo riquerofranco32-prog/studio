@@ -4,10 +4,12 @@ import { Proof } from "@/components/sections/proof";
 import { SelectedWork } from "@/components/sections/selected-work";
 import { Services } from "@/components/sections/services";
 import { Process } from "@/components/sections/process";
+import { Comparison } from "@/components/sections/comparison";
 import { About } from "@/components/sections/about";
+import { Testimonials } from "@/components/sections/testimonials";
 import { Technology } from "@/components/sections/technology";
 import { FAQ } from "@/components/sections/faq";
-import { Testimonials } from "@/components/sections/testimonials";
+import { CtaBanner } from "@/components/sections/cta-banner";
 import { Contact } from "@/components/sections/contact";
 
 export default function Home() {
@@ -18,10 +20,12 @@ export default function Home() {
       <SelectedWork />
       <Services />
       <Process />
+      <Comparison />
       <About />
+      <Testimonials />
       <Technology />
       <FAQ />
-      <Testimonials />
+      <CtaBanner />
       <Contact />
     </PageTransition>
   );

@@ -7,6 +7,7 @@ export interface Project {
   year: string;
   shortDescription: string;
   description: string;
+  impactMetric?: string;
   challenge?: string;
   approach?: string;
   design?: string;
@@ -61,6 +62,15 @@ export interface Testimonial {
   role: string;
   company: string;
   quote: string;
-  published: boolean;
-  order: number;
+  projectSlug?: string;
+  highlight?: string;
+  published?: boolean;
+  order?: number;
+}
+
+export interface TechStackItem {
+  name: string;
+  category: "frontend" | "backend" | "ai" | "design";
+  description: string;
+  badge?: string;
 }

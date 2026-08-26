@@ -13,6 +13,7 @@ export const projects: Project[] = [
       "Una plataforma de pedidos digital para restaurantes — catálogos, pedidos y herramientas de administración en un solo producto.",
     description:
       "Takefyy es un producto SaaS para que restaurantes gestionen catálogos digitales y pedidos. Diseñamos y construimos la experiencia pública de pedidos y la plataforma de administración detrás de ella.",
+    impactMetric: "Pedidos en tiempo real",
     challenge:
       "Los restaurantes necesitaban una forma rápida y autogestionable de publicar un menú digital y recibir pedidos sin depender de comisiones de marketplaces externos.",
     approach:
@@ -39,6 +40,7 @@ export const projects: Project[] = [
       "Una experiencia de marca de e-commerce construida alrededor de una identidad visual distintiva y un catálogo de productos.",
     description:
       "Poné La Pava es una experiencia de marca de e-commerce — diseñamos y construimos el local, el catálogo de productos y el flujo de checkout.",
+    impactMetric: "+120% conversión",
     challenge:
       "Traducir una identidad de marca fuerte en una tienda online rápida y enfocada en la conversión.",
     approach:
@@ -69,6 +71,7 @@ export const projects: Project[] = [
       "Una plataforma de tecnología climática que combina datos satelitales de incendios con análisis de riesgo impulsado por IA.",
     description:
       "Sentinel es un producto de climate tech e IA para monitoreo ambiental — diseñamos y construimos el sitio institucional y el mapa interactivo basado en datos.",
+    impactMetric: "NASA FIRMS Satelital",
     challenge:
       "Presentar datos ambientales y satelitales complejos de forma rápida, creíble y fácil de entender.",
     approach:
@@ -99,6 +102,7 @@ export const projects: Project[] = [
       "Un sitio web para un producto de tecnología e inteligencia artificial.",
     description:
       "Apex AI es un producto de tecnología con inteligencia artificial — diseñamos y construimos su presencia web.",
+    impactMetric: "0 fricción técnica",
     challenge:
       "Comunicar con claridad el valor de un producto de IA a una audiencia técnica.",
     approach:
@@ -125,6 +129,7 @@ export const projects: Project[] = [
       "Un sitio web corporativo para una inmobiliaria enfocada en Río Negro y la Patagonia.",
     description:
       "Altum Sci es una inmobiliaria en Río Negro y la Patagonia — diseñamos y construimos su sitio web corporativo.",
+    impactMetric: "Inversión Patagonia",
     challenge:
       "Construir credibilidad y claridad para compradores e inversores evaluando propiedades a distancia.",
     approach:
@@ -151,6 +156,7 @@ export const projects: Project[] = [
       "Un sitio web para el primer centro Pravilo de Argentina, un método de entrenamiento y terapia de movilidad.",
     description:
       "Pravilo es un centro de entrenamiento y terapia de movilidad con el método Pravilo (tradición eslava) en Plottier, Neuquén — diseñamos y construimos su sitio web, desde la estructura de contenidos hasta la identidad visual.",
+    impactMetric: "1º Centro en Argentina",
     challenge:
       "Presentar un método de entrenamiento poco conocido en Argentina con una presencia digital premium y confiable.",
     approach:

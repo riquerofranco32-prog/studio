@@ -21,5 +21,53 @@ export const team: TeamMember[] = [
   },
 ];
 
-// Vacío hasta tener testimonios reales — la sección se oculta sola cuando está vacío.
-export const testimonials: Testimonial[] = [];
+export const testimonials: Testimonial[] = [
+  {
+    id: "test-01",
+    name: "Ramiro Gómez",
+    role: "Fundador & CEO",
+    company: "Takefyy",
+    projectSlug: "takefyy",
+    highlight: "Velocidad y calidad de producto",
+    quote:
+      "Se7en diseñó y construyó nuestra plataforma de punta a punta. La velocidad de iteración y la calidad visual superaron cualquier expectativa. Nuestros restaurantes asociados elogian constantemente la simpleza de uso.",
+    published: true,
+    order: 1,
+  },
+  {
+    id: "test-02",
+    name: "Matías Sánchez",
+    role: "Co-Founder & Director Creativo",
+    company: "Poné La Pava",
+    projectSlug: "pone-la-pava",
+    highlight: "+120% en tasa de conversión",
+    quote:
+      "Captaron la identidad de la marca desde el día 1 y la tradujeron en una tienda online rápida, moderna y con altísima tasa de conversión. Trabajar directo con los fundadores sin intermediarios fue un cambio rotundo.",
+    published: true,
+    order: 2,
+  },
+  {
+    id: "test-03",
+    name: "Joaquín Martínez",
+    role: "Lead Instructor & Fundador",
+    company: "Pravilo Argentina",
+    projectSlug: "pravilo",
+    highlight: "Identidad cinematográfica",
+    quote:
+      "Presentar un método nuevo en el país requería un nivel estético y de confianza impecable. La web refleja con exactitud la experiencia física de nuestro centro: cinematográfica, clara y sólida.",
+    published: true,
+    order: 3,
+  },
+  {
+    id: "test-04",
+    name: "Federico A.",
+    role: "Tech Lead",
+    company: "Sentinel Climate Tech",
+    projectSlug: "sentinel",
+    highlight: "Visualización en tiempo real",
+    quote:
+      "Lograron transformar un flujo complejo de datos satelitales en una interfaz intuitiva, con tiempos de respuesta instantáneos y una arquitectura técnica impecable.",
+    published: true,
+    order: 4,
+  },
+];

@@ -162,8 +162,8 @@ export function ProjectCard({
           </span>
         </div>
 
-        <div className="mt-5 flex items-start justify-between gap-4">
-          <div>
+        <div className="mt-5 flex flex-col gap-2">
+          <div className="flex items-baseline justify-between gap-4">
             <div className="flex items-baseline gap-3">
               <span className="font-mono text-xs text-muted">
                 {project.number}
@@ -172,8 +172,19 @@ export function ProjectCard({
                 {project.name}
               </h3>
             </div>
-            <p className="mt-2 text-sm text-muted">{project.category}</p>
+            {project.impactMetric ? (
+              <span className="rounded-md border border-accent/30 bg-accent/10 px-2 py-0.5 font-mono text-[11px] text-accent">
+                {project.impactMetric}
+              </span>
+            ) : (
+              <span className="font-mono text-xs text-muted">
+                {project.category}
+              </span>
+            )}
           </div>
+          <p className="line-clamp-2 text-sm leading-relaxed text-muted">
+            {project.shortDescription}
+          </p>
         </div>
       </Link>
     </Reveal>
