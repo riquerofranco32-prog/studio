@@ -3,6 +3,7 @@ export interface Project {
   number: string;
   name: string;
   category: string;
+  categoryGroup?: string;
   year: string;
   shortDescription: string;
   description: string;
@@ -34,12 +35,15 @@ export interface Service {
   description: string;
   /** Entregables concretos — se muestran como chips en la fila de servicio. */
   deliverables?: string[];
+  tagline?: string;
 }
 
 export interface ProcessStep {
   number: string;
   title: string;
   description: string;
+  duration?: string;
+  deliverables?: string[];
 }
 
 export interface TeamMember {

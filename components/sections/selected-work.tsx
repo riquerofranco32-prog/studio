@@ -1,33 +1,46 @@
+"use client";
+
+import { useState } from "react";
+import { AnimatePresence } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Magnetic } from "@/components/ui/magnetic";
+import { CategoryFilter, CategoryOption } from "@/components/ui/category-filter";
 import { ProjectCard } from "@/components/work/project-card";
 import { projects } from "@/data/projects";
 
-// El ancho de columna y la pista de `sizes` viven juntos a propósito: si se
-// cambia el span y la pista queda vieja, el navegador baja una imagen del tamaño
-// equivocado y no lo avisa nadie. Anchos reales con el contenedor en su máximo
-// (1320px útiles, gap de 24px): 8 cols = 872px, 6 = 648px, 4 = 424px.
-const layout = [
-  { span: "md:col-span-8", sizes: "(min-width: 1440px) 880px, (min-width: 768px) 67vw, 100vw" },
-  { span: "md:col-span-4", sizes: "(min-width: 1440px) 430px, (min-width: 768px) 33vw, 100vw" },
-  { span: "md:col-span-8", sizes: "(min-width: 1440px) 880px, (min-width: 768px) 67vw, 100vw" },
-  { span: "md:col-span-4", sizes: "(min-width: 1440px) 430px, (min-width: 768px) 33vw, 100vw" },
-  { span: "md:col-span-6", sizes: "(min-width: 1440px) 660px, (min-width: 768px) 50vw, 100vw" },
-  { span: "md:col-span-6", sizes: "(min-width: 1440px) 660px, (min-width: 768px) 50vw, 100vw" },
+const categories: CategoryOption[] = [
+  { id: "all", label: "Todos", count: projects.length },
+  {
+    id: "saas",
+    label: "SaaS & Plataformas",
+    count: projects.filter((p) => p.categoryGroup === "saas").length,
+  },
+  {
+    id: "ecommerce",
+    label: "E-Commerce",
+    count: projects.filter((p) => p.categoryGroup === "ecommerce").length,
+  },
+  {
+    id: "ai",
+    label: "IA & Climate",
+    count: projects.filter((p) => p.categoryGroup === "ai").length,
+  },
+  {
+    id: "web",
+    label: "Web & Marcas",
+    count: projects.filter((p) => p.categoryGroup === "web").length,
+  },
 ];
 
-const fallbackLayout = layout[4];
-
-// La grilla son tres filas de dos, asi que la posicion dentro de la fila es
-// i % 2 — y la cascada escalona lo que entra junto. Con i a secas la ultima
-// tarjeta esperaria 450ms despues de ya estar en pantalla, que no se lee como
-// cascada sino como demora.
-
 export function SelectedWork() {
-  const sorted = [...projects].sort((a, b) => a.order - b.order);
+  const [selectedCategory, setSelectedCategory] = useState("all");
+
+  const filteredProjects = projects
+    .filter((p) => selectedCategory === "all" || p.categoryGroup === selectedCategory)
+    .sort((a, b) => a.order - b.order);
 
   return (
     <section id="work" className="border-t border-border py-24 md:py-32">
@@ -36,7 +49,7 @@ export function SelectedWork() {
           <SectionHeading
             kicker="Trabajo seleccionado"
             title="Trabajo seleccionado."
-            subtitle={`${sorted.length} experiencias digitales que diseñamos y construimos.`}
+            subtitle={`${projects.length} experiencias digitales que diseñamos y construimos con foco en conversión y estética.`}
           />
           <Magnetic className="shrink-0">
             <ButtonLink href="/#contact" variant="secondary">
@@ -49,20 +62,32 @@ export function SelectedWork() {
           </Magnetic>
         </div>
 
-        <div className="mt-16 grid grid-cols-1 gap-x-6 gap-y-14 md:grid-cols-12">
-          {sorted.map((project, i) => {
-            const { span, sizes } = layout[i] ?? fallbackLayout;
-            return (
+        {/* Barra de filtros interactiva */}
+        <div className="mt-12 flex items-center justify-between border-y border-border py-4">
+          <CategoryFilter
+            categories={categories}
+            selected={selectedCategory}
+            onSelect={setSelectedCategory}
+          />
+          <span className="hidden font-mono text-xs text-muted md:inline">
+            Mostrando {filteredProjects.length} de {projects.length}
+          </span>
+        </div>
+
+        {/* Grilla dinámica de proyectos */}
+        <div className="mt-12 grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-2">
+          <AnimatePresence mode="popLayout">
+            {filteredProjects.map((project, i) => (
               <ProjectCard
                 key={project.slug}
                 project={project}
                 priority={i === 0}
-                className={span}
-                sizes={sizes}
+                className="w-full"
+                sizes="(min-width: 1024px) 50vw, 100vw"
                 index={i % 2}
               />
-            );
-          })}
+            ))}
+          </AnimatePresence>
         </div>
       </Container>
     </section>

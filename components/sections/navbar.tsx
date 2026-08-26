@@ -12,6 +12,7 @@ const links = [
   { href: "/#work", id: "work", label: "Trabajo" },
   { href: "/#services", id: "services", label: "Servicios" },
   { href: "/#about", id: "about", label: "Nosotros" },
+  { href: "/#faq", id: "faq", label: "Preguntas" },
 ];
 
 export function Navbar() {

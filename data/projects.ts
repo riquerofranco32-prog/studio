@@ -7,6 +7,7 @@ export const projects: Project[] = [
     number: "01",
     name: "Takefyy",
     category: "SaaS / Producto Digital",
+    categoryGroup: "saas",
     year: "2025",
     shortDescription:
       "Una plataforma de pedidos digital para restaurantes — catálogos, pedidos y herramientas de administración en un solo producto.",
@@ -32,6 +33,7 @@ export const projects: Project[] = [
     number: "02",
     name: "Poné La Pava",
     category: "E-commerce / Experiencia de Marca",
+    categoryGroup: "ecommerce",
     year: "2026",
     shortDescription:
       "Una experiencia de marca de e-commerce construida alrededor de una identidad visual distintiva y un catálogo de productos.",
@@ -61,6 +63,7 @@ export const projects: Project[] = [
     number: "03",
     name: "Sentinel",
     category: "Climate Tech / IA",
+    categoryGroup: "ai",
     year: "2025",
     shortDescription:
       "Una plataforma de tecnología climática que combina datos satelitales de incendios con análisis de riesgo impulsado por IA.",
@@ -90,6 +93,7 @@ export const projects: Project[] = [
     number: "04",
     name: "Apex AI",
     category: "Inteligencia Artificial",
+    categoryGroup: "ai",
     year: "2025",
     shortDescription:
       "Un sitio web para un producto de tecnología e inteligencia artificial.",
@@ -115,6 +119,7 @@ export const projects: Project[] = [
     number: "05",
     name: "Altum Sci",
     category: "Inmobiliaria / Sitio Corporativo",
+    categoryGroup: "web",
     year: "2025",
     shortDescription:
       "Un sitio web corporativo para una inmobiliaria enfocada en Río Negro y la Patagonia.",
@@ -140,6 +145,7 @@ export const projects: Project[] = [
     number: "06",
     name: "Pravilo",
     category: "Entrenamiento y Movilidad",
+    categoryGroup: "web",
     year: "2026",
     shortDescription:
       "Un sitio web para el primer centro Pravilo de Argentina, un método de entrenamiento y terapia de movilidad.",

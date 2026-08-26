@@ -8,24 +8,26 @@ export function About() {
     <section id="about" className="border-t border-border py-24 md:py-32">
       <Container>
         <SectionHeading
-          kicker="Nosotros"
-          title="Equipo chico. Pensamiento digital grande."
+          kicker="Sobre el Estudio"
+          title="Equipo compacto. Foco obsesivo en el producto."
         />
 
         <div className="mt-12 grid grid-cols-1 gap-10 md:mt-16 md:grid-cols-12 md:gap-x-8 lg:gap-x-16">
           <p className="text-2xl leading-snug text-foreground md:col-span-7 md:text-[2rem]">
-            Combinamos diseño, tecnología y estrategia para crear experiencias
-            digitales que{" "}
+            Combinamos dirección de diseño, ingeniería moderna de software y mentalidad de negocio para crear experiencias que{" "}
             <span className="text-accent">
-              se sienten tan bien como funcionan
+              se sienten fluidas y convierten usuarios en clientes
             </span>
             .
           </p>
-          <p className="text-lg leading-relaxed text-muted md:col-span-5">
-            Somos dos. Eso significa que hablás directo con quienes diseñan y
-            escriben el código de tu proyecto — sin capas intermedias, sin
-            equipos rotando, sin briefs que se pierden en el camino.
-          </p>
+          <div className="space-y-4 text-base leading-relaxed text-muted md:col-span-5 md:text-lg">
+            <p>
+              Somos dos fundadores especializados. Al trabajar con nosotros, eliminás las capas de burocracia y hablás directamente con quienes diseñan los píxeles y escriben cada línea de código.
+            </p>
+            <p className="text-sm text-muted/80">
+              Ubicados en la Patagonia Argentina (Neuquén / Río Negro), diseñando y desarrollando productos digitales para clientes de todo el mundo.
+            </p>
+          </div>
         </div>
 
         <div className="mt-20">
