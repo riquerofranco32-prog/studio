@@ -119,9 +119,23 @@ export function Footer() {
                     </Link>
                   </li>
                   <li>
+                    <Link href="/portal" className="text-muted hover:text-foreground transition-colors">
+                      Demo Portal de Staging
+                    </Link>
+                  </li>
+                  <li>
                     <Link href="/#estimator" className="text-muted hover:text-foreground transition-colors">
                       Cotizador en Vivo
                     </Link>
+                  </li>
+                  <li>
+                    <button
+                      type="button"
+                      onClick={() => window.dispatchEvent(new CustomEvent("open-badge-generator"))}
+                      className="text-muted hover:text-foreground transition-colors text-left"
+                    >
+                      Insignia "Built by Se7en"
+                    </button>
                   </li>
                   <li>
                     <button

@@ -12,6 +12,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/roi",
     "/tech",
     "/blog",
+    "/portal",
     "/#estimator",
     "/#about",
     "/#contact",

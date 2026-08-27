@@ -19,6 +19,7 @@ import {
   FolderGit2,
   X,
   TrendingUp,
+  Terminal,
 } from "lucide-react";
 import { projects } from "@/data/projects";
 import { SITE } from "@/data/site";
@@ -139,6 +140,18 @@ export function CommandPalette() {
         },
       },
       {
+        id: "action-badge",
+        title: "Generar Insignia 'Built by Se7en'",
+        subtitle: "Obtené el snippet JSX / HTML / SVG oficial para tu footer",
+        category: "Acciones Rápidas",
+        icon: Sparkles,
+        keywords: ["badge", "insignia", "built", "logo", "creditos"],
+        action: () => {
+          setOpen(false);
+          window.dispatchEvent(new CustomEvent("open-badge-generator"));
+        },
+      },
+      {
         id: "action-copy-email",
         title: "Copiar correo electrónico oficial",
         subtitle: SITE.email,
@@ -152,6 +165,18 @@ export function CommandPalette() {
       },
 
       // Navegación
+      {
+        id: "nav-portal",
+        title: "Demo del Portal de Cliente & Staging",
+        subtitle: "Mirá cómo gestionamos sprints y deploys en vivo",
+        category: "Navegación",
+        icon: Terminal,
+        keywords: ["portal", "staging", "demo", "cliente", "sprints", "commits"],
+        action: () => {
+          setOpen(false);
+          router.push("/portal");
+        },
+      },
       {
         id: "nav-work",
         title: "Ver Portafolio Completo",

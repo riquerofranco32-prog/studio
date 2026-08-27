@@ -9,6 +9,7 @@ import { Container } from "@/components/ui/container";
 import { RevealText } from "@/components/ui/reveal-text";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Magnetic } from "@/components/ui/magnetic";
+import { ViewportSimulator } from "@/components/work/viewport-simulator";
 import { getProjectBySlug, projects } from "@/data/projects";
 import { testimonials } from "@/data/team";
 import { SITE } from "@/data/site";
@@ -306,6 +307,16 @@ export default async function CaseStudyPage({
                     {project.outcome}
                   </p>
                 </section>
+              )}
+
+              {/* Simulador Multi-Viewport */}
+              {project.image && (
+                <ViewportSimulator
+                  imageSrc={project.image}
+                  projectName={project.name}
+                  videoSrc={project.video}
+                  liveUrl={project.url}
+                />
               )}
 
               {/* Call to action de cierre para proyecto similar */}

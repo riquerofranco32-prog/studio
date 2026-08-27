@@ -14,6 +14,7 @@ import { AuroraBackground } from "@/components/ui/aurora-background";
 import { ShortcutsModal } from "@/components/ui/shortcuts-modal";
 import { VideoTheaterModal } from "@/components/ui/video-theater-modal";
 import { WhatsAppWidget } from "@/components/ui/whatsapp-widget";
+import { BadgeGeneratorModal } from "@/components/ui/badge-generator";
 import { SITE } from "@/data/site";
 import "./globals.css";
 
@@ -92,6 +93,7 @@ export default function RootLayout({
             <ShortcutsModal />
             <VideoTheaterModal />
             <WhatsAppWidget />
+            <BadgeGeneratorModal />
           </MotionProvider>
         </SoundProvider>
       </body>
