@@ -19,15 +19,24 @@ const categories: { id: FAQCategory; label: string; icon: React.ComponentType<{ 
 
 export function FAQ() {
   const [selectedCategory, setSelectedCategory] = useState<FAQCategory>("all");
+  const [searchQuery, setSearchQuery] = useState("");
   const [openId, setOpenId] = useState<string | null>(faqs[0].id);
 
   function toggle(id: string) {
     setOpenId((prev) => (prev === id ? null : id));
   }
 
-  const filteredFaqs = faqs.filter(
-    (faq) => selectedCategory === "all" || faq.category === selectedCategory
-  );
+  const filteredFaqs = faqs.filter((faq) => {
+    const matchesCategory =
+      selectedCategory === "all" || faq.category === selectedCategory;
+    const q = searchQuery.toLowerCase().trim();
+    const matchesSearch =
+      q === "" ||
+      faq.question.toLowerCase().includes(q) ||
+      faq.answer.toLowerCase().includes(q);
+
+    return matchesCategory && matchesSearch;
+  });
 
   return (
     <section id="faq" className="border-t border-border py-24 md:py-32">
@@ -61,28 +70,50 @@ export function FAQ() {
           </div>
 
           <div className="lg:col-span-8">
-            {/* Categorías de FAQ */}
-            <div className="mb-6 flex flex-wrap gap-2 pb-4 border-b border-border">
-              {categories.map((cat) => {
-                const Icon = cat.icon;
-                const isSelected = selectedCategory === cat.id;
+            {/* Buscador + Categorías */}
+            <div className="mb-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-4 border-b border-border">
+              <div className="flex flex-wrap gap-2">
+                {categories.map((cat) => {
+                  const Icon = cat.icon;
+                  const isSelected = selectedCategory === cat.id;
 
-                return (
+                  return (
+                    <button
+                      key={cat.id}
+                      type="button"
+                      onClick={() => setSelectedCategory(cat.id)}
+                      className={`focus-ring inline-flex items-center gap-1.5 rounded-full border px-3 py-1 font-mono text-xs transition-all ${
+                        isSelected
+                          ? "border-accent bg-accent text-background font-medium"
+                          : "border-border bg-surface text-muted hover:border-foreground/30 hover:text-foreground"
+                      }`}
+                    >
+                      <Icon size={12} className={isSelected ? "text-background" : "text-accent"} />
+                      <span>{cat.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              {/* Input de Búsqueda Rápida */}
+              <div className="relative w-full sm:w-56">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Filtrar preguntas..."
+                  className="focus-ring w-full rounded-lg border border-border bg-surface py-1.5 px-3 text-xs text-foreground placeholder:text-muted/60 focus:border-accent"
+                />
+                {searchQuery && (
                   <button
-                    key={cat.id}
                     type="button"
-                    onClick={() => setSelectedCategory(cat.id)}
-                    className={`focus-ring inline-flex items-center gap-1.5 rounded-full border px-3.5 py-1.5 font-mono text-xs transition-all ${
-                      isSelected
-                        ? "border-accent bg-accent text-background font-medium"
-                        : "border-border bg-surface text-muted hover:border-foreground/30 hover:text-foreground"
-                    }`}
+                    onClick={() => setSearchQuery("")}
+                    className="absolute top-1/2 right-2.5 -translate-y-1/2 font-mono text-[10px] text-muted hover:text-foreground"
                   >
-                    <Icon size={13} className={isSelected ? "text-background" : "text-accent"} />
-                    <span>{cat.label}</span>
+                    ✕
                   </button>
-                );
-              })}
+                )}
+              </div>
             </div>
 
             <div className="flex flex-col divide-y divide-border border-y border-border">

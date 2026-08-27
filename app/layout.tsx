@@ -8,6 +8,11 @@ import { SoundProvider } from "@/components/providers/sound-provider";
 import { CommandPalette } from "@/components/ui/command-palette";
 import { BookingModal } from "@/components/ui/booking-modal";
 import { FloatingStatusBar } from "@/components/ui/floating-status-bar";
+import { CustomCursor } from "@/components/ui/custom-cursor";
+import { ScrollProgress } from "@/components/ui/scroll-progress";
+import { AuroraBackground } from "@/components/ui/aurora-background";
+import { ShortcutsModal } from "@/components/ui/shortcuts-modal";
+import { VideoTheaterModal } from "@/components/ui/video-theater-modal";
 import { SITE } from "@/data/site";
 import "./globals.css";
 
@@ -64,13 +69,16 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${geistSans.variable} ${geistMono.variable}`}>
-      <body className="antialiased">
+      <body className="antialiased selection:bg-accent selection:text-background">
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
             __html: JSON.stringify(organizationJsonLd),
           }}
         />
+        <ScrollProgress />
+        <CustomCursor />
+        <AuroraBackground />
         <SmoothScroll />
         <SoundProvider>
           <MotionProvider>
@@ -80,6 +88,8 @@ export default function RootLayout({
             <CommandPalette />
             <BookingModal />
             <FloatingStatusBar />
+            <ShortcutsModal />
+            <VideoTheaterModal />
           </MotionProvider>
         </SoundProvider>
       </body>

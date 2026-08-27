@@ -80,6 +80,7 @@ export function ProjectCard({
       <Link
         href={`/work/${project.slug}`}
         transitionTypes={["nav-forward"]}
+        data-cursor-text="Ver caso ↗"
         className="focus-ring group block"
       >
         <div

@@ -18,6 +18,7 @@ import {
   Code2,
   FolderGit2,
   X,
+  TrendingUp,
 } from "lucide-react";
 import { projects } from "@/data/projects";
 import { SITE } from "@/data/site";
@@ -111,6 +112,18 @@ export function CommandPalette() {
         action: () => {
           setOpen(false);
           router.push("/#estimator");
+        },
+      },
+      {
+        id: "action-roi",
+        title: "Calculadora de Ahorro & Retorno (ROI)",
+        subtitle: "Proyectá cuánto dinero ahorrás en comisiones de Shopify/apps",
+        category: "Acciones Rápidas",
+        icon: TrendingUp,
+        keywords: ["roi", "ahorro", "comisiones", "retorno", "shopify", "pedidosya", "inversion"],
+        action: () => {
+          setOpen(false);
+          router.push("/roi");
         },
       },
       {
