@@ -94,6 +94,11 @@ export function Footer() {
                     </Link>
                   </li>
                   <li>
+                    <Link href="/testimonials" className="text-muted hover:text-foreground transition-colors">
+                      Casos de Éxito & Testimonios
+                    </Link>
+                  </li>
+                  <li>
                     <Link href="/playground" className="text-muted hover:text-foreground transition-colors">
                       Playground Técnico
                     </Link>
@@ -121,6 +126,11 @@ export function Footer() {
                     <Link href="/start" className="text-accent font-medium hover:underline flex items-center gap-1">
                       <span>Iniciar Briefing</span>
                       <ArrowUpRight size={13} />
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/audit" className="text-muted hover:text-foreground transition-colors">
+                      Auditoría Técnica Gratuita
                     </Link>
                   </li>
                   <li>

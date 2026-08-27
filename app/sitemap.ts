@@ -16,6 +16,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/portal",
     "/playground",
     "/security",
+    "/audit",
+    "/testimonials",
     "/#estimator",
     "/#about",
     "/#contact",

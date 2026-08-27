@@ -153,6 +153,18 @@ export function CommandPalette() {
         },
       },
       {
+        id: "action-audit",
+        title: "Solicitar Auditoría Técnica Gratuita en Video",
+        subtitle: "Diagnóstico de 3 puntos (velocidad, seguridad y conversión)",
+        category: "Acciones Rápidas",
+        icon: Sparkles,
+        keywords: ["auditoria", "diagnostico", "gratis", "video", "velocidad", "audit"],
+        action: () => {
+          setOpen(false);
+          router.push("/audit");
+        },
+      },
+      {
         id: "action-badge",
         title: "Generar Insignia 'Built by Se7en'",
         subtitle: "Obtené el snippet JSX / HTML / SVG oficial para tu footer",
@@ -178,6 +190,18 @@ export function CommandPalette() {
       },
 
       // Navegación
+      {
+        id: "nav-testimonials",
+        title: "Casos de Éxito & Testimonios",
+        subtitle: "Métricas de negocio verificadas y resultados de clientes",
+        category: "Navegación",
+        icon: Layers,
+        keywords: ["testimonios", "historias", "clientes", "metricas", "opiniones", "reviews"],
+        action: () => {
+          setOpen(false);
+          router.push("/testimonials");
+        },
+      },
       {
         id: "nav-playground",
         title: "Playground Técnico & Server Actions",
