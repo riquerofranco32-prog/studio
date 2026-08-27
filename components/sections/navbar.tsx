@@ -13,9 +13,10 @@ import { useSoundFx } from "@/components/providers/sound-provider";
 const links = [
   { href: "/work", id: "work", label: "Portafolio" },
   { href: "/services", id: "services", label: "Servicios" },
+  { href: "/tech", id: "tech", label: "Radar Tech" },
+  { href: "/blog", id: "blog", label: "Blog" },
+  { href: "/roi", id: "roi", label: "Calculadora ROI" },
   { href: "/#estimator", id: "estimator", label: "Cotizador" },
-  { href: "/#about", id: "about", label: "Nosotros" },
-  { href: "/#faq", id: "faq", label: "Preguntas" },
 ];
 
 export function Navbar() {
