@@ -94,6 +94,16 @@ export function Footer() {
                     </Link>
                   </li>
                   <li>
+                    <Link href="/playground" className="text-muted hover:text-foreground transition-colors">
+                      Playground Técnico
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/security" className="text-muted hover:text-foreground transition-colors">
+                      Seguridad & NDA
+                    </Link>
+                  </li>
+                  <li>
                     <Link href="/#about" className="text-muted hover:text-foreground transition-colors">
                       Sobre el Estudio
                     </Link>

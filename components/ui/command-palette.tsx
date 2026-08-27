@@ -20,6 +20,7 @@ import {
   X,
   TrendingUp,
   Terminal,
+  ShieldCheck,
 } from "lucide-react";
 import { projects } from "@/data/projects";
 import { SITE } from "@/data/site";
@@ -177,6 +178,30 @@ export function CommandPalette() {
       },
 
       // Navegación
+      {
+        id: "nav-playground",
+        title: "Playground Técnico & Server Actions",
+        subtitle: "Probá en vivo consultas Supabase, Zod y streaming IA",
+        category: "Navegación",
+        icon: Terminal,
+        keywords: ["playground", "consola", "server actions", "api", "zod", "supabase"],
+        action: () => {
+          setOpen(false);
+          router.push("/playground");
+        },
+      },
+      {
+        id: "nav-security",
+        title: "Seguridad, Propiedad & NDA",
+        subtitle: "Código 100% propio en GitHub y arquitectura Zero-Trust",
+        category: "Navegación",
+        icon: ShieldCheck,
+        keywords: ["seguridad", "nda", "privacidad", "github", "rls", "trust"],
+        action: () => {
+          setOpen(false);
+          router.push("/security");
+        },
+      },
       {
         id: "nav-portal",
         title: "Demo del Portal de Cliente & Staging",

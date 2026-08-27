@@ -14,6 +14,8 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/tech",
     "/blog",
     "/portal",
+    "/playground",
+    "/security",
     "/#estimator",
     "/#about",
     "/#contact",
