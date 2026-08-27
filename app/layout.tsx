@@ -13,6 +13,7 @@ import { ScrollProgress } from "@/components/ui/scroll-progress";
 import { AuroraBackground } from "@/components/ui/aurora-background";
 import { ShortcutsModal } from "@/components/ui/shortcuts-modal";
 import { VideoTheaterModal } from "@/components/ui/video-theater-modal";
+import { WhatsAppWidget } from "@/components/ui/whatsapp-widget";
 import { SITE } from "@/data/site";
 import "./globals.css";
 
@@ -90,6 +91,7 @@ export default function RootLayout({
             <FloatingStatusBar />
             <ShortcutsModal />
             <VideoTheaterModal />
+            <WhatsAppWidget />
           </MotionProvider>
         </SoundProvider>
       </body>
