@@ -136,7 +136,10 @@ export function Hero() {
               className="hero-line block"
               style={{ animationDelay: SEQUENCE.line3 }}
             >
-              para marcas que <span className="text-accent">avanzan.</span>
+              para marcas que{" "}
+              <span className="text-accent drop-shadow-[0_0_25px_rgba(255,77,46,0.35)]">
+                avanzan.
+              </span>
             </span>
           </span>
         </h1>
@@ -146,8 +149,7 @@ export function Hero() {
             className="hero-rise max-w-md text-lg leading-relaxed text-muted md:text-xl"
             style={{ animationDelay: SEQUENCE.sub }}
           >
-            Estrategia, diseño y tecnología — desde la primera idea hasta el
-            producto final.
+            Estrategia, diseño atómico y arquitectura de software — desde la primera idea hasta el producto final listo para escalar.
           </p>
 
           <div
@@ -164,8 +166,8 @@ export function Hero() {
               </ButtonLink>
             </Magnetic>
             <Magnetic>
-              <ButtonLink href="/#work" variant="secondary">
-                Ver nuestro trabajo
+              <ButtonLink href="/pricing" variant="secondary">
+                Ver Precios & Alcance
                 <ArrowUpRight
                   size={16}
                   className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"

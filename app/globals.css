@@ -370,6 +370,12 @@ body::after {
   background: var(--accent);
 }
 
+/* Selection */
+::selection {
+  background: var(--accent);
+  color: #0a0a0c;
+}
+
 /* Glassmorphism & spotlight utilities */
 .glass-panel {
   background: rgba(16, 16, 18, 0.75);
@@ -384,5 +390,37 @@ body::after {
 .glass-panel-hover:hover {
   border-color: rgba(255, 77, 46, 0.3);
   background: rgba(23, 23, 26, 0.85);
+}
+
+/* Text Shimmer Effect */
+.text-shimmer {
+  background: linear-gradient(
+    110deg,
+    #f4f4f5 20%,
+    rgba(255, 77, 46, 0.8) 50%,
+    #f4f4f5 80%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: shimmer 4s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 100% 0;
+  }
+  100% {
+    background-position: -100% 0;
+  }
+}
+
+/* Glow Utilities */
+.glow-accent-sm {
+  box-shadow: 0 0 20px rgba(255, 77, 46, 0.2);
+}
+.glow-accent-md {
+  box-shadow: 0 0 35px rgba(255, 77, 46, 0.3);
 }
 

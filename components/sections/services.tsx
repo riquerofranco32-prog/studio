@@ -72,6 +72,28 @@ export function Services() {
             </article>
           ))}
         </div>
+
+        {/* Banner de Precios Transparentes */}
+        <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-6 rounded-2xl border border-border bg-surface p-6 sm:p-8">
+          <div>
+            <h4 className="font-semibold text-foreground text-base">
+              ¿Buscás armar una propuesta a medida con tiempos y costos exactos?
+            </h4>
+            <p className="text-xs text-muted mt-1">
+              Probá nuestro configurador interactivo con soporte de pasarelas de pago, IA y base de datos.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3 shrink-0">
+            <a
+              href="/pricing"
+              className="focus-ring inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-xs font-semibold text-background hover:bg-accent/90 transition-colors shadow-[0_0_20px_rgba(255,77,46,0.25)]"
+            >
+              <span>Ver Configurador de Precios</span>
+              <ArrowUpRight size={14} />
+            </a>
+          </div>
+        </div>
       </Container>
     </section>
   );
