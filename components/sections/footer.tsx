@@ -99,6 +99,11 @@ export function Footer() {
                     </Link>
                   </li>
                   <li>
+                    <Link href="/design-system" className="text-muted hover:text-foreground transition-colors">
+                      Design System & Tokens
+                    </Link>
+                  </li>
+                  <li>
                     <Link href="/playground" className="text-muted hover:text-foreground transition-colors">
                       Playground Técnico
                     </Link>
@@ -126,6 +131,11 @@ export function Footer() {
                     <Link href="/start" className="text-accent font-medium hover:underline flex items-center gap-1">
                       <span>Iniciar Briefing</span>
                       <ArrowUpRight size={13} />
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/kickoff" className="text-muted hover:text-foreground transition-colors">
+                      Portal de Kickoff
                     </Link>
                   </li>
                   <li>

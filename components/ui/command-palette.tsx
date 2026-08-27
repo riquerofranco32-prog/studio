@@ -191,6 +191,30 @@ export function CommandPalette() {
 
       // Navegación
       {
+        id: "nav-kickoff",
+        title: "Portal de Kickoff & Onboarding",
+        subtitle: "Configurá accesos GitHub, assets y canal de staging",
+        category: "Navegación",
+        icon: Sparkles,
+        keywords: ["kickoff", "onboarding", "inicio", "assets", "github", "setup"],
+        action: () => {
+          setOpen(false);
+          router.push("/kickoff");
+        },
+      },
+      {
+        id: "nav-design-system",
+        title: "Design System & Tokens Atómicos",
+        subtitle: "Explorá colores OLED, escalas tipográficas y componentes",
+        category: "Navegación",
+        icon: Code2,
+        keywords: ["design system", "tokens", "colores", "tipografia", "componentes", "ui"],
+        action: () => {
+          setOpen(false);
+          router.push("/design-system");
+        },
+      },
+      {
         id: "nav-testimonials",
         title: "Casos de Éxito & Testimonios",
         subtitle: "Métricas de negocio verificadas y resultados de clientes",
