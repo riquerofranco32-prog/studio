@@ -1,6 +1,7 @@
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { TeamRoster } from "@/components/sections/team-roster";
+import { FounderVoiceWave } from "@/components/ui/founder-voice-wave";
 import { team } from "@/data/team";
 
 export function About() {
@@ -24,9 +25,7 @@ export function About() {
             <p>
               Somos dos fundadores especializados. Al trabajar con nosotros, eliminás las capas de burocracia y hablás directamente con quienes diseñan los píxeles y escriben cada línea de código.
             </p>
-            <p className="text-sm text-muted/80">
-              Ubicados en la Patagonia Argentina (Neuquén / Río Negro), diseñando y desarrollando productos digitales para clientes de todo el mundo.
-            </p>
+            <FounderVoiceWave />
           </div>
         </div>
 

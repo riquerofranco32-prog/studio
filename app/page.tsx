@@ -9,6 +9,7 @@ import { BentoFeatures } from "@/components/sections/bento-features";
 import { Process } from "@/components/sections/process";
 import { ClientJourney } from "@/components/sections/client-journey";
 import { ArchitectureBlueprint } from "@/components/sections/architecture-blueprint";
+import { EdgeLatencyMonitor } from "@/components/sections/edge-latency-monitor";
 import { Comparison } from "@/components/sections/comparison";
 import { StackComparison } from "@/components/sections/stack-comparison";
 import { About } from "@/components/sections/about";
@@ -32,6 +33,7 @@ export default function Home() {
       <Process />
       <ClientJourney />
       <ArchitectureBlueprint />
+      <EdgeLatencyMonitor />
       <StackComparison />
       <Comparison />
       <About />

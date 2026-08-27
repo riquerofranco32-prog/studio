@@ -104,8 +104,20 @@ export function CommandPalette() {
         },
       },
       {
+        id: "action-pricing",
+        title: "Ver Precios & Planes Transparentes (/pricing)",
+        subtitle: "Configurá el alcance y generá un presupuesto inmediato",
+        category: "Acciones Rápidas",
+        icon: Calculator,
+        keywords: ["precios", "planes", "costos", "cuanto", "vale", "presupuesto", "pricing"],
+        action: () => {
+          setOpen(false);
+          router.push("/pricing");
+        },
+      },
+      {
         id: "action-estimator",
-        title: "Calcular Presupuesto de Proyecto",
+        title: "Calcular Presupuesto Rápido",
         subtitle: "Cotizador interactivo en tiempo real con tiempos y costos",
         category: "Acciones Rápidas",
         icon: Calculator,
