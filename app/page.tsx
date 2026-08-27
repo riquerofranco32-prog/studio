@@ -6,6 +6,7 @@ import { DeviceShowcase } from "@/components/sections/device-showcase";
 import { Services } from "@/components/sections/services";
 import { BentoFeatures } from "@/components/sections/bento-features";
 import { Process } from "@/components/sections/process";
+import { ClientJourney } from "@/components/sections/client-journey";
 import { ArchitectureBlueprint } from "@/components/sections/architecture-blueprint";
 import { Comparison } from "@/components/sections/comparison";
 import { StackComparison } from "@/components/sections/stack-comparison";
@@ -27,6 +28,7 @@ export default function Home() {
       <Services />
       <BentoFeatures />
       <Process />
+      <ClientJourney />
       <ArchitectureBlueprint />
       <StackComparison />
       <Comparison />

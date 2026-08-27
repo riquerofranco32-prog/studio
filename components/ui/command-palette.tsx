@@ -176,6 +176,30 @@ export function CommandPalette() {
           router.push("/services");
         },
       },
+      {
+        id: "nav-tech",
+        title: "Radar Tecnológico & Stack",
+        subtitle: "Tecnologías que adoptamos, evaluamos y evitamos",
+        category: "Navegación",
+        icon: Code2,
+        keywords: ["tech", "radar", "stack", "tecnologias", "turbopack", "supabase"],
+        action: () => {
+          setOpen(false);
+          router.push("/tech");
+        },
+      },
+      {
+        id: "nav-blog",
+        title: "Blog de Ingeniería & Estrategia",
+        subtitle: "Artículos de arquitectura, Core Web Vitals y lecciones",
+        category: "Navegación",
+        icon: Layers,
+        keywords: ["blog", "articulos", "posts", "lecturas", "guias"],
+        action: () => {
+          setOpen(false);
+          router.push("/blog");
+        },
+      },
 
       // Servicios específicos
       {
