@@ -4,6 +4,9 @@ import { Navbar } from "@/components/sections/navbar";
 import { Footer } from "@/components/sections/footer";
 import { MotionProvider } from "@/components/providers/motion-provider";
 import { SmoothScroll } from "@/components/providers/smooth-scroll";
+import { CommandPalette } from "@/components/ui/command-palette";
+import { BookingModal } from "@/components/ui/booking-modal";
+import { FloatingStatusBar } from "@/components/ui/floating-status-bar";
 import { SITE } from "@/data/site";
 import "./globals.css";
 
@@ -59,9 +62,6 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    // Las variables de fuente van en <html>: Tailwind resuelve --font-sans/--font-mono
-    // en :root, así que definirlas en <body> las dejaba sin valor y todo caía al
-    // stack del sistema.
     <html lang="es" className={`${geistSans.variable} ${geistMono.variable}`}>
       <body className="antialiased">
         <script
@@ -75,6 +75,9 @@ export default function RootLayout({
           <Navbar />
           <main>{children}</main>
           <Footer />
+          <CommandPalette />
+          <BookingModal />
+          <FloatingStatusBar />
         </MotionProvider>
       </body>
     </html>

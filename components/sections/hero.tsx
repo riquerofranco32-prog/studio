@@ -11,6 +11,8 @@ import { HeroShowcase } from "@/components/sections/hero-showcase";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { capabilities } from "@/data/services";
 import { projects } from "@/data/projects";
+import { LiveClock } from "@/components/ui/live-clock";
+import { Star } from "lucide-react";
 
 // La entrada del hero es una secuencia de CSS puro (ver .hero-line/.hero-rise en
 // globals.css) en vez de una timeline de GSAP: mismo resultado, sin la librería
@@ -84,18 +86,33 @@ export function Hero() {
           línea detrás del navbar, así que el contenido arranca arriba y sólo se
           centra cuando hay aire de sobra. */}
       <Container className="relative flex flex-1 flex-col justify-start md:justify-center">
-        <p
-          className="hero-rise mb-8 flex items-center gap-2.5 font-mono text-xs tracking-widest text-muted uppercase"
+        <div
+          className="hero-rise mb-8 flex flex-wrap items-center gap-3"
           style={{ animationDelay: SEQUENCE.kicker }}
         >
-          <span className="relative flex h-2 w-2">
-            {!reduceMotion && (
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
-            )}
-            <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
-          </span>
-          Disponibles para nuevos proyectos
-        </p>
+          <div className="inline-flex items-center gap-2.5 rounded-full border border-border bg-surface/80 px-3.5 py-1.5 font-mono text-xs text-muted backdrop-blur-md">
+            <span className="relative flex h-2 w-2">
+              {!reduceMotion && (
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
+              )}
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
+            </span>
+            <span className="text-foreground font-medium">Estudio Abierto</span>
+            <span className="text-border">·</span>
+            <span className="hidden sm:inline">Patagonia AR</span>
+            <LiveClock className="text-foreground" />
+          </div>
+
+          <div className="hidden items-center gap-1.5 rounded-full border border-accent/20 bg-accent/5 px-3 py-1 font-mono text-xs text-muted sm:inline-flex">
+            <div className="flex text-amber-400">
+              {[...Array(5)].map((_, i) => (
+                <Star key={i} size={11} className="fill-amber-400" />
+              ))}
+            </div>
+            <span className="text-foreground font-medium">5.0</span>
+            <span className="text-muted">· 6+ Productos Shipped</span>
+          </div>
+        </div>
 
         <h1 className="display max-w-3xl text-[2.6rem] text-foreground sm:max-w-4xl sm:text-6xl md:max-w-6xl md:text-[6.5rem]">
           <span className="line-mask block">

@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { ArrowLeft, ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { ButtonLink } from "@/components/ui/button-link";

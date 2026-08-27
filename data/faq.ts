@@ -2,7 +2,7 @@ export interface FAQItem {
   id: string;
   question: string;
   answer: string;
-  category?: string;
+  category: "process" | "tech" | "pricing" | "support";
 }
 
 export const faqs: FAQItem[] = [
@@ -11,35 +11,41 @@ export const faqs: FAQItem[] = [
     question: "¿Qué tipo de proyectos y productos digitales construyen?",
     answer:
       "Desarrollamos desde landing pages interactivas y sitios web corporativos de alto impacto visual hasta plataformas SaaS complejas, experiencias de e-commerce personalizadas y soluciones integradas con Inteligencia Artificial. Cada producto se diseña a medida desde cero, sin plantillas genéricas.",
+    category: "process",
   },
   {
     id: "timeline",
     question: "¿Cuánto tiempo toma típicamente el desarrollo de un proyecto?",
     answer:
-      "Una landing page o sitio institucional suele requerir entre 2 y 3 semanas. Proyectos más complejos como plataformas SaaS, paneles administrativos o tiendas de e-commerce personalizadas toman entre 4 y 8 semanas, organizadas en sprints con avances semanales tangibles.",
+      "Una landing page o sitio institucional suele requerir entre 1 y 2 semanas. Proyectos más complejos como plataformas SaaS, paneles administrativos o tiendas de e-commerce toman entre 2 y 4 semanas, organizadas en sprints con avances continuos en staging.",
+    category: "pricing",
   },
   {
     id: "communication",
     question: "¿Cómo es el proceso de trabajo y la comunicación?",
     answer:
-      "Trabajás directamente con nosotros (Franco en desarrollo y Federico en diseño), sin ejecutivos de cuentas ni capas burocráticas. Mantenemos comunicación fluida mediante un canal privado de WhatsApp o Slack, reuniones de sincronización semanales y accesos en vivo al entorno de desarrollo (staging).",
+      "Trabajás directamente con nosotros (los dos fundadores en ingeniería y diseño), sin intermediarios ni capas burocráticas. Mantenemos comunicación fluida mediante un canal privado de WhatsApp o Slack, con demos en vivo y respuestas en menos de 2 horas hábiles.",
+    category: "process",
   },
   {
     id: "international",
-    question: "¿Trabajan con clientes de otros países y qué monedas aceptan?",
+    question: "¿Trabajan con clientes internacionales y qué métodos de pago aceptan?",
     answer:
-      "Sí, colaboramos activamente con clientes en Argentina, Latinoamérica, Estados Unidos y Europa. Aceptamos transferencias bancarias locales en ARS, transferencias internacionales en USD/EUR y pagos mediante plataformas seguras como Stripe, Wise o criptoactivos.",
+      "Sí, colaboramos activamente con clientes en Argentina, Latinoamérica, Estados Unidos y Europa. Aceptamos transferencias bancarias locales en ARS/USD, transferencias internacionales (SWIFT / ACH), Stripe, Wise y criptoactivos (USDT/USDC).",
+    category: "pricing",
   },
   {
     id: "tech-stack",
     question: "¿Qué tecnologías utilizan y qué ventajas ofrece su arquitectura?",
     answer:
-      "Nuestra base principal es Next.js, React, TypeScript, Tailwind CSS, Supabase y despliegue global en Vercel. Esta arquitectura garantiza máxima velocidad de carga (Core Web Vitals óptimos), excelente indexación en motores de búsqueda (SEO), seguridad robusta y una experiencia de usuario extremadamente fluida sin lag.",
+      "Nuestra base principal es Next.js 16, React 19, TypeScript, Tailwind CSS v4, Supabase y despliegue en Vercel Edge. Esta arquitectura garantiza tiempos de carga instantáneos (100/100 Lighthouse), indexación SEO óptima y un código mantenible sin dependencias lentas.",
+    category: "tech",
   },
   {
     id: "post-launch",
-    question: "¿Ofrecen soporte y mantenimiento luego de que el sitio esté publicado?",
+    question: "¿Ofrecen soporte y garantía luego del lanzamiento?",
     answer:
-      "Absolutamente. Todos los lanzamientos incluyen 30 días de garantía y soporte técnico posterior para asegurar estabilidad total. Además, ofrecemos planes de evolución continua y acompañamiento mensual para iterar nuevas funcionalidades a medida que tu negocio crece.",
+      "Absolutamente. Todos nuestros proyectos incluyen 30 días de garantía y soporte post-lanzamiento sin costo adicional para asegurar estabilidad total. Además, ofrecemos sprints de evolución continua para escalar tu producto a medida que crecen tus usuarios.",
+    category: "support",
   },
 ];

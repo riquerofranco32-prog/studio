@@ -76,6 +76,8 @@ html.lenis body {
 #work,
 #services,
 #about,
+#estimator,
+#faq,
 #contact {
   scroll-margin-top: 80px;
 }

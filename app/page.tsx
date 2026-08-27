@@ -8,6 +8,7 @@ import { Comparison } from "@/components/sections/comparison";
 import { About } from "@/components/sections/about";
 import { Testimonials } from "@/components/sections/testimonials";
 import { Technology } from "@/components/sections/technology";
+import { ProjectEstimator } from "@/components/sections/project-estimator";
 import { FAQ } from "@/components/sections/faq";
 import { CtaBanner } from "@/components/sections/cta-banner";
 import { Contact } from "@/components/sections/contact";
@@ -24,6 +25,7 @@ export default function Home() {
       <About />
       <Testimonials />
       <Technology />
+      <ProjectEstimator />
       <FAQ />
       <CtaBanner />
       <Contact />

@@ -10,8 +10,9 @@ import { Reveal } from "@/components/ui/reveal";
 import { SITE } from "@/data/site";
 
 const links = [
-  { href: "/#work", label: "Trabajo" },
-  { href: "/#services", label: "Servicios" },
+  { href: "/work", label: "Portafolio" },
+  { href: "/services", label: "Servicios" },
+  { href: "/#estimator", label: "Cotizador" },
   { href: "/#about", label: "Nosotros" },
   { href: "/#contact", label: "Contacto" },
 ];

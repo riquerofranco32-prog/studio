@@ -2,20 +2,23 @@
 
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X, ArrowUpRight } from "lucide-react";
+import { Menu, X, ArrowUpRight, Search } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { SITE } from "@/data/site";
 
 const links = [
-  { href: "/#work", id: "work", label: "Trabajo" },
-  { href: "/#services", id: "services", label: "Servicios" },
+  { href: "/work", id: "work", label: "Portafolio" },
+  { href: "/services", id: "services", label: "Servicios" },
+  { href: "/#estimator", id: "estimator", label: "Cotizador" },
   { href: "/#about", id: "about", label: "Nosotros" },
   { href: "/#faq", id: "faq", label: "Preguntas" },
 ];
 
 export function Navbar() {
+  const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState<string | null>(null);
@@ -30,21 +33,32 @@ export function Navbar() {
   }, []);
 
   useEffect(() => {
+    if (pathname === "/work") {
+      setActive("work");
+      return;
+    }
+    if (pathname === "/services") {
+      setActive("services");
+      return;
+    }
+
+    if (pathname !== "/") {
+      setActive(null);
+      return;
+    }
+
     const sections = links
+      .filter((link) => link.href.startsWith("/#"))
       .map((link) => document.getElementById(link.id))
       .filter((el): el is HTMLElement => el !== null);
     if (sections.length === 0) return;
 
-    // La banda de -45%/-50% deja activa la sección que cruza el medio del
-    // viewport, en vez de la que apenas asoma por abajo.
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
           if (entry.isIntersecting) {
             setActive(entry.target.id);
           } else {
-            // Update funcional: leer `active` del closure lo dejaría congelado
-            // en el valor del primer render.
             setActive((cur) => (cur === entry.target.id ? null : cur));
           }
         }
@@ -54,7 +68,7 @@ export function Navbar() {
 
     sections.forEach((section) => observer.observe(section));
     return () => observer.disconnect();
-  }, []);
+  }, [pathname]);
 
   return (
     <header
@@ -113,25 +127,50 @@ export function Navbar() {
             ))}
           </ul>
 
-          <Link
-            href="/#contact"
-            className="focus-ring group hidden items-center gap-1.5 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-background transition-colors duration-300 hover:bg-accent/90 md:inline-flex"
-          >
-            Iniciar un proyecto
-            <ArrowUpRight
-              size={14}
-              className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-            />
-          </Link>
+          <div className="hidden items-center gap-3 md:flex">
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent("open-command-palette"))}
+              className="focus-ring inline-flex items-center gap-2 rounded-full border border-border bg-surface/80 px-3 py-1.5 font-mono text-xs text-muted hover:border-foreground/30 hover:text-foreground transition-colors"
+              title="Buscar (⌘K / Ctrl+K)"
+            >
+              <Search size={13} />
+              <span className="hidden xl:inline">Buscar</span>
+              <kbd className="rounded border border-border bg-background px-1.5 py-0.5 text-[10px] text-muted">
+                ⌘K
+              </kbd>
+            </button>
 
-          <button
-            aria-label={open ? "Cerrar menú" : "Abrir menú"}
-            aria-expanded={open}
-            onClick={() => setOpen((v) => !v)}
-            className="focus-ring -mr-2 p-2 md:hidden"
-          >
-            {open ? <X size={20} /> : <Menu size={20} />}
-          </button>
+            <Link
+              href="/#contact"
+              className="focus-ring group inline-flex items-center gap-1.5 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-background transition-colors duration-300 hover:bg-accent/90"
+            >
+              Iniciar un proyecto
+              <ArrowUpRight
+                size={14}
+                className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+              />
+            </Link>
+          </div>
+
+          <div className="flex items-center gap-1 md:hidden">
+            <button
+              type="button"
+              onClick={() => window.dispatchEvent(new CustomEvent("open-command-palette"))}
+              className="focus-ring p-2 text-muted hover:text-foreground"
+              aria-label="Buscar"
+            >
+              <Search size={20} />
+            </button>
+            <button
+              aria-label={open ? "Cerrar menú" : "Abrir menú"}
+              aria-expanded={open}
+              onClick={() => setOpen((v) => !v)}
+              className="focus-ring p-2"
+            >
+              {open ? <X size={20} /> : <Menu size={20} />}
+            </button>
+          </div>
         </nav>
       </Container>
 
