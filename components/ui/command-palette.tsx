@@ -78,6 +78,18 @@ export function CommandPalette() {
     const list: CommandItem[] = [
       // Acciones Rápidas
       {
+        id: "action-start-brief",
+        title: "Iniciar Briefing Interactivo (/start)",
+        subtitle: "Configurá tu proyecto en 3 minutos y generá un roadmap técnico",
+        category: "Acciones Rápidas",
+        icon: Sparkles,
+        keywords: ["brief", "iniciar", "start", "proyecto", "cotizar", "roadmap", "onboarding"],
+        action: () => {
+          setOpen(false);
+          router.push("/start");
+        },
+      },
+      {
         id: "action-booking",
         title: "Agendar Discovery Call (15 min)",
         subtitle: "Reunión breve de scoping con Franco y Federico",

@@ -4,6 +4,7 @@ import { Navbar } from "@/components/sections/navbar";
 import { Footer } from "@/components/sections/footer";
 import { MotionProvider } from "@/components/providers/motion-provider";
 import { SmoothScroll } from "@/components/providers/smooth-scroll";
+import { SoundProvider } from "@/components/providers/sound-provider";
 import { CommandPalette } from "@/components/ui/command-palette";
 import { BookingModal } from "@/components/ui/booking-modal";
 import { FloatingStatusBar } from "@/components/ui/floating-status-bar";
@@ -71,14 +72,16 @@ export default function RootLayout({
           }}
         />
         <SmoothScroll />
-        <MotionProvider>
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
-          <CommandPalette />
-          <BookingModal />
-          <FloatingStatusBar />
-        </MotionProvider>
+        <SoundProvider>
+          <MotionProvider>
+            <Navbar />
+            <main>{children}</main>
+            <Footer />
+            <CommandPalette />
+            <BookingModal />
+            <FloatingStatusBar />
+          </MotionProvider>
+        </SoundProvider>
       </body>
     </html>
   );

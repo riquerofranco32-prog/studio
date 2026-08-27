@@ -2,9 +2,13 @@ import { PageTransition } from "@/components/ui/page-transition";
 import { Hero } from "@/components/sections/hero";
 import { Proof } from "@/components/sections/proof";
 import { SelectedWork } from "@/components/sections/selected-work";
+import { DeviceShowcase } from "@/components/sections/device-showcase";
 import { Services } from "@/components/sections/services";
+import { BentoFeatures } from "@/components/sections/bento-features";
 import { Process } from "@/components/sections/process";
+import { ArchitectureBlueprint } from "@/components/sections/architecture-blueprint";
 import { Comparison } from "@/components/sections/comparison";
+import { StackComparison } from "@/components/sections/stack-comparison";
 import { About } from "@/components/sections/about";
 import { Testimonials } from "@/components/sections/testimonials";
 import { Technology } from "@/components/sections/technology";
@@ -19,8 +23,12 @@ export default function Home() {
       <Hero />
       <Proof />
       <SelectedWork />
+      <DeviceShowcase />
       <Services />
+      <BentoFeatures />
       <Process />
+      <ArchitectureBlueprint />
+      <StackComparison />
       <Comparison />
       <About />
       <Testimonials />

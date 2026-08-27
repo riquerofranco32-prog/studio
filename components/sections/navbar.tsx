@@ -5,9 +5,10 @@ import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { Menu, X, ArrowUpRight, Search } from "lucide-react";
+import { Menu, X, ArrowUpRight, Search, Volume2, VolumeX } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { SITE } from "@/data/site";
+import { useSoundFx } from "@/components/providers/sound-provider";
 
 const links = [
   { href: "/work", id: "work", label: "Portafolio" },
@@ -18,6 +19,7 @@ const links = [
 ];
 
 export function Navbar() {
+  const { soundEnabled, toggleSound } = useSoundFx();
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
@@ -128,6 +130,21 @@ export function Navbar() {
           </ul>
 
           <div className="hidden items-center gap-3 md:flex">
+            {/* Toggle de sonido */}
+            <button
+              type="button"
+              onClick={toggleSound}
+              className="focus-ring p-2 rounded-full border border-border bg-surface/80 text-muted hover:border-foreground/30 hover:text-foreground transition-colors"
+              title={soundEnabled ? "Silenciar efectos de sonido" : "Activar efectos de sonido"}
+              aria-label={soundEnabled ? "Silenciar efectos de sonido" : "Activar efectos de sonido"}
+            >
+              {soundEnabled ? (
+                <Volume2 size={15} className="text-accent" />
+              ) : (
+                <VolumeX size={15} />
+              )}
+            </button>
+
             <button
               type="button"
               onClick={() => window.dispatchEvent(new CustomEvent("open-command-palette"))}
@@ -142,8 +159,8 @@ export function Navbar() {
             </button>
 
             <Link
-              href="/#contact"
-              className="focus-ring group inline-flex items-center gap-1.5 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-background transition-colors duration-300 hover:bg-accent/90"
+              href="/start"
+              className="focus-ring group inline-flex items-center gap-1.5 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-background transition-colors duration-300 hover:bg-accent/90 shadow-[0_0_20px_rgba(255,77,46,0.25)]"
             >
               Iniciar un proyecto
               <ArrowUpRight
