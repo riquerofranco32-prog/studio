@@ -2,22 +2,15 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, ArrowUpRight } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Star } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Marquee } from "@/components/ui/marquee";
 import { Magnetic } from "@/components/ui/magnetic";
-import { HeroShowcase } from "@/components/sections/hero-showcase";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
-import { capabilities } from "@/data/services";
 import { projects } from "@/data/projects";
 import { LiveClock } from "@/components/ui/live-clock";
-import { Star } from "lucide-react";
 
-// La entrada del hero es una secuencia de CSS puro (ver .hero-line/.hero-rise en
-// globals.css) en vez de una timeline de GSAP: mismo resultado, sin la librería
-// en el bundle. El paralaje sí necesita JS y usa framer-motion, que ya está acá
-// por el navbar, las tarjetas y RevealText.
 const SEQUENCE = {
   kicker: "0.05s",
   line1: "0.35s",
@@ -28,23 +21,8 @@ const SEQUENCE = {
   ticker: "1.4s",
 };
 
-/**
- * Los proyectos que se muestran arriba, en el orden de data/projects.ts. La
- * lista se filtra por los que tienen clip: agregar apex-ai es agregarle el
- * campo `video` y aparece solo, sin tocar layout — la grilla se arma con la
- * cantidad que reciba.
- */
-const SHOWCASE = [...projects]
-  .sort((a, b) => a.order - b.order)
-  .slice(0, 4);
-
 export function Hero() {
   const rootRef = useRef<HTMLElement>(null);
-
-  // El paralaje escribe una MotionValue a mano, así que no pasa por el gate de
-  // <MotionProvider> y necesita el suyo. El hook propio (useSyncExternalStore)
-  // resuelve false en servidor y en el primer render del cliente, así que la
-  // hidratación coincide sin el useState + useEffect que había acá.
   const reduceMotion = useReducedMotion();
 
   const { scrollYProgress } = useScroll({
@@ -52,19 +30,13 @@ export function Hero() {
     offset: ["start start", "end start"],
   });
   const gridY = useTransform(scrollYProgress, [0, 1], ["0%", "15%"]);
-  // Sentido opuesto al del grid: el diferencial se lee sin que ninguna de las
-  // dos capas viaje mucho.
-  const cardsY = useTransform(scrollYProgress, [0, 1], ["0%", "-8%"]);
 
-  // Sin min-h-[100svh] a propósito: con la fila de productos el hero mide
-  // ~1150px y no entra en una pantalla. En vez de achicar las tarjetas o el
-  // titular, el corte se diseña — las tarjetas asoman cortadas por abajo, que
-  // es lo que invita a scrollear. Un hero que entra exacto no da ninguna
-  // razón para bajar.
+  const clientBrands = [...projects].sort((a, b) => a.order - b.order);
+
   return (
     <section
       ref={rootRef}
-      className="relative flex flex-col overflow-hidden pt-28 pb-16"
+      className="relative flex flex-col overflow-hidden pt-28 pb-12 md:pt-36 md:pb-16"
     >
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-background/40 to-background" />
       <motion.div
@@ -72,7 +44,7 @@ export function Hero() {
         style={reduceMotion ? undefined : { y: gridY }}
         className="pointer-events-none absolute inset-0 [background-image:linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] [background-size:64px_64px] opacity-40"
       />
-      {/* Resplandor de acento: única fuente de color del hero. */}
+      {/* Resplandor de acento sutil */}
       <div
         aria-hidden
         className="pointer-events-none absolute -right-32 top-1/4 h-[560px] w-[560px] rounded-full bg-accent/[0.09] blur-[140px]"
@@ -82,9 +54,6 @@ export function Hero() {
         className="pointer-events-none absolute -left-40 bottom-0 h-[420px] w-[420px] rounded-full bg-foreground/[0.03] blur-3xl"
       />
 
-      {/* En mobile el titular ocupa casi todo el alto: centrar recortaría la primera
-          línea detrás del navbar, así que el contenido arranca arriba y sólo se
-          centra cuando hay aire de sobra. */}
       <Container className="relative flex flex-1 flex-col justify-start md:justify-center">
         <div
           className="hero-rise mb-8 flex flex-wrap items-center gap-3"
@@ -110,7 +79,7 @@ export function Hero() {
               ))}
             </div>
             <span className="text-foreground font-medium">5.0</span>
-            <span className="text-muted">· 6+ Productos Shipped</span>
+            <span className="text-muted">· 6+ Productos en Producción</span>
           </div>
         </div>
 
@@ -149,7 +118,7 @@ export function Hero() {
             className="hero-rise max-w-md text-lg leading-relaxed text-muted md:text-xl"
             style={{ animationDelay: SEQUENCE.sub }}
           >
-            Estrategia de producto, diseño de sistemas y arquitectura de ingeniería en Next.js — de 0 a producción en 2 a 3 semanas.
+            Estrategia de producto, diseño de sistemas y arquitectura de ingeniería en Next.js 16 — de 0 a producción en 2 a 3 semanas.
           </p>
 
           <div
@@ -178,25 +147,22 @@ export function Hero() {
         </div>
       </Container>
 
-      <Container className="relative mt-14">
-        <HeroShowcase
-          projects={SHOWCASE}
-          y={reduceMotion ? undefined : cardsY}
-        />
-      </Container>
-
+      {/* Marquee de Clientes y Productos */}
       <div
-        className="hero-rise relative mt-16 border-y border-border py-5"
+        className="hero-rise relative mt-20 border-y border-border py-4 bg-surface/30"
         style={{ animationDelay: SEQUENCE.ticker }}
       >
-        <Marquee duration={45}>
-          {capabilities.map((item) => (
+        <Marquee duration={35}>
+          {clientBrands.map((project) => (
             <span
-              key={item}
-              className="flex items-center gap-8 pr-8 font-mono text-xs tracking-widest text-muted uppercase"
+              key={project.slug}
+              className="flex items-center gap-8 pr-8 text-lg font-medium tracking-tight text-muted transition-colors hover:text-foreground md:text-xl"
             >
-              {item}
-              <span className="text-accent">/</span>
+              <span>{project.name}</span>
+              <span className="font-mono text-xs text-accent">[{project.category.split("/")[0].trim()}]</span>
+              <span aria-hidden className="text-accent/40 text-xs">
+                ✱
+              </span>
             </span>
           ))}
         </Marquee>
