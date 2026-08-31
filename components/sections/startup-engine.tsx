@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Gauge,
   Layers,
@@ -238,291 +239,317 @@ export async function getLiveMetrics() {
           </div>
         </div>
 
-        {/* CONTENIDO DE LA PESTAÑA 1: VELOCIDAD & EDGE */}
-        {activeTab === "performance" && (
-          <div className="mt-12 grid grid-cols-1 gap-6 md:grid-cols-12">
-            {/* Card Lighthouse Score */}
-            <div className="rounded-2xl border border-border bg-surface p-6 md:p-8 md:col-span-7 flex flex-col justify-between">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
-                    <Gauge size={18} />
-                  </span>
-                  <span className="font-mono text-xs uppercase tracking-widest text-muted">
-                    Google Lighthouse
-                  </span>
-                </div>
-                <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-0.5 font-mono text-xs font-semibold text-emerald-400">
-                  100 / 100 Score
-                </span>
-              </div>
-
-              <div className="my-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
-                {[
-                  { label: "Performance", score: "100" },
-                  { label: "Accessibility", score: "100" },
-                  { label: "Best Practices", score: "100" },
-                  { label: "SEO Score", score: "100" },
-                ].map((item) => (
-                  <div
-                    key={item.label}
-                    className="rounded-xl border border-border/80 bg-background/60 p-3 text-center"
-                  >
-                    <span className="display text-2xl font-bold text-emerald-400">
-                      {item.score}
-                    </span>
-                    <p className="mt-1 font-mono text-[10px] text-muted">
-                      {item.label}
-                    </p>
-                  </div>
-                ))}
-              </div>
-
-              <div className="border-t border-border/60 pt-4 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-muted">
-                <span>First Contentful Paint: <strong className="text-foreground">0.4s</strong></span>
-                <span>Largest Contentful Paint: <strong className="text-foreground">0.7s</strong></span>
-                <span>CLS: <strong className="text-foreground">0.00</strong></span>
-              </div>
-            </div>
-
-            {/* Card Edge Radar */}
-            <div className="rounded-2xl border border-border bg-surface p-6 md:p-8 md:col-span-5 flex flex-col justify-between">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2.5">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 text-accent">
-                    <Globe2 size={18} />
-                  </span>
-                  <span className="font-mono text-xs uppercase tracking-widest text-muted">
-                    Red Perimetral Vercel
-                  </span>
-                </div>
-                <span className="font-mono text-xs text-muted">300+ PoPs</span>
-              </div>
-
-              <div className="my-5 space-y-2.5">
-                {[
-                  { city: "Buenos Aires (eze1)", latency: "11 ms" },
-                  { city: "São Paulo (gru1)", latency: "24 ms" },
-                  { city: "Washington D.C. (iad1)", latency: "82 ms" },
-                  { city: "Frankfurt (fra1)", latency: "138 ms" },
-                ].map((node) => (
-                  <div
-                    key={node.city}
-                    className="flex items-center justify-between rounded-lg border border-border/60 bg-background/50 px-3 py-1.5 text-xs"
-                  >
-                    <span className="font-mono text-muted">{node.city}</span>
-                    <div className="flex items-center gap-2">
-                      <span className="font-mono font-bold text-foreground">{node.latency}</span>
-                      <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-                    </div>
-                  </div>
-                ))}
-              </div>
-
-              <p className="text-xs text-muted leading-relaxed">
-                Distribución en los bordes para una respuesta instantánea sin importar dónde esté tu cliente.
-              </p>
-            </div>
-
-            {/* Card Terminal de Código */}
-            <div className="rounded-2xl border border-border bg-[#0e0e11] p-6 md:p-8 md:col-span-12">
-              <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/60 pb-4">
-                <div className="flex items-center gap-3">
-                  <div className="flex gap-1.5">
-                    <span className="h-3 w-3 rounded-full bg-[#ff5f56]" />
-                    <span className="h-3 w-3 rounded-full bg-[#ffbd2e]" />
-                    <span className="h-3 w-3 rounded-full bg-[#27c93f]" />
-                  </div>
-                  <span className="font-mono text-xs text-muted">
-                    architecture-preview.ts
-                  </span>
-                </div>
-
-                <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => {
-                      playClick();
-                      setCodeTab("action");
-                    }}
-                    className={`rounded-lg px-3 py-1 font-mono text-xs transition-colors ${
-                      codeTab === "action"
-                        ? "bg-accent text-background font-bold"
-                        : "bg-surface text-muted hover:text-foreground"
-                    }`}
-                  >
-                    Server Action
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => {
-                      playClick();
-                      setCodeTab("query");
-                    }}
-                    className={`rounded-lg px-3 py-1 font-mono text-xs transition-colors ${
-                      codeTab === "query"
-                        ? "bg-accent text-background font-bold"
-                        : "bg-surface text-muted hover:text-foreground"
-                    }`}
-                  >
-                    Edge Cache SWR
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={copyCode}
-                    className="focus-ring inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3 py-1 font-mono text-xs text-muted hover:text-foreground transition-colors ml-2"
-                  >
-                    {copiedCode ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
-                    <span>{copiedCode ? "Copiado" : "Copiar"}</span>
-                  </button>
-                </div>
-              </div>
-
-              <div className="mt-4 overflow-x-auto font-mono text-xs leading-relaxed text-[#eaeaea]">
-                <pre className="p-2">
-                  <code>{codeSnippets[codeTab]}</code>
-                </pre>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* CONTENIDO DE LA PESTAÑA 2: BLUEPRINT DE ARQUITECTURA */}
-        {activeTab === "blueprint" && (
-          <div className="mt-12 space-y-6">
-            <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
-              {architectureLayers.map((layer, idx) => {
-                const isSelected = selectedLayerIndex === idx;
-                const Icon = layer.icon;
-
-                return (
-                  <button
-                    key={layer.step}
-                    type="button"
-                    onClick={() => {
-                      playClick();
-                      setSelectedLayerIndex(idx);
-                    }}
-                    className={`focus-ring relative text-left rounded-2xl border p-4 transition-all duration-300 ${
-                      isSelected
-                        ? "border-accent bg-surface shadow-[0_0_20px_rgba(255,77,46,0.18)]"
-                        : "border-border bg-surface/50 hover:border-foreground/30 hover:bg-surface"
-                    }`}
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-xs font-bold text-accent">
-                        Capa {layer.step}
+        {/* CONTENEDOR CON ANIMACIÓN DE TRANSICIÓN */}
+        <div className="mt-12">
+          <AnimatePresence mode="wait">
+            {/* CONTENIDO DE LA PESTAÑA 1: VELOCIDAD & EDGE */}
+            {activeTab === "performance" && (
+              <motion.div
+                key="tab-performance"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                className="grid grid-cols-1 gap-6 md:grid-cols-12"
+              >
+                {/* Card Lighthouse Score */}
+                <div className="rounded-2xl border border-border bg-surface p-6 md:p-8 md:col-span-7 flex flex-col justify-between shadow-lg">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-emerald-500/10 text-emerald-400">
+                        <Gauge size={18} />
                       </span>
-                      <Icon size={16} className={isSelected ? "text-accent" : "text-muted"} />
+                      <span className="font-mono text-xs uppercase tracking-widest text-muted">
+                        Google Lighthouse
+                      </span>
                     </div>
-
-                    <h4 className="mt-2.5 text-xs font-semibold text-foreground">
-                      {layer.name}
-                    </h4>
-
-                    <p className="mt-1 font-mono text-[10px] text-muted truncate">
-                      {layer.tech}
-                    </p>
-
-                    {isSelected && (
-                      <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 h-1 w-8 rounded-full bg-accent" />
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-
-            {/* Detalle Expandido de la Capa */}
-            <div className="rounded-2xl border border-border bg-surface p-6 md:p-8">
-              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between border-b border-border/80 pb-5">
-                <div className="flex items-center gap-3.5">
-                  <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/10 text-accent shrink-0">
-                    <LayerIcon size={24} />
-                  </div>
-                  <div>
-                    <span className="font-mono text-xs text-accent uppercase font-semibold">
-                      Capa {currentLayer.step} — {currentLayer.tech}
+                    <span className="rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-0.5 font-mono text-xs font-semibold text-emerald-400">
+                      100 / 100 Score
                     </span>
-                    <h3 className="display mt-0.5 text-2xl text-foreground">
-                      {currentLayer.name}
-                    </h3>
+                  </div>
+
+                  <div className="my-6 grid grid-cols-2 gap-3 sm:grid-cols-4">
+                    {[
+                      { label: "Performance", score: "100" },
+                      { label: "Accessibility", score: "100" },
+                      { label: "Best Practices", score: "100" },
+                      { label: "SEO Score", score: "100" },
+                    ].map((item) => (
+                      <div
+                        key={item.label}
+                        className="rounded-xl border border-border/80 bg-background/60 p-3 text-center"
+                      >
+                        <span className="display text-2xl font-bold text-emerald-400">
+                          {item.score}
+                        </span>
+                        <p className="mt-1 font-mono text-[10px] text-muted">
+                          {item.label}
+                        </p>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="border-t border-border/60 pt-4 flex flex-wrap items-center justify-between gap-3 text-xs font-mono text-muted">
+                    <span>First Contentful Paint: <strong className="text-foreground">0.4s</strong></span>
+                    <span>Largest Contentful Paint: <strong className="text-foreground">0.7s</strong></span>
+                    <span>CLS: <strong className="text-foreground">0.00</strong></span>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-1.5 text-xs text-emerald-400 font-mono">
-                  <ShieldCheck size={15} />
-                  <span>{currentLayer.security}</span>
+                {/* Card Edge Radar */}
+                <div className="rounded-2xl border border-border bg-surface p-6 md:p-8 md:col-span-5 flex flex-col justify-between shadow-lg">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-2.5">
+                      <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-accent/10 text-accent">
+                        <Globe2 size={18} />
+                      </span>
+                      <span className="font-mono text-xs uppercase tracking-widest text-muted">
+                        Red Perimetral Vercel
+                      </span>
+                    </div>
+                    <span className="font-mono text-xs text-muted">300+ PoPs</span>
+                  </div>
+
+                  <div className="my-5 space-y-2.5">
+                    {[
+                      { city: "Buenos Aires (eze1)", latency: "11 ms" },
+                      { city: "São Paulo (gru1)", latency: "24 ms" },
+                      { city: "Washington D.C. (iad1)", latency: "82 ms" },
+                      { city: "Frankfurt (fra1)", latency: "138 ms" },
+                    ].map((node) => (
+                      <div
+                        key={node.city}
+                        className="flex items-center justify-between rounded-lg border border-border/60 bg-background/50 px-3 py-1.5 text-xs"
+                      >
+                        <span className="font-mono text-muted">{node.city}</span>
+                        <div className="flex items-center gap-2">
+                          <span className="font-mono font-bold text-foreground">{node.latency}</span>
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <p className="text-xs text-muted leading-relaxed">
+                    Distribución en los bordes para una respuesta instantánea sin importar dónde esté tu cliente.
+                  </p>
                 </div>
-              </div>
 
-              <div className="mt-6 grid grid-cols-1 gap-3.5 md:grid-cols-3">
-                {currentLayer.specs.map((spec, i) => (
-                  <div
-                    key={i}
-                    className="rounded-xl border border-border/80 bg-background/60 p-4"
-                  >
-                    <div className="flex items-start gap-2.5">
-                      <CheckCircle2 size={15} className="text-accent shrink-0 mt-0.5" />
-                      <p className="text-xs leading-relaxed text-muted">
-                        {spec}
-                      </p>
+                {/* Card Terminal de Código */}
+                <div className="rounded-2xl border border-border bg-[#0e0e11] p-6 md:p-8 md:col-span-12 shadow-xl">
+                  <div className="flex flex-wrap items-center justify-between gap-4 border-b border-border/60 pb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="flex gap-1.5">
+                        <span className="h-3 w-3 rounded-full bg-[#ff5f56]" />
+                        <span className="h-3 w-3 rounded-full bg-[#ffbd2e]" />
+                        <span className="h-3 w-3 rounded-full bg-[#27c93f]" />
+                      </div>
+                      <span className="font-mono text-xs text-muted">
+                        architecture-preview.ts
+                      </span>
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          playClick();
+                          setCodeTab("action");
+                        }}
+                        className={`rounded-lg px-3 py-1 font-mono text-xs transition-colors ${
+                          codeTab === "action"
+                            ? "bg-accent text-background font-bold"
+                            : "bg-surface text-muted hover:text-foreground"
+                        }`}
+                      >
+                        Server Action
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          playClick();
+                          setCodeTab("query");
+                        }}
+                        className={`rounded-lg px-3 py-1 font-mono text-xs transition-colors ${
+                          codeTab === "query"
+                            ? "bg-accent text-background font-bold"
+                            : "bg-surface text-muted hover:text-foreground"
+                        }`}
+                      >
+                        Edge Cache SWR
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={copyCode}
+                        className="focus-ring inline-flex items-center gap-1.5 rounded-lg border border-border bg-surface px-3 py-1 font-mono text-xs text-muted hover:text-foreground transition-colors ml-2"
+                      >
+                        {copiedCode ? <Check size={12} className="text-emerald-400" /> : <Copy size={12} />}
+                        <span>{copiedCode ? "Copiado" : "Copiar"}</span>
+                      </button>
                     </div>
                   </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
 
-        {/* CONTENIDO DE LA PESTAÑA 3: SE7EN VS AGENCIAS */}
-        {activeTab === "comparison" && (
-          <div className="mt-12 overflow-hidden rounded-2xl border border-border bg-surface">
-            <div className="grid grid-cols-1 md:grid-cols-12 border-b border-border bg-surface-2/60 font-mono text-xs">
-              <div className="p-4 md:col-span-4 text-muted uppercase tracking-wider font-semibold">
-                Criterio de Calidad
-              </div>
-              <div className="p-4 md:col-span-4 border-t md:border-t-0 md:border-l border-border bg-accent/5 text-accent font-bold flex items-center gap-2">
-                <Sparkles size={14} />
-                <span>Se7en Studio (Next.js 16)</span>
-              </div>
-              <div className="p-4 md:col-span-4 border-t md:border-t-0 md:border-l border-border text-muted">
-                <span>Agencias / WordPress / Plantillas</span>
-              </div>
-            </div>
-
-            <div className="divide-y divide-border">
-              {comparisonMetrics.map((row) => (
-                <div
-                  key={row.aspect}
-                  className="grid grid-cols-1 md:grid-cols-12 hover:bg-surface-2/40 transition-colors"
-                >
-                  <div className="p-4 md:col-span-4 flex items-center font-medium text-xs text-foreground">
-                    {row.aspect}
-                  </div>
-
-                  <div className="p-4 md:col-span-4 md:border-l border-border bg-accent/[0.02]">
-                    <div className="flex items-start gap-2.5">
-                      <CheckCircle2 size={16} className="text-accent shrink-0 mt-0.5" />
-                      <p className="text-xs leading-relaxed text-foreground font-medium">
-                        {row.se7en}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="p-4 md:col-span-4 md:border-l border-border">
-                    <div className="flex items-start gap-2.5">
-                      <XCircle size={16} className="text-red-400/80 shrink-0 mt-0.5" />
-                      <p className="text-xs leading-relaxed text-muted">
-                        {row.traditional}
-                      </p>
-                    </div>
+                  <div className="mt-4 overflow-x-auto font-mono text-xs leading-relaxed text-[#eaeaea]">
+                    <pre className="p-2">
+                      <code>{codeSnippets[codeTab]}</code>
+                    </pre>
                   </div>
                 </div>
-              ))}
-            </div>
-          </div>
-        )}
+              </motion.div>
+            )}
+
+            {/* CONTENIDO DE LA PESTAÑA 2: BLUEPRINT DE ARQUITECTURA */}
+            {activeTab === "blueprint" && (
+              <motion.div
+                key="tab-blueprint"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                className="space-y-6"
+              >
+                <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
+                  {architectureLayers.map((layer, idx) => {
+                    const isSelected = selectedLayerIndex === idx;
+                    const Icon = layer.icon;
+
+                    return (
+                      <button
+                        key={layer.step}
+                        type="button"
+                        onClick={() => {
+                          playClick();
+                          setSelectedLayerIndex(idx);
+                        }}
+                        className={`focus-ring relative text-left rounded-2xl border p-4 transition-all duration-300 ${
+                          isSelected
+                            ? "border-accent bg-surface shadow-[0_0_20px_rgba(255,77,46,0.18)]"
+                            : "border-border bg-surface/50 hover:border-foreground/30 hover:bg-surface"
+                        }`}
+                      >
+                        <div className="flex items-center justify-between">
+                          <span className="font-mono text-xs font-bold text-accent">
+                            Capa {layer.step}
+                          </span>
+                          <Icon size={16} className={isSelected ? "text-accent" : "text-muted"} />
+                        </div>
+
+                        <h4 className="mt-2.5 text-xs font-semibold text-foreground">
+                          {layer.name}
+                        </h4>
+
+                        <p className="mt-1 font-mono text-[10px] text-muted truncate">
+                          {layer.tech}
+                        </p>
+
+                        {isSelected && (
+                          <div className="absolute -bottom-2 left-1/2 -translate-x-1/2 h-1 w-8 rounded-full bg-accent" />
+                        )}
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Detalle Expandido de la Capa */}
+                <div className="rounded-2xl border border-border bg-surface p-6 md:p-8 shadow-lg">
+                  <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between border-b border-border/80 pb-5">
+                    <div className="flex items-center gap-3.5">
+                      <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/10 text-accent shrink-0">
+                        <LayerIcon size={24} />
+                      </div>
+                      <div>
+                        <span className="font-mono text-xs text-accent uppercase font-semibold">
+                          Capa {currentLayer.step} — {currentLayer.tech}
+                        </span>
+                        <h3 className="display mt-0.5 text-2xl text-foreground">
+                          {currentLayer.name}
+                        </h3>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3.5 py-1.5 text-xs text-emerald-400 font-mono">
+                      <ShieldCheck size={15} />
+                      <span>{currentLayer.security}</span>
+                    </div>
+                  </div>
+
+                  <div className="mt-6 grid grid-cols-1 gap-3.5 md:grid-cols-3">
+                    {currentLayer.specs.map((spec, i) => (
+                      <div
+                        key={i}
+                        className="rounded-xl border border-border/80 bg-background/60 p-4"
+                      >
+                        <div className="flex items-start gap-2.5">
+                          <CheckCircle2 size={15} className="text-accent shrink-0 mt-0.5" />
+                          <p className="text-xs leading-relaxed text-muted">
+                            {spec}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* CONTENIDO DE LA PESTAÑA 3: SE7EN VS AGENCIAS */}
+            {activeTab === "comparison" && (
+              <motion.div
+                key="tab-comparison"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+                className="overflow-hidden rounded-2xl border border-border bg-surface shadow-lg"
+              >
+                <div className="grid grid-cols-1 md:grid-cols-12 border-b border-border bg-surface-2/60 font-mono text-xs">
+                  <div className="p-4 md:col-span-4 text-muted uppercase tracking-wider font-semibold">
+                    Criterio de Calidad
+                  </div>
+                  <div className="p-4 md:col-span-4 border-t md:border-t-0 md:border-l border-border bg-accent/5 text-accent font-bold flex items-center gap-2">
+                    <Sparkles size={14} />
+                    <span>Se7en Studio (Next.js 16)</span>
+                  </div>
+                  <div className="p-4 md:col-span-4 border-t md:border-t-0 md:border-l border-border text-muted">
+                    <span>Agencias / WordPress / Plantillas</span>
+                  </div>
+                </div>
+
+                <div className="divide-y divide-border">
+                  {comparisonMetrics.map((row) => (
+                    <div
+                      key={row.aspect}
+                      className="grid grid-cols-1 md:grid-cols-12 hover:bg-surface-2/40 transition-colors"
+                    >
+                      <div className="p-4 md:col-span-4 flex items-center font-medium text-xs text-foreground">
+                        {row.aspect}
+                      </div>
+
+                      <div className="p-4 md:col-span-4 md:border-l border-border bg-accent/[0.02]">
+                        <div className="flex items-start gap-2.5">
+                          <CheckCircle2 size={16} className="text-accent shrink-0 mt-0.5" />
+                          <p className="text-xs leading-relaxed text-foreground font-medium">
+                            {row.se7en}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="p-4 md:col-span-4 md:border-l border-border">
+                        <div className="flex items-start gap-2.5">
+                          <XCircle size={16} className="text-red-400/80 shrink-0 mt-0.5" />
+                          <p className="text-xs leading-relaxed text-muted">
+                            {row.traditional}
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </div>
       </Container>
     </section>
   );
