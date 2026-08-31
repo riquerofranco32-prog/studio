@@ -94,25 +94,25 @@ export const projects: Project[] = [
   {
     slug: "apex-ai",
     number: "04",
-    name: "Apex AI",
-    category: "Software & Inteligencia Artificial",
+    name: "Apex Performance",
+    category: "Software & Performance",
     categoryGroup: "systems",
     year: "2025",
     shortDescription:
-      "Un sitio web para un producto de tecnología e inteligencia artificial.",
+      "Un sitio web enfocado en alto rendimiento, tecnología y conversión.",
     description:
-      "Apex AI es un producto de tecnología con inteligencia artificial — diseñamos y construimos su presencia web.",
+      "Apex Performance es una plataforma de tecnología y alto rendimiento — diseñamos y construimos su presencia web.",
     impactMetric: "0 fricción técnica",
     challenge:
-      "Comunicar con claridad el valor de un producto de IA a una audiencia técnica.",
+      "Comunicar con claridad el valor de un producto de tecnología a una audiencia exigente.",
     approach:
-      "Construimos un sitio enfocado en comunicar el producto con claridad técnica, sin la fricción de una demo o un llamado de ventas previo.",
+      "Construimos un sitio enfocado en comunicar la propuesta de valor con claridad técnica, sin la fricción de una demo o un llamado de ventas previo.",
     design:
       "Una interfaz oscura y minimalista, con la jerarquía tipográfica por delante de cualquier elemento decorativo.",
-    technology: ["Next.js", "IA/APIs"],
+    technology: ["Next.js", "TypeScript", "Vercel"],
     outcome:
-      "Sitio en producción, presentando el producto a una audiencia técnica.",
-    url: "https://apex-ai-arg.netlify.app/",
+      "Sitio en producción, presentando el producto con tiempos de carga instantáneos.",
+    url: "https://apexperformance.com.ar/",
     image: "/projects/apex-ai.jpg",
     featured: false,
     order: 4,
