@@ -35,12 +35,24 @@ export function Navbar() {
   }, []);
 
   useEffect(() => {
-    if (pathname === "/work") {
+    if (pathname === "/work" || pathname.startsWith("/work/")) {
       setActive("work");
       return;
     }
     if (pathname === "/services") {
       setActive("services");
+      return;
+    }
+    if (pathname === "/tech") {
+      setActive("tech");
+      return;
+    }
+    if (pathname === "/pricing") {
+      setActive("pricing");
+      return;
+    }
+    if (pathname === "/blog" || pathname.startsWith("/blog/")) {
+      setActive("blog");
       return;
     }
 
