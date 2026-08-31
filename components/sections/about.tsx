@@ -6,11 +6,11 @@ import { team } from "@/data/team";
 
 export function About() {
   return (
-    <section id="about" className="border-t border-border py-24 md:py-32">
+    <section id="about" className="border-t border-border py-20 md:py-28">
       <Container>
         <SectionHeading
-          kicker="Sobre el Estudio"
-          title="Equipo compacto. Foco obsesivo en el producto."
+          kicker="Equipo Senior"
+          title="Foco de fundadores. Cero intermediarios."
         />
 
         <div className="mt-12 grid grid-cols-1 gap-10 md:mt-16 md:grid-cols-12 md:gap-x-8 lg:gap-x-16">

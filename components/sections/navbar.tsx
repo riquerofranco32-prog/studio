@@ -11,12 +11,11 @@ import { SITE } from "@/data/site";
 import { useSoundFx } from "@/components/providers/sound-provider";
 
 const links = [
-  { href: "/work", id: "work", label: "Portafolio" },
+  { href: "/work", id: "work", label: "Casos" },
   { href: "/services", id: "services", label: "Servicios" },
+  { href: "/tech", id: "tech", label: "Ingeniería" },
   { href: "/pricing", id: "pricing", label: "Precios" },
-  { href: "/tech", id: "tech", label: "Radar Tech" },
   { href: "/blog", id: "blog", label: "Blog" },
-  { href: "/roi", id: "roi", label: "ROI" },
 ];
 
 export function Navbar() {

@@ -10,11 +10,11 @@ export function Testimonials() {
   if (!testimonials || testimonials.length === 0) return null;
 
   return (
-    <section className="border-t border-border py-24 md:py-32">
+    <section className="border-t border-border py-20 md:py-28">
       <Container>
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <SectionHeading
-            kicker="Resultados & Confianza"
+            kicker="Testimonios & Clientes"
             title="Lo que dicen los fundadores."
             subtitle="Experiencias reales de clientes que confiaron en Se7en para diseñar, programar y lanzar sus productos clave."
           />

@@ -128,7 +128,7 @@ export function Hero() {
               className="hero-line block"
               style={{ animationDelay: SEQUENCE.line2 }}
             >
-              experiencias digitales
+              software & craft
             </span>
           </span>
           <span className="line-mask block">
@@ -138,7 +138,7 @@ export function Hero() {
             >
               para marcas que{" "}
               <span className="text-accent drop-shadow-[0_0_25px_rgba(255,77,46,0.35)]">
-                avanzan.
+                escalan.
               </span>
             </span>
           </span>
@@ -149,7 +149,7 @@ export function Hero() {
             className="hero-rise max-w-md text-lg leading-relaxed text-muted md:text-xl"
             style={{ animationDelay: SEQUENCE.sub }}
           >
-            Estrategia, diseño atómico y arquitectura de software — desde la primera idea hasta el producto final listo para escalar.
+            Estrategia de producto, diseño de sistemas y arquitectura de ingeniería en Next.js — de 0 a producción en 2 a 3 semanas.
           </p>
 
           <div

@@ -107,13 +107,13 @@ export function DeviceShowcase() {
   }
 
   return (
-    <section className="border-t border-border py-24 md:py-32 overflow-hidden">
+    <section className="border-t border-border py-20 md:py-28 overflow-hidden">
       <Container>
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <SectionHeading
-            kicker="Experiencia Interactiva"
-            title="Diseño y código en cada viewport."
-            subtitle="Explorá nuestros proyectos reales con simulador de dispositivos y puntos de inspección técnica."
+            kicker="Inspección de Viewports"
+            title="Diseño y código en cada pantalla."
+            subtitle="Explorá nuestros productos en producción con simulador de dispositivos y detalle de ingeniería."
           />
 
           {/* Selector de Dispositivo Desktop / Mobile */}

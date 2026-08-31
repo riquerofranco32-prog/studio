@@ -15,7 +15,7 @@ const categories: CategoryOption[] = [
   { id: "all", label: "Todos", count: projects.length },
   {
     id: "saas",
-    label: "SaaS & Plataformas",
+    label: "SaaS & Apps",
     count: projects.filter((p) => p.categoryGroup === "saas").length,
   },
   {
@@ -24,13 +24,13 @@ const categories: CategoryOption[] = [
     count: projects.filter((p) => p.categoryGroup === "ecommerce").length,
   },
   {
-    id: "ai",
-    label: "IA & Climate",
-    count: projects.filter((p) => p.categoryGroup === "ai").length,
+    id: "systems",
+    label: "Software & IA",
+    count: projects.filter((p) => p.categoryGroup === "systems").length,
   },
   {
     id: "web",
-    label: "Web & Marcas",
+    label: "Web Corporativa",
     count: projects.filter((p) => p.categoryGroup === "web").length,
   },
 ];

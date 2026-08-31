@@ -39,7 +39,7 @@ export function FAQ() {
   });
 
   return (
-    <section id="faq" className="border-t border-border py-24 md:py-32">
+    <section id="faq" className="border-t border-border py-20 md:py-28">
       <Container>
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-4">

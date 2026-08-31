@@ -5,12 +5,12 @@ import { services } from "@/data/services";
 
 export function Services() {
   return (
-    <section id="services" className="border-t border-border py-24 md:py-32">
+    <section id="services" className="border-t border-border py-20 md:py-28">
       <Container>
         <SectionHeading
-          kicker="Servicios & Capacidades"
-          title="De la idea a la interfaz."
-          subtitle="Cuatro modalidades de trabajo diseñadas para impulsar el crecimiento de tu producto digital."
+          kicker="Capacidades & Servicios"
+          title="De la visión a la arquitectura final."
+          subtitle="Cuatro modalidades de desarrollo estructuradas para escalar productos digitales con velocidad y precisión."
         />
 
         <div className="mt-16 border-t border-border">

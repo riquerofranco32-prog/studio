@@ -1,5 +1,8 @@
 "use client";
 
+import { motion } from "framer-motion";
+import { useSoundFx } from "@/components/providers/sound-provider";
+
 export interface CategoryOption {
   id: string;
   label: string;
@@ -15,6 +18,8 @@ export function CategoryFilter({
   selected: string;
   onSelect: (id: string) => void;
 }) {
+  const { playClick } = useSoundFx();
+
   return (
     <div
       role="tablist"
@@ -29,10 +34,13 @@ export function CategoryFilter({
             key={cat.id}
             role="tab"
             aria-selected={isSelected}
-            onClick={() => onSelect(cat.id)}
+            onClick={() => {
+              playClick();
+              onSelect(cat.id);
+            }}
             className={`focus-ring relative inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-mono tracking-wide transition-all duration-300 ${
               isSelected
-                ? "border-accent bg-accent text-background font-medium shadow-[0_0_20px_rgba(255,77,46,0.3)]"
+                ? "border-accent bg-accent text-background font-semibold shadow-[0_0_20px_rgba(255,77,46,0.3)]"
                 : "border border-border bg-surface text-muted hover:border-foreground/30 hover:text-foreground"
             }`}
           >
@@ -41,7 +49,7 @@ export function CategoryFilter({
               <span
                 className={`inline-flex h-4 min-w-4 items-center justify-center rounded-full px-1 text-[10px] ${
                   isSelected
-                    ? "bg-background/25 text-background"
+                    ? "bg-background/25 text-background font-bold"
                     : "bg-surface-2 text-muted"
                 }`}
               >

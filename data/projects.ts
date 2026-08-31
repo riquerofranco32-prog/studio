@@ -64,8 +64,8 @@ export const projects: Project[] = [
     slug: "sentinel",
     number: "03",
     name: "Sentinel",
-    category: "Climate Tech / IA",
-    categoryGroup: "ai",
+    category: "Climate Tech & Datos Satelitales",
+    categoryGroup: "systems",
     year: "2025",
     shortDescription:
       "Una plataforma de tecnología climática que combina datos satelitales de incendios con análisis de riesgo impulsado por IA.",
@@ -95,8 +95,8 @@ export const projects: Project[] = [
     slug: "apex-ai",
     number: "04",
     name: "Apex AI",
-    category: "Inteligencia Artificial",
-    categoryGroup: "ai",
+    category: "Software & Inteligencia Artificial",
+    categoryGroup: "systems",
     year: "2025",
     shortDescription:
       "Un sitio web para un producto de tecnología e inteligencia artificial.",
