@@ -10,10 +10,10 @@ import { projects } from "@/data/projects";
 
 const categories = [
   { id: "all", label: "Todos los proyectos" },
-  { id: "saas", label: "SaaS & Plataformas" },
+  { id: "saas", label: "SaaS & Apps" },
   { id: "ecommerce", label: "E-Commerce" },
-  { id: "ai", label: "IA & Climate Tech" },
-  { id: "web", label: "Sitios Web & Marca" },
+  { id: "systems", label: "Software & IA" },
+  { id: "web", label: "Web Corporativa" },
 ];
 
 export function WorkArchiveClient() {

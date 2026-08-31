@@ -125,7 +125,7 @@ export function CommandPalette() {
         keywords: ["cotizador", "precio", "estimar", "costo", "presupuesto"],
         action: () => {
           setOpen(false);
-          router.push("/#estimator");
+          router.push("/pricing");
         },
       },
       {
