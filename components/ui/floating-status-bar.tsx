@@ -52,7 +52,7 @@ export function FloatingStatusBar() {
           animate={{ opacity: 1, y: 0, scale: 1 }}
           exit={{ opacity: 0, y: 20, scale: 0.95 }}
           transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-          className="fixed bottom-6 right-6 z-40 hidden sm:flex items-center gap-2 rounded-full border border-border/80 bg-surface/90 p-1.5 pl-4 shadow-2xl backdrop-blur-md"
+          className="fixed bottom-6 left-1/2 -translate-x-1/2 z-40 hidden sm:flex items-center gap-2 rounded-full border border-border/80 bg-surface/90 p-1.5 pl-4 shadow-2xl backdrop-blur-md"
           role="status"
           aria-live="polite"
         >
