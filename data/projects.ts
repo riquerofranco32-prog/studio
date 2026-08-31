@@ -50,7 +50,7 @@ export const projects: Project[] = [
     technology: ["Next.js", "TypeScript", "Supabase", "Vercel"],
     outcome:
       "Tienda en producción, con stock y catálogo actualizados en tiempo real.",
-    url: "https://ponelapava.vercel.app/",
+    url: "https://ponelapavayerbas.com/",
     image: "/projects/pone-la-pava.jpg",
     video: {
       mp4: "/projects/videos/pone-la-pava.mp4",
