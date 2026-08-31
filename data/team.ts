@@ -1,21 +1,19 @@
 import { TeamMember, Testimonial } from "@/types";
 
-// Los retratos son 600x600 aplanados sobre el fondo del sitio — el marco del roster
-// es circular, así que se recortan ahí.
 export const team: TeamMember[] = [
   {
     id: "founder-01",
     name: "Franco Riquero",
-    role: "Fundador · Desarrollo",
-    bio: "Desarrollador full-stack. Construye cada producto del estudio de punta a punta — de Takefyy a Sentinel y Pravilo — con Next.js, TypeScript y Supabase.",
+    role: "Fundador · Desarrollo & Arquitectura",
+    bio: "Desarrollador full-stack e ingeniero de software. Construye cada producto digital del estudio de punta a punta con Next.js 16, TypeScript, Server Actions y Supabase PostgreSQL.",
     imageUrl: "/team/franco-riquero.jpg",
     linkedin: "https://www.linkedin.com/in/franco-riquero-117492355/",
   },
   {
     id: "founder-02",
     name: "Federico Martín",
-    role: "Fundador · Diseño",
-    bio: "Diseñador de producto. Traduce identidades de marca en experiencias digitales claras, cuidadas en cada detalle de interacción y jerarquía visual.",
+    role: "Fundador · Dirección de Diseño & UI/UX",
+    bio: "Diseñador de producto y sistemas visuales. Traduce identidades de marca en interfaces digitales de altísimo impacto visual, cuidando cada micro-interacción, tipografía y jerarquía estética.",
     imageUrl: "/team/federico-martin.jpg",
     linkedin: "https://www.linkedin.com/in/federico-martin-632223231/",
   },
