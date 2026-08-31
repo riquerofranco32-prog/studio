@@ -86,13 +86,12 @@ export function renderSocialCard() {
               lineHeight: 1.08,
             }}
           >
-            <div style={{ display: "flex" }}>Construimos experiencias</div>
-            <div style={{ display: "flex" }}>digitales para marcas que</div>
-            <div style={{ display: "flex", color: ACCENT }}>avanzan.</div>
+            <div style={{ display: "flex" }}>Construimos software &</div>
+            <div style={{ display: "flex" }}>craft para marcas que</div>
+            <div style={{ display: "flex", color: ACCENT }}>escalan.</div>
           </div>
-          <div style={{ fontSize: 30, color: MUTED, maxWidth: 720 }}>
-            Estrategia, diseño y tecnología — desde la primera idea hasta el
-            producto final.
+          <div style={{ fontSize: 28, color: MUTED, maxWidth: 780 }}>
+            Estrategia de producto, diseño de sistemas y arquitectura en Next.js.
           </div>
         </div>
 
@@ -103,12 +102,12 @@ export function renderSocialCard() {
             alignItems: "center",
             borderTop: `1px solid ${BORDER}`,
             paddingTop: 28,
-            fontSize: 24,
+            fontSize: 22,
             color: MUTED,
           }}
         >
           <div style={{ display: "flex" }}>
-            Producto digital · Tecnología creativa
+            SaaS · E-Commerce · Sistemas & IA · Patagonia AR
           </div>
           <div style={{ display: "flex", color: FOREGROUND }}>{SITE.email}</div>
         </div>
