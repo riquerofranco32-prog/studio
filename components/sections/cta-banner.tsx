@@ -1,12 +1,29 @@
 "use client";
 
 import { ArrowRight, MessageCircle, Sparkles, Clock, ShieldCheck, Zap } from "lucide-react";
+import { useEffect, useState } from "react";
 import { Container } from "@/components/ui/container";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Magnetic } from "@/components/ui/magnetic";
 import { SITE } from "@/data/site";
 
+function getAvailabilityMonth(): string {
+  const now = new Date();
+  const day = now.getDate();
+  const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  const monthNames = [
+    "Enero","Febrero","Marzo","Abril","Mayo","Junio",
+    "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre",
+  ];
+  const targetMonth = day > daysInMonth * 0.8 ? now.getMonth() + 1 : now.getMonth();
+  const year = now.getFullYear() + (targetMonth > 11 ? 1 : 0);
+  return `${monthNames[targetMonth % 12]} ${year}`;
+}
+
 export function CtaBanner() {
+  const [month, setMonth] = useState("");
+  useEffect(() => { setMonth(getAvailabilityMonth()); }, []);
+
   const whatsappUrl = `${SITE.whatsapp}?text=${encodeURIComponent(
     "Hola Se7en Studio! Me gustaría consultarles por un nuevo proyecto.",
   )}`;
@@ -32,7 +49,7 @@ export function CtaBanner() {
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                 <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
               </span>
-              <span>Disponibilidad Q2 2026: 2 cupos abiertos</span>
+              <span>Disponibilidad {month}: 2 cupos abiertos</span>
             </div>
 
             <h2 className="display mt-8 text-4xl text-foreground sm:text-5xl md:text-6xl">

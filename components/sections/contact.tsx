@@ -106,14 +106,35 @@ export function Contact() {
     `Hola Se7en Studio! Me gustaría consultarles por un proyecto de ${selectedType}.`,
   )}`;
 
+  function getAvailabilityMonth(): string {
+    const now = new Date();
+    const day = now.getDate();
+    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const monthNames = [
+      "Enero","Febrero","Marzo","Abril","Mayo","Junio",
+      "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre",
+    ];
+    const targetMonth = day > daysInMonth * 0.8 ? now.getMonth() + 1 : now.getMonth();
+    const year = now.getFullYear() + (targetMonth > 11 ? 1 : 0);
+    return `${monthNames[targetMonth % 12]} ${year}`;
+  }
+
+  const currentMonth = getAvailabilityMonth();
+
   return (
-    <section id="contact" className="border-t border-border py-24 md:py-32">
+    <section id="contact" className="border-t border-border py-20 md:py-28">
       <Container>
         <div className="grid grid-cols-1 gap-16 md:grid-cols-12 md:gap-x-10 lg:gap-x-20">
           <div className="md:col-span-5">
-            <p className="mb-6 font-mono text-xs tracking-widest text-muted uppercase">
-              Iniciar Conversación
-            </p>
+            <div className="mb-6 flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 font-mono text-xs text-emerald-400">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+                </span>
+                <span>{currentMonth}: 2 cupos abiertos</span>
+              </span>
+            </div>
 
             <h2 className="display text-[2.6rem] text-foreground sm:text-5xl md:text-[3.4rem] lg:text-[4rem]">
               <RevealText>¿Tenés una idea?</RevealText>
