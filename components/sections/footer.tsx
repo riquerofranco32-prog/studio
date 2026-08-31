@@ -154,8 +154,8 @@ export function Footer() {
                     </Link>
                   </li>
                   <li>
-                    <Link href="/#estimator" className="text-muted hover:text-foreground transition-colors">
-                      Cotizador en Vivo
+                    <Link href="/pricing" className="text-muted hover:text-foreground transition-colors">
+                      Configurador de Precios
                     </Link>
                   </li>
                   <li>

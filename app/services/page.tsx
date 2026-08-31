@@ -218,7 +218,7 @@ export default function ServicesPage() {
 
                     <div className="mt-6 pt-4 border-t border-border flex items-center justify-between">
                       <Link
-                        href="/#estimator"
+                        href="/pricing"
                         className="focus-ring inline-flex items-center gap-1.5 text-xs font-mono text-accent hover:underline"
                       >
                         <span>Calcular presupuesto</span>
