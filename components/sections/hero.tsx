@@ -2,14 +2,13 @@
 
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, ArrowUpRight, Star } from "lucide-react";
+import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Marquee } from "@/components/ui/marquee";
 import { Magnetic } from "@/components/ui/magnetic";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { projects } from "@/data/projects";
-import { LiveClock } from "@/components/ui/live-clock";
 
 const SEQUENCE = {
   kicker: "0.05s",
@@ -68,18 +67,7 @@ export function Hero() {
             </span>
             <span className="text-foreground font-medium">Estudio Abierto</span>
             <span className="text-border">·</span>
-            <span className="hidden sm:inline">Patagonia AR</span>
-            <LiveClock className="text-foreground" />
-          </div>
-
-          <div className="hidden items-center gap-1.5 rounded-full border border-accent/20 bg-accent/5 px-3 py-1 font-mono text-xs text-muted sm:inline-flex">
-            <div className="flex text-amber-400">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} size={11} className="fill-amber-400" />
-              ))}
-            </div>
-            <span className="text-foreground font-medium">5.0</span>
-            <span className="text-muted">· 6+ Productos en Producción</span>
+            <span>Patagonia AR</span>
           </div>
         </div>
 
@@ -105,10 +93,7 @@ export function Hero() {
               className="hero-line block"
               style={{ animationDelay: SEQUENCE.line3 }}
             >
-              para marcas que{" "}
-              <span className="text-accent drop-shadow-[0_0_25px_rgba(255,77,46,0.35)]">
-                escalan.
-              </span>
+              para marcas que <span className="text-accent">escalan.</span>
             </span>
           </span>
         </h1>
@@ -118,7 +103,8 @@ export function Hero() {
             className="hero-rise max-w-md text-lg leading-relaxed text-muted md:text-xl"
             style={{ animationDelay: SEQUENCE.sub }}
           >
-            Estrategia de producto, diseño de sistemas y arquitectura de ingeniería en Next.js 16 — de 0 a producción en 2 a 3 semanas.
+            Estrategia de producto, diseño de sistemas y arquitectura de
+            ingeniería en Next.js 16. De 0 a producción en 2 a 3 semanas.
           </p>
 
           <div
@@ -159,7 +145,9 @@ export function Hero() {
               className="flex items-center gap-8 pr-8 text-lg font-medium tracking-tight text-muted transition-colors hover:text-foreground md:text-xl"
             >
               <span>{project.name}</span>
-              <span className="font-mono text-xs text-accent">[{project.category.split("/")[0].trim()}]</span>
+              <span className="font-mono text-xs text-accent">
+                [{project.category.split("/")[0].trim()}]
+              </span>
               <span aria-hidden className="text-accent/40 text-xs">
                 ✱
               </span>

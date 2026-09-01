@@ -5,16 +5,17 @@ export function SectionHeading({
   title,
   subtitle,
 }: {
-  kicker: string;
+  kicker?: string;
   title: string;
   subtitle?: string;
 }) {
   return (
     <div className="max-w-2xl">
-      <p className="mb-5 flex items-center gap-2.5 font-mono text-xs tracking-widest text-muted uppercase">
-        <span aria-hidden className="h-1.5 w-1.5 rounded-full bg-accent" />
-        {kicker}
-      </p>
+      {kicker && (
+        <p className="mb-5 font-mono text-xs tracking-widest text-muted uppercase">
+          {kicker}
+        </p>
+      )}
       {/* El tamaño va en el <h2> y no dentro de <RevealText> a propósito: la
           máscara compensa su padding con un margen negativo en em, y ese em
           tiene que resolver contra el cuerpo del titular. Con las clases

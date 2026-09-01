@@ -8,7 +8,6 @@ export function Services() {
     <section id="services" className="border-t border-border py-20 md:py-28">
       <Container>
         <SectionHeading
-          kicker="Capacidades & Servicios"
           title="De la visión a la arquitectura final."
           subtitle="Cuatro modalidades de desarrollo estructuradas para escalar productos digitales con velocidad y precisión."
         />
@@ -80,7 +79,8 @@ export function Services() {
               ¿Buscás armar una propuesta a medida con tiempos y costos exactos?
             </h4>
             <p className="text-xs text-muted mt-1">
-              Probá nuestro configurador interactivo con soporte de pasarelas de pago, IA y base de datos.
+              Probá nuestro configurador interactivo con soporte de pasarelas de
+              pago, IA y base de datos.
             </p>
           </div>
 

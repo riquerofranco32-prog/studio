@@ -7,7 +7,12 @@ export const services: Service[] = [
     tagline: "Landing pages & Sitios de Marca",
     description:
       "Diseñamos y programamos landing pages inmersivas, sitios corporativos y experiencias interactivas que destacan tu propuesta y elevan la percepción de tu marca.",
-    deliverables: ["Landing pages de alta conversión", "Sitios corporativos", "Motion & Micro-interacciones", "Optimización SEO"],
+    deliverables: [
+      "Landing pages de alta conversión",
+      "Sitios corporativos",
+      "Motion & Micro-interacciones",
+      "Optimización SEO",
+    ],
   },
   {
     number: "02",
@@ -15,7 +20,12 @@ export const services: Service[] = [
     tagline: "Tiendas y Catálogos de Alta Conversión",
     description:
       "Catálogos digitales, sincronización de stock en tiempo real, flujos de checkout directos a WhatsApp o pasarelas de pago y paneles de gestión autoadministrables.",
-    deliverables: ["Catálogos interactivos", "Checkout optimizado", "Panel de administración", "Integración de pagos"],
+    deliverables: [
+      "Catálogos interactivos",
+      "Checkout optimizado",
+      "Panel de administración",
+      "Integración de pagos",
+    ],
   },
   {
     number: "03",
@@ -23,7 +33,12 @@ export const services: Service[] = [
     tagline: "SaaS, Plataformas & Dashboards",
     description:
       "Diseñamos y desarrollamos aplicaciones web completas (SaaS), dashboards analíticos y sistemas a medida pensados para escalar desde el día uno.",
-    deliverables: ["Arquitectura SaaS", "Dashboards y paneles", "Design systems", "Autenticación & Base de datos"],
+    deliverables: [
+      "Arquitectura SaaS",
+      "Dashboards y paneles",
+      "Design systems",
+      "Autenticación & Base de datos",
+    ],
   },
   {
     number: "04",
@@ -31,7 +46,12 @@ export const services: Service[] = [
     tagline: "Automatización & Modelos Inteligentes",
     description:
       "Integración de modelos de lenguaje (LLMs), automatización de procesos internos, pipelines de datos en vivo y APIs personalizadas.",
-    deliverables: ["Integraciones con OpenAI/Anthropic", "APIs a medida", "Procesamiento de datos", "Automatizaciones"],
+    deliverables: [
+      "Integraciones con OpenAI/Anthropic",
+      "APIs a medida",
+      "Procesamiento de datos",
+      "Automatizaciones",
+    ],
   },
 ];
 
@@ -42,7 +62,11 @@ export const process: ProcessStep[] = [
     duration: "Semana 1",
     description:
       "Analizamos tu negocio, modelo de monetización y audiencia. Definimos el alcance exacto, la arquitectura de contenidos y los objetivos clave de conversión.",
-    deliverables: ["Brief estratégico", "Arquitectura de información", "Moodboard visual y referencias"],
+    deliverables: [
+      "Brief estratégico",
+      "Arquitectura de información",
+      "Moodboard visual y referencias",
+    ],
   },
   {
     number: "02",
@@ -50,15 +74,23 @@ export const process: ProcessStep[] = [
     duration: "Semana 2",
     description:
       "Diseñamos la experiencia de usuario (UX) y la dirección de arte (UI). Creamos prototipos interactivos en Figma con estados, interacciones y responsive design.",
-    deliverables: ["Wireframes y flujos de usuario", "Diseño UI desktop y mobile", "Prototipo interactivo navegable"],
+    deliverables: [
+      "Wireframes y flujos de usuario",
+      "Diseño UI desktop y mobile",
+      "Prototipo interactivo navegable",
+    ],
   },
   {
     number: "03",
     title: "Construir & Animar",
-    duration: "Semanas 3–4",
+    duration: "Semanas 3-4",
     description:
       "Escribimos código limpio, robusto y ultrarrápido con Next.js, TypeScript y Tailwind CSS. Implementamos animaciones fluidas a 60fps y conectamos bases de datos.",
-    deliverables: ["Desarrollo frontend & backend", "Animaciones y micro-interacciones", "Entorno de pruebas (Staging) en vivo"],
+    deliverables: [
+      "Desarrollo frontend & backend",
+      "Animaciones y micro-interacciones",
+      "Entorno de pruebas (Staging) en vivo",
+    ],
   },
   {
     number: "04",
@@ -66,7 +98,11 @@ export const process: ProcessStep[] = [
     duration: "Lanzamiento",
     description:
       "Desplegamos en infraestructura global (Vercel/Cloudflare), configuramos dominios, realizamos auditoría de SEO/performance y brindamos soporte post-lanzamiento.",
-    deliverables: ["Auditoría de Core Web Vitals (95+)", "Configuración de analítica y SEO", "30 días de garantía y soporte"],
+    deliverables: [
+      "Auditoría de Core Web Vitals (95+)",
+      "Configuración de analítica y SEO",
+      "30 días de garantía y soporte",
+    ],
   },
 ];
 
@@ -103,7 +139,8 @@ export const techStack: TechStackItem[] = [
   {
     name: "React 19 & TypeScript",
     category: "frontend",
-    description: "Tipado estricto, 0 errores en runtime y arquitectura escalable.",
+    description:
+      "Tipado estricto, 0 errores en runtime y arquitectura escalable.",
     badge: "Core UI",
   },
   {
@@ -115,43 +152,50 @@ export const techStack: TechStackItem[] = [
   {
     name: "Framer Motion & Lenis",
     category: "frontend",
-    description: "Animaciones a 60 FPS aceleradas por hardware y scroll inercial suave.",
+    description:
+      "Animaciones a 60 FPS aceleradas por hardware y scroll inercial suave.",
     badge: "Motion System",
   },
   {
     name: "Supabase (PostgreSQL)",
     category: "backend",
-    description: "Base de datos relacional con RLS, subscripciones Realtime y Auth.",
+    description:
+      "Base de datos relacional con RLS, subscripciones Realtime y Auth.",
     badge: "Database & Auth",
   },
   {
     name: "Vercel Edge Network",
     category: "backend",
-    description: "Distribución global en el Edge con tiempos de respuesta < 50ms.",
+    description:
+      "Distribución global en el Edge con tiempos de respuesta < 50ms.",
     badge: "Cloud Infra",
   },
   {
     name: "OpenAI & Anthropic LLMs",
     category: "ai",
-    description: "Integración de inteligencia artificial conversacional y asistentes.",
+    description:
+      "Integración de inteligencia artificial conversacional y asistentes.",
     badge: "AI Models",
   },
   {
     name: "Pipelines de Datos en Vivo",
     category: "ai",
-    description: "Integración de datos satelitales (NASA), scrapers y APIs externas.",
+    description:
+      "Integración de datos satelitales (NASA), scrapers y APIs externas.",
     badge: "Data Stream",
   },
   {
     name: "Figma Design Systems",
     category: "design",
-    description: "Componentes atómicos, guías de estilo y prototipado interactivo.",
+    description:
+      "Componentes atómicos, guías de estilo y prototipado interactivo.",
     badge: "UI / UX",
   },
   {
     name: "Dirección de Arte & Shaders",
     category: "design",
-    description: "Tipografía de exhibición, Canvas/WebGL sutil y micro-interacciones.",
+    description:
+      "Tipografía de exhibición, Canvas/WebGL sutil y micro-interacciones.",
     badge: "Creative Tech",
   },
 ];

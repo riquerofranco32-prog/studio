@@ -2,7 +2,15 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, HelpCircle, MessageCircle, Layers, Clock, Cpu, ShieldCheck } from "lucide-react";
+import {
+  ChevronDown,
+  HelpCircle,
+  MessageCircle,
+  Layers,
+  Clock,
+  Cpu,
+  ShieldCheck,
+} from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { faqs } from "@/data/faq";
@@ -10,7 +18,11 @@ import { SITE } from "@/data/site";
 
 type FAQCategory = "all" | "pricing" | "tech" | "support" | "process";
 
-const categories: { id: FAQCategory; label: string; icon: React.ComponentType<{ size?: number; className?: string }> }[] = [
+const categories: {
+  id: FAQCategory;
+  label: string;
+  icon: React.ComponentType<{ size?: number; className?: string }>;
+}[] = [
   { id: "all", label: "Todas", icon: Layers },
   { id: "pricing", label: "Tiempos & Inversión", icon: Clock },
   { id: "tech", label: "Stack & Arquitectura", icon: Cpu },
@@ -44,7 +56,6 @@ export function FAQ() {
         <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-16">
           <div className="lg:col-span-4">
             <SectionHeading
-              kicker="Preguntas Frecuentes"
               title="Todo claro antes de empezar."
               subtitle="Resolvemos las dudas más habituales sobre cómo trabajamos, plazos y metodología."
             />
@@ -55,7 +66,8 @@ export function FAQ() {
                 ¿Tenés otra consulta específica?
               </p>
               <p className="mt-2 text-sm leading-relaxed text-muted">
-                Escribinos directamente a nuestro WhatsApp o envianos un email. Te respondemos en menos de 2 horas.
+                Escribinos directamente a nuestro WhatsApp o envianos un email.
+                Te respondemos en menos de 2 horas.
               </p>
               <a
                 href={SITE.whatsapp}
@@ -88,7 +100,12 @@ export function FAQ() {
                           : "border-border bg-surface text-muted hover:border-foreground/30 hover:text-foreground"
                       }`}
                     >
-                      <Icon size={12} className={isSelected ? "text-background" : "text-accent"} />
+                      <Icon
+                        size={12}
+                        className={
+                          isSelected ? "text-background" : "text-accent"
+                        }
+                      />
                       <span>{cat.label}</span>
                     </button>
                   );
@@ -162,7 +179,10 @@ export function FAQ() {
                             initial={{ height: 0, opacity: 0 }}
                             animate={{ height: "auto", opacity: 1 }}
                             exit={{ height: 0, opacity: 0 }}
-                            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+                            transition={{
+                              duration: 0.3,
+                              ease: [0.22, 1, 0.36, 1],
+                            }}
                             className="overflow-hidden"
                           >
                             <p className="mt-4 pl-8 text-base leading-relaxed text-muted md:text-lg">

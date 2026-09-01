@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { Quote, ArrowUpRight, Star } from "lucide-react";
+import { Quote, ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { TeamRoster } from "@/components/sections/team-roster";
@@ -14,25 +14,16 @@ export function About() {
       <Container>
         <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
           <SectionHeading
-            kicker="El Estudio & Confianza"
             title="Dos fundadores senior. Cero burocracia."
             subtitle="Trabajás de forma directa con los dos ingenieros y diseñadores que crean y despliegan cada píxel y línea de código."
           />
-
-          <div className="flex items-center gap-2 rounded-full border border-border bg-surface px-4 py-2 text-xs font-mono text-muted shrink-0">
-            <div className="flex text-amber-400">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} size={13} className="fill-amber-400" />
-              ))}
-            </div>
-            <span className="text-foreground font-medium">100% Satisfacción</span>
-          </div>
         </div>
 
         {/* Declaración de Valor y Voice Note */}
         <div className="mt-12 grid grid-cols-1 gap-10 md:mt-16 md:grid-cols-12 md:gap-x-8 lg:gap-x-16">
           <p className="text-2xl leading-snug text-foreground md:col-span-7 md:text-[2rem]">
-            Combinamos dirección de diseño, arquitectura moderna de software y foco comercial para crear productos que{" "}
+            Combinamos dirección de diseño, arquitectura moderna de software y
+            foco comercial para crear productos que{" "}
             <span className="text-accent">
               cargan en milisegundos y convierten visitas en clientes
             </span>
@@ -40,7 +31,8 @@ export function About() {
           </p>
           <div className="space-y-4 text-base leading-relaxed text-muted md:col-span-5 md:text-lg">
             <p>
-              Sin gerentes de cuentas ni desarrolladores juniors tercerizados. Comunicación diaria y sprints transparentes en staging.
+              Sin gerentes de cuentas ni desarrolladores juniors tercerizados.
+              Comunicación diaria y sprints transparentes en staging.
             </p>
             <FounderVoiceWave />
           </div>
@@ -53,10 +45,6 @@ export function About() {
 
         {/* Testimonios Reales de Clientes */}
         <div className="mt-20 border-t border-border pt-16">
-          <p className="font-mono text-xs tracking-widest text-muted uppercase mb-8">
-            Lo que dicen los fundadores
-          </p>
-
           <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
             {testimonials.map((t) => {
               const initials = t.name
@@ -100,7 +88,10 @@ export function About() {
                           {t.name}
                         </cite>
                         <span className="block text-xs text-muted">
-                          {t.role} · <span className="text-foreground/90 font-medium">{t.company}</span>
+                          {t.role} ·{" "}
+                          <span className="text-foreground/90 font-medium">
+                            {t.company}
+                          </span>
                         </span>
                       </div>
                     </div>

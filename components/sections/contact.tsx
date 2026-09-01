@@ -19,8 +19,8 @@ const projectTypes = [
 
 const budgetRanges = [
   "< $1.500 USD",
-  "$1.500 – $3.000 USD",
-  "$3.000 – $6.000 USD",
+  "$1.500 - $3.000 USD",
+  "$3.000 - $6.000 USD",
   "$6.000+ USD",
   "A definir",
 ];
@@ -87,7 +87,9 @@ export function Contact() {
 
       const data = await res.json();
       if (!res.ok) {
-        throw new Error(data.error || "Ocurrió un problema al enviar la consulta.");
+        throw new Error(
+          data.error || "Ocurrió un problema al enviar la consulta.",
+        );
       }
 
       setSent(true);
@@ -95,7 +97,9 @@ export function Contact() {
     } catch (err: unknown) {
       console.error(err);
       setErrorMessage(
-        err instanceof Error ? err.message : "Error al enviar. Probá enviarnos un mensaje por WhatsApp o email directo."
+        err instanceof Error
+          ? err.message
+          : "Error al enviar. Probá enviarnos un mensaje por WhatsApp o email directo.",
       );
     } finally {
       setLoading(false);
@@ -109,12 +113,27 @@ export function Contact() {
   function getAvailabilityMonth(): string {
     const now = new Date();
     const day = now.getDate();
-    const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+    const daysInMonth = new Date(
+      now.getFullYear(),
+      now.getMonth() + 1,
+      0,
+    ).getDate();
     const monthNames = [
-      "Enero","Febrero","Marzo","Abril","Mayo","Junio",
-      "Julio","Agosto","Septiembre","Octubre","Noviembre","Diciembre",
+      "Enero",
+      "Febrero",
+      "Marzo",
+      "Abril",
+      "Mayo",
+      "Junio",
+      "Julio",
+      "Agosto",
+      "Septiembre",
+      "Octubre",
+      "Noviembre",
+      "Diciembre",
     ];
-    const targetMonth = day > daysInMonth * 0.8 ? now.getMonth() + 1 : now.getMonth();
+    const targetMonth =
+      day > daysInMonth * 0.8 ? now.getMonth() + 1 : now.getMonth();
     const year = now.getFullYear() + (targetMonth > 11 ? 1 : 0);
     return `${monthNames[targetMonth % 12]} ${year}`;
   }
@@ -144,12 +163,15 @@ export function Contact() {
             </h2>
 
             <p className="mt-8 max-w-md text-lg leading-relaxed text-muted">
-              Contanos sobre tu producto u objetivo de negocio. Respondemos cada mensaje de manera personalizada dentro de las 24 horas.
+              Contanos sobre tu producto u objetivo de negocio. Respondemos cada
+              mensaje de manera personalizada dentro de las 24 horas.
             </p>
 
             <div className="mt-10 space-y-4 rounded-xl border border-border bg-surface/60 p-6">
               <div className="flex items-center justify-between gap-4">
-                <span className="font-mono text-xs text-muted">Canal directo:</span>
+                <span className="font-mono text-xs text-muted">
+                  Canal directo:
+                </span>
                 <CopyButton text={SITE.email} label="Copiar email" />
               </div>
 
@@ -204,7 +226,9 @@ export function Contact() {
                   ¡Mensaje recibido con éxito!
                 </h3>
                 <p className="mx-auto mt-3 max-w-md text-base leading-relaxed text-muted">
-                  Analizaremos tu proyecto ({selectedType}) y te responderemos por correo en menos de 24 horas con una propuesta y próximos pasos.
+                  Analizaremos tu proyecto ({selectedType}) y te responderemos
+                  por correo en menos de 24 horas con una propuesta y próximos
+                  pasos.
                 </p>
                 <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
                   <a
