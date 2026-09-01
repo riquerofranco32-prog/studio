@@ -147,8 +147,16 @@ export function Navbar() {
               type="button"
               onClick={toggleSound}
               className="focus-ring p-2 rounded-full border border-border bg-surface/80 text-muted hover:border-foreground/30 hover:text-foreground transition-colors"
-              title={soundEnabled ? "Silenciar efectos de sonido" : "Activar efectos de sonido"}
-              aria-label={soundEnabled ? "Silenciar efectos de sonido" : "Activar efectos de sonido"}
+              title={
+                soundEnabled
+                  ? "Silenciar efectos de sonido"
+                  : "Activar efectos de sonido"
+              }
+              aria-label={
+                soundEnabled
+                  ? "Silenciar efectos de sonido"
+                  : "Activar efectos de sonido"
+              }
             >
               {soundEnabled ? (
                 <Volume2 size={15} className="text-accent" />
@@ -159,7 +167,9 @@ export function Navbar() {
 
             <button
               type="button"
-              onClick={() => window.dispatchEvent(new CustomEvent("open-command-palette"))}
+              onClick={() =>
+                window.dispatchEvent(new CustomEvent("open-command-palette"))
+              }
               className="focus-ring inline-flex items-center gap-2 rounded-full border border-border bg-surface/80 px-3 py-1.5 font-mono text-xs text-muted hover:border-foreground/30 hover:text-foreground transition-colors"
               title="Buscar (⌘K / Ctrl+K)"
             >
@@ -172,7 +182,7 @@ export function Navbar() {
 
             <Link
               href="/start"
-              className="focus-ring group inline-flex items-center gap-1.5 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-background transition-colors duration-300 hover:bg-accent/90 shadow-[0_0_20px_rgba(255,77,46,0.25)]"
+              className="focus-ring group inline-flex items-center gap-1.5 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-background transition-colors duration-300 hover:bg-accent/90"
             >
               Iniciar un proyecto
               <ArrowUpRight
@@ -185,7 +195,9 @@ export function Navbar() {
           <div className="flex items-center gap-1 md:hidden">
             <button
               type="button"
-              onClick={() => window.dispatchEvent(new CustomEvent("open-command-palette"))}
+              onClick={() =>
+                window.dispatchEvent(new CustomEvent("open-command-palette"))
+              }
               className="focus-ring p-2 text-muted hover:text-foreground"
               aria-label="Buscar"
             >

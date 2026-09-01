@@ -7,6 +7,7 @@ import { Container } from "@/components/ui/container";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Marquee } from "@/components/ui/marquee";
 import { Magnetic } from "@/components/ui/magnetic";
+import { BuildConsole } from "@/components/ui/build-console";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { projects } from "@/data/projects";
 
@@ -17,6 +18,7 @@ const SEQUENCE = {
   line3: "0.75s",
   sub: "1.05s",
   cta: "1.2s",
+  console: "1.15s",
   ticker: "1.4s",
 };
 
@@ -54,81 +56,94 @@ export function Hero() {
       />
 
       <Container className="relative flex flex-1 flex-col justify-start md:justify-center">
-        <div
-          className="hero-rise mb-8 flex flex-wrap items-center gap-3"
-          style={{ animationDelay: SEQUENCE.kicker }}
-        >
-          <div className="inline-flex items-center gap-2.5 rounded-full border border-border bg-surface/80 px-3.5 py-1.5 font-mono text-xs text-muted backdrop-blur-md">
-            <span className="relative flex h-2 w-2">
-              {!reduceMotion && (
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
-              )}
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
-            </span>
-            <span className="text-foreground font-medium">Estudio Abierto</span>
-            <span className="text-border">·</span>
-            <span>Patagonia AR</span>
+        <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-12 lg:gap-10">
+          <div className="lg:col-span-7">
+            <div
+              className="hero-rise mb-8 flex flex-wrap items-center gap-3"
+              style={{ animationDelay: SEQUENCE.kicker }}
+            >
+              <div className="inline-flex items-center gap-2.5 rounded-full border border-border bg-surface/80 px-3.5 py-1.5 font-mono text-xs text-muted backdrop-blur-md">
+                <span className="relative flex h-2 w-2">
+                  {!reduceMotion && (
+                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
+                  )}
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
+                </span>
+                <span className="text-foreground font-medium">
+                  Estudio Abierto
+                </span>
+                <span className="text-border">·</span>
+                <span>Patagonia AR</span>
+              </div>
+            </div>
+
+            <h1 className="display text-[2.4rem] text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
+              <span className="line-mask block">
+                <span
+                  className="hero-line block"
+                  style={{ animationDelay: SEQUENCE.line1 }}
+                >
+                  Construimos
+                </span>
+              </span>
+              <span className="line-mask block">
+                <span
+                  className="hero-line block"
+                  style={{ animationDelay: SEQUENCE.line2 }}
+                >
+                  software & craft
+                </span>
+              </span>
+              <span className="line-mask block">
+                <span
+                  className="hero-line block"
+                  style={{ animationDelay: SEQUENCE.line3 }}
+                >
+                  para marcas que <span className="text-accent">escalan.</span>
+                </span>
+              </span>
+            </h1>
+
+            <div className="mt-10 flex flex-col gap-8">
+              <p
+                className="hero-rise max-w-md text-lg leading-relaxed text-muted md:text-xl"
+                style={{ animationDelay: SEQUENCE.sub }}
+              >
+                Estrategia de producto, diseño de sistemas y arquitectura de
+                ingeniería en Next.js 16. De 0 a producción en 2 a 3 semanas.
+              </p>
+
+              <div
+                className="hero-rise flex flex-wrap items-center gap-3"
+                style={{ animationDelay: SEQUENCE.cta }}
+              >
+                <Magnetic>
+                  <ButtonLink href="/#contact">
+                    Iniciar un proyecto
+                    <ArrowRight
+                      size={16}
+                      className="transition-transform duration-300 group-hover:translate-x-1"
+                    />
+                  </ButtonLink>
+                </Magnetic>
+                <Magnetic>
+                  <ButtonLink href="/pricing" variant="secondary">
+                    Ver Precios & Alcance
+                    <ArrowUpRight
+                      size={16}
+                      className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                    />
+                  </ButtonLink>
+                </Magnetic>
+              </div>
+            </div>
           </div>
-        </div>
-
-        <h1 className="display max-w-3xl text-[2.6rem] text-foreground sm:max-w-4xl sm:text-6xl md:max-w-6xl md:text-[6.5rem]">
-          <span className="line-mask block">
-            <span
-              className="hero-line block"
-              style={{ animationDelay: SEQUENCE.line1 }}
-            >
-              Construimos
-            </span>
-          </span>
-          <span className="line-mask block">
-            <span
-              className="hero-line block"
-              style={{ animationDelay: SEQUENCE.line2 }}
-            >
-              software & craft
-            </span>
-          </span>
-          <span className="line-mask block">
-            <span
-              className="hero-line block"
-              style={{ animationDelay: SEQUENCE.line3 }}
-            >
-              para marcas que <span className="text-accent">escalan.</span>
-            </span>
-          </span>
-        </h1>
-
-        <div className="mt-12 flex flex-col gap-10 md:flex-row md:items-end md:justify-between">
-          <p
-            className="hero-rise max-w-md text-lg leading-relaxed text-muted md:text-xl"
-            style={{ animationDelay: SEQUENCE.sub }}
-          >
-            Estrategia de producto, diseño de sistemas y arquitectura de
-            ingeniería en Next.js 16. De 0 a producción en 2 a 3 semanas.
-          </p>
 
           <div
-            className="hero-rise flex flex-wrap items-center gap-3"
-            style={{ animationDelay: SEQUENCE.cta }}
+            className="hero-rise lg:col-span-5"
+            style={{ animationDelay: SEQUENCE.console }}
           >
-            <Magnetic>
-              <ButtonLink href="/#contact">
-                Iniciar un proyecto
-                <ArrowRight
-                  size={16}
-                  className="transition-transform duration-300 group-hover:translate-x-1"
-                />
-              </ButtonLink>
-            </Magnetic>
-            <Magnetic>
-              <ButtonLink href="/pricing" variant="secondary">
-                Ver Precios & Alcance
-                <ArrowUpRight
-                  size={16}
-                  className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                />
-              </ButtonLink>
-            </Magnetic>
+            <BuildConsole />
           </div>
         </div>
       </Container>

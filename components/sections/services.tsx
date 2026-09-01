@@ -87,7 +87,7 @@ export function Services() {
           <div className="flex items-center gap-3 shrink-0">
             <a
               href="/pricing"
-              className="focus-ring inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-xs font-semibold text-background hover:bg-accent/90 transition-colors shadow-[0_0_20px_rgba(255,77,46,0.25)]"
+              className="focus-ring inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-xs font-semibold text-background transition-colors hover:bg-accent/90"
             >
               <span>Ver Configurador de Precios</span>
               <ArrowUpRight size={14} />

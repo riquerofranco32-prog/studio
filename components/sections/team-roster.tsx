@@ -1,7 +1,14 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowUpRight, CheckCircle2, Code2, Palette, ShieldCheck, Sparkles } from "lucide-react";
+import {
+  ArrowUpRight,
+  CheckCircle2,
+  Code2,
+  Palette,
+  ShieldCheck,
+  Sparkles,
+} from "lucide-react";
 import { LinkedinIcon } from "@/components/ui/brand-icons";
 import { TeamMember } from "@/types";
 
@@ -11,16 +18,35 @@ interface ExtendedTeamMember extends TeamMember {
   experience?: string;
 }
 
-const membersData: Record<string, { skills: string[]; focus: string; experience: string }> = {
+const membersData: Record<
+  string,
+  { skills: string[]; focus: string; experience: string }
+> = {
   "founder-01": {
-    skills: ["Next.js 16", "TypeScript Strict", "Supabase Postgres", "Server Actions", "Vercel Edge", "Zod"],
+    skills: [
+      "Next.js 16",
+      "TypeScript Strict",
+      "Supabase Postgres",
+      "Server Actions",
+      "Vercel Edge",
+      "Zod",
+    ],
     focus: "Arquitectura Full-Stack, Rendimiento Edge & Seguridad Zero-Trust",
-    experience: "+5 años construyendo productos y plataformas SaaS de alta escala",
+    experience:
+      "+5 años construyendo productos y plataformas SaaS de alta escala",
   },
   "founder-02": {
-    skills: ["Figma Systems", "UI/UX Craft", "Design Tokens", "Micro-Interactions", "Motion 60 FPS", "Branding"],
+    skills: [
+      "Figma Systems",
+      "UI/UX Craft",
+      "Design Tokens",
+      "Micro-Interactions",
+      "Motion 60 FPS",
+      "Branding",
+    ],
     focus: "Dirección Visual, Sistemas de Diseño & Conversión de Producto",
-    experience: "+5 años transformando modelos de negocio en experiencias de alta gama",
+    experience:
+      "+5 años transformando modelos de negocio en experiencias de alta gama",
   },
 };
 
@@ -40,7 +66,7 @@ export function TeamRoster({ members }: { members: TeamMember[] }) {
         return (
           <div
             key={member.id}
-            className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-border bg-gradient-to-b from-surface via-surface to-surface/90 p-8 transition-all duration-500 hover:border-accent/40 hover:shadow-[0_0_30px_rgba(255,77,46,0.1)] md:p-10"
+            className="group relative flex flex-col justify-between overflow-hidden rounded-3xl border border-border bg-gradient-to-b from-surface via-surface to-surface/90 p-8 transition-all duration-500 hover:border-accent/40 md:p-10"
           >
             {/* Filete superior interactivo */}
             <span
@@ -72,7 +98,10 @@ export function TeamRoster({ members }: { members: TeamMember[] }) {
                     </div>
 
                     {/* Status Dot */}
-                    <span className="absolute -bottom-1 -right-1 flex h-4 w-4" title="Activo en Sprints">
+                    <span
+                      className="absolute -bottom-1 -right-1 flex h-4 w-4"
+                      title="Activo en Sprints"
+                    >
                       <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-60" />
                       <span className="relative inline-flex h-4 w-4 rounded-full border-2 border-surface bg-emerald-500" />
                     </span>
@@ -85,7 +114,11 @@ export function TeamRoster({ members }: { members: TeamMember[] }) {
                       </span>
                       <span className="text-border">·</span>
                       <span className="font-mono text-[11px] text-muted flex items-center gap-1">
-                        {isEngineer ? <Code2 size={12} className="text-accent" /> : <Palette size={12} className="text-accent" />}
+                        {isEngineer ? (
+                          <Code2 size={12} className="text-accent" />
+                        ) : (
+                          <Palette size={12} className="text-accent" />
+                        )}
                         {isEngineer ? "Ingeniería" : "Diseño & Craft"}
                       </span>
                     </div>
@@ -146,8 +179,13 @@ export function TeamRoster({ members }: { members: TeamMember[] }) {
                   className="focus-ring group/link inline-flex items-center justify-between w-full rounded-2xl border border-border bg-background/80 px-4 py-2.5 font-mono text-xs text-muted transition-all duration-300 hover:border-accent/40 hover:bg-accent/10 hover:text-foreground"
                 >
                   <span className="inline-flex items-center gap-2">
-                    <LinkedinIcon size={15} className="text-[#0077b5] group-hover/link:text-accent transition-colors" />
-                    <span className="font-medium text-foreground">Conectar en LinkedIn</span>
+                    <LinkedinIcon
+                      size={15}
+                      className="text-[#0077b5] group-hover/link:text-accent transition-colors"
+                    />
+                    <span className="font-medium text-foreground">
+                      Conectar en LinkedIn
+                    </span>
                   </span>
                   <ArrowUpRight
                     size={14}

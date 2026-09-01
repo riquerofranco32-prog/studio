@@ -36,7 +36,8 @@ const steps: ProcessStep[] = [
     title: "Kickoff & Dirección de Arte",
     tagline: "Estrategia, wireframes y prototipo interactivo",
     icon: MessageSquare,
-    description: "Alineamos objetivos de negocio, arquitectura de información y creamos el diseño de alta fidelidad en Figma.",
+    description:
+      "Alineamos objetivos de negocio, arquitectura de información y creamos el diseño de alta fidelidad en Figma.",
     tasks: [
       "Canal directo en Slack o WhatsApp con los fundadores (Franco & Federico).",
       "Mapeo de flujos clave de usuario y arquitectura técnica.",
@@ -50,7 +51,8 @@ const steps: ProcessStep[] = [
     title: "Ingeniería & Staging en Vivo",
     tagline: "Desarrollo en Next.js 16 y bases de datos",
     icon: Code2,
-    description: "Construimos componentes atómicos en React 19, Server Actions y persistencia con PostgreSQL.",
+    description:
+      "Construimos componentes atómicos en React 19, Server Actions y persistencia con PostgreSQL.",
     tasks: [
       "Entorno privado de pruebas (staging.tudominio.com) para ver avances diarios.",
       "Componentes atómicos con Tailwind CSS v4 y TypeScript estricto.",
@@ -64,7 +66,8 @@ const steps: ProcessStep[] = [
     title: "Motion, Polish & Core Web Vitals",
     tagline: "Experiencia fluida a 60 FPS y rendimiento 100/100",
     icon: Sparkles,
-    description: "Implementamos micro-interacciones cinematográficas y optimizamos cada milisegundo de carga.",
+    description:
+      "Implementamos micro-interacciones cinematográficas y optimizamos cada milisegundo de carga.",
     tasks: [
       "Transiciones fluidas y micro-animaciones con Framer Motion.",
       "Auditoría técnica de Core Web Vitals para garantizar 95-100 en Lighthouse.",
@@ -78,7 +81,8 @@ const steps: ProcessStep[] = [
     title: "Lanzamiento Global & Garantía",
     tagline: "Despliegue perimetral en Edge y soporte directo",
     icon: Rocket,
-    description: "Desplegamos en la red perimetral de Vercel y te entregamos la propiedad total del repositorio.",
+    description:
+      "Desplegamos en la red perimetral de Vercel y te entregamos la propiedad total del repositorio.",
     tasks: [
       "Configuración de DNS con Vercel Edge, SSL bancario y SEO Schema dinámico.",
       "Indexación en Google Search Console y OpenGraph para redes sociales.",
@@ -108,7 +112,7 @@ export function Process() {
           <div className="flex items-center gap-3 shrink-0">
             <Link
               href="/#contact"
-              className="focus-ring inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-xs font-semibold text-background hover:bg-accent/90 transition-all shadow-[0_0_20px_rgba(255,77,46,0.25)]"
+              className="focus-ring inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-xs font-semibold text-background transition-colors hover:bg-accent/90"
             >
               <span>Iniciar un proyecto</span>
               <ArrowRight size={14} />
@@ -132,7 +136,7 @@ export function Process() {
                 }}
                 className={`focus-ring relative text-left rounded-2xl border p-5 transition-all duration-300 ${
                   isSelected
-                    ? "border-accent bg-surface shadow-[0_0_24px_rgba(255,77,46,0.18)]"
+                    ? "border-accent bg-surface"
                     : "border-border bg-surface/50 hover:border-foreground/30 hover:bg-surface"
                 }`}
               >
@@ -194,10 +198,11 @@ export function Process() {
                 className="rounded-xl border border-border/80 bg-background/60 p-4"
               >
                 <div className="flex items-start gap-3">
-                  <CheckCircle2 size={16} className="text-accent shrink-0 mt-0.5" />
-                  <p className="text-xs leading-relaxed text-muted">
-                    {task}
-                  </p>
+                  <CheckCircle2
+                    size={16}
+                    className="text-accent shrink-0 mt-0.5"
+                  />
+                  <p className="text-xs leading-relaxed text-muted">{task}</p>
                 </div>
               </div>
             ))}
