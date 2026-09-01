@@ -22,7 +22,7 @@ export const team: TeamMember[] = [
 export const testimonials: Testimonial[] = [
   {
     id: "test-01",
-    name: "Ramiro Gómez",
+    name: "Franco Riquero",
     role: "Fundador & CEO",
     company: "Takefyy",
     projectSlug: "takefyy",
@@ -34,7 +34,7 @@ export const testimonials: Testimonial[] = [
   },
   {
     id: "test-02",
-    name: "Matías Sánchez",
+    name: "Simón Lacón",
     role: "Co-Founder & Director Creativo",
     company: "Poné La Pava",
     projectSlug: "pone-la-pava",
@@ -46,7 +46,7 @@ export const testimonials: Testimonial[] = [
   },
   {
     id: "test-03",
-    name: "Joaquín Martínez",
+    name: "Juan Garrafa",
     role: "Lead Instructor & Fundador",
     company: "Pravilo Argentina",
     projectSlug: "pravilo",
@@ -58,7 +58,7 @@ export const testimonials: Testimonial[] = [
   },
   {
     id: "test-04",
-    name: "Federico A.",
+    name: "Lautaro Silva",
     role: "Tech Lead",
     company: "Sentinel Climate Tech",
     projectSlug: "sentinel",
