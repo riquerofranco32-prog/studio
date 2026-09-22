@@ -8,9 +8,11 @@ import { ArrowUpRight } from "lucide-react";
 import { Marquee } from "@/components/ui/marquee";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { projects } from "@/data/projects";
+import { capabilities } from "@/data/services";
 
-// Muro tipo John Moore: filas de palabras gigantes de fondo + una imagen que
-// escala con el scroll, a modo de puente hacia "Trabajo seleccionado".
+// Cierre del Hero, estilo John Moore: titular + tags que se revelan y un
+// proyecto real que crece hasta ocupar la pantalla, con un muro de palabras
+// de fondo. Puente hacia "Trabajo seleccionado".
 const WALL_WORDS = [
   "DISEÑO",
   "DESARROLLO",
@@ -30,11 +32,23 @@ export function WorkWall() {
     offset: ["start start", "end end"],
   });
 
-  const scale = useTransform(scrollYProgress, [0, 0.5, 1], [0.55, 1, 1.3]);
-  const radius = useTransform(scrollYProgress, [0, 1], [28, 0]);
-  const opacity = useTransform(
+  const scale = useTransform(scrollYProgress, [0, 0.55, 1], [0.4, 1, 1.3]);
+  const radius = useTransform(scrollYProgress, [0, 0.55, 1], [9999, 28, 0]);
+  const videoOpacity = useTransform(
     scrollYProgress,
-    [0, 0.12, 0.85, 1],
+    [0, 0.2, 0.85, 1],
+    [0, 1, 1, 0],
+  );
+
+  const introOpacity = useTransform(
+    scrollYProgress,
+    [0, 0.12, 0.35, 0.5],
+    [0, 1, 1, 0],
+  );
+  const introY = useTransform(scrollYProgress, [0, 0.5], [0, -40]);
+  const tagsOpacity = useTransform(
+    scrollYProgress,
+    [0.08, 0.22, 0.35, 0.5],
     [0, 1, 1, 0],
   );
 
@@ -56,9 +70,26 @@ export function WorkWall() {
             </span>
           ))}
         </div>
+
+        <div className="relative mx-auto max-w-2xl px-6 text-center">
+          <h2 className="display text-3xl text-foreground sm:text-4xl">
+            Así construimos.
+          </h2>
+          <div className="mt-6 flex flex-wrap justify-center gap-2.5">
+            {capabilities.map((cap) => (
+              <span
+                key={cap}
+                className="rounded-full border border-border bg-surface px-3.5 py-1.5 font-mono text-xs text-muted"
+              >
+                {cap}
+              </span>
+            ))}
+          </div>
+        </div>
+
         <Link
           href={`/work/${featured.slug}`}
-          className="focus-ring group relative mx-auto block aspect-video w-[80vw] max-w-2xl overflow-hidden rounded-2xl border border-border shadow-2xl"
+          className="focus-ring group relative mx-auto mt-12 block aspect-video w-[80vw] max-w-2xl overflow-hidden rounded-2xl border border-border shadow-2xl"
         >
           <Image
             src={featured.image}
@@ -73,7 +104,7 @@ export function WorkWall() {
   }
 
   return (
-    <section ref={rootRef} className="relative h-[260vh] bg-background">
+    <section ref={rootRef} className="relative h-[340vh] bg-background">
       <div className="sticky top-0 flex h-screen flex-col items-center justify-center overflow-hidden border-y border-border">
         <div
           aria-hidden
@@ -88,8 +119,31 @@ export function WorkWall() {
           ))}
         </div>
 
+        {/* Titular y tags que se revelan antes de que el video crezca */}
         <motion.div
-          style={{ scale, opacity, borderRadius: radius }}
+          style={{ opacity: introOpacity, y: introY }}
+          className="pointer-events-none absolute z-10 mx-auto max-w-2xl px-6 text-center"
+        >
+          <h2 className="display text-3xl text-foreground sm:text-4xl md:text-5xl">
+            Así construimos.
+          </h2>
+          <motion.div
+            style={{ opacity: tagsOpacity }}
+            className="mt-6 flex flex-wrap justify-center gap-2.5"
+          >
+            {capabilities.map((cap) => (
+              <span
+                key={cap}
+                className="rounded-full border border-accent/30 bg-accent/10 px-3.5 py-1.5 font-mono text-xs text-foreground"
+              >
+                {cap}
+              </span>
+            ))}
+          </motion.div>
+        </motion.div>
+
+        <motion.div
+          style={{ scale, opacity: videoOpacity, borderRadius: radius }}
           className="relative aspect-video w-[70vw] max-w-3xl overflow-hidden border border-border shadow-2xl"
         >
           <Image
