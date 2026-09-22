@@ -18,6 +18,7 @@ import { Marquee } from "@/components/ui/marquee";
 import { Magnetic } from "@/components/ui/magnetic";
 import { BuildConsole } from "@/components/ui/build-console";
 import { ScrambleText } from "@/components/ui/scramble-text";
+import { HeroMesh } from "@/components/ui/hero-mesh";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { EASE } from "@/lib/motion";
 import { projects } from "@/data/projects";
@@ -85,15 +86,7 @@ export function Hero() {
         style={reduceMotion ? undefined : { y: gridY }}
         className="pointer-events-none absolute inset-0 [background-image:linear-gradient(to_right,var(--border)_1px,transparent_1px),linear-gradient(to_bottom,var(--border)_1px,transparent_1px)] [background-size:64px_64px] opacity-40"
       />
-      {/* Resplandor de acento sutil */}
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -right-32 top-1/4 h-[560px] w-[560px] rounded-full bg-accent/[0.09] blur-[140px]"
-      />
-      <div
-        aria-hidden
-        className="pointer-events-none absolute -left-40 bottom-0 h-[420px] w-[420px] rounded-full bg-foreground/[0.03] blur-3xl"
-      />
+      <HeroMesh />
       {!reduceMotion && (
         <motion.div
           aria-hidden
