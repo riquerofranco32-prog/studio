@@ -5,6 +5,7 @@ import Image from "next/image";
 import {
   AnimatePresence,
   motion,
+  useMotionTemplate,
   useMotionValue,
   useScroll,
   useSpring,
@@ -58,10 +59,24 @@ export function Hero() {
     previewY.set(e.clientY);
   }
 
+  // Resplandor ambiente que sigue al cursor dentro del hero: mismo patrón
+  // que el spotlight de las tarjetas de proyecto (motion values, sin
+  // useState), un solo tono de acento, cero dependencias nuevas.
+  const glowX = useMotionValue(0);
+  const glowY = useMotionValue(0);
+  const glowBackground = useMotionTemplate`radial-gradient(480px circle at ${glowX}px ${glowY}px, var(--accent-soft), transparent 70%)`;
+
+  function handleHeroMouseMove(e: React.MouseEvent<HTMLElement>) {
+    const rect = e.currentTarget.getBoundingClientRect();
+    glowX.set(e.clientX - rect.left);
+    glowY.set(e.clientY - rect.top);
+  }
+
   return (
     <section
       id="hero"
       ref={rootRef}
+      onMouseMove={reduceMotion ? undefined : handleHeroMouseMove}
       className="relative flex min-h-[100dvh] flex-col justify-center overflow-hidden pt-20 pb-12 md:pt-24 md:pb-16"
     >
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-background/40 to-background" />
@@ -79,6 +94,13 @@ export function Hero() {
         aria-hidden
         className="pointer-events-none absolute -left-40 bottom-0 h-[420px] w-[420px] rounded-full bg-foreground/[0.03] blur-3xl"
       />
+      {!reduceMotion && (
+        <motion.div
+          aria-hidden
+          style={{ background: glowBackground }}
+          className="pointer-events-none absolute inset-0 opacity-60"
+        />
+      )}
 
       <Container className="relative">
         <div
