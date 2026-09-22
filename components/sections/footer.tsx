@@ -11,7 +11,13 @@ import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/ui/reveal";
 import { LiveClock } from "@/components/ui/live-clock";
 import { SITE } from "@/data/site";
-import { ArrowUpRight, Sparkles, MessageCircle, Mail } from "lucide-react";
+import {
+  ArrowUpRight,
+  ArrowUp,
+  Sparkles,
+  MessageCircle,
+  Mail,
+} from "lucide-react";
 
 export function Footer() {
   return (
@@ -293,6 +299,19 @@ export function Footer() {
           </div>
         </Reveal>
       </Container>
+
+      {/* Volver arriba */}
+      <button
+        type="button"
+        onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        className="focus-ring group mt-10 flex w-full items-center justify-center gap-3 border-t border-border py-8 text-2xl font-medium uppercase tracking-tight text-muted transition-colors hover:text-foreground sm:text-4xl"
+      >
+        <span>Volver arriba</span>
+        <ArrowUp
+          size={28}
+          className="transition-transform duration-300 group-hover:-translate-y-1"
+        />
+      </button>
 
       {/* Wordmark de cierre */}
       <Reveal index={1} className="mt-10 overflow-hidden">
