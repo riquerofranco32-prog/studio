@@ -1,115 +1,77 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
-import { Quote, ArrowUpRight } from "lucide-react";
+import { LinkedinIcon } from "@/components/ui/brand-icons";
 import { Container } from "@/components/ui/container";
-import { SectionHeading } from "@/components/ui/section-heading";
-import { TeamRoster } from "@/components/sections/team-roster";
+import { RevealText } from "@/components/ui/reveal-text";
 import { FounderVoiceWave } from "@/components/ui/founder-voice-wave";
-import { team, testimonials } from "@/data/team";
+import { team } from "@/data/team";
 
 export function About() {
   return (
     <section id="about" className="border-t border-border py-20 md:py-28">
       <Container>
-        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-          <SectionHeading
-            title="Dos fundadores senior. Cero burocracia."
-            subtitle="Trabajás de forma directa con los dos ingenieros y diseñadores que crean y despliegan cada píxel y línea de código."
-          />
-        </div>
-
-        {/* Declaración de Valor y Voice Note */}
-        <div className="mt-12 grid grid-cols-1 gap-10 md:mt-16 md:grid-cols-12 md:gap-x-8 lg:gap-x-16">
-          <p className="text-2xl leading-snug text-foreground md:col-span-7 md:text-[2rem]">
-            Combinamos dirección de diseño, arquitectura moderna de software y
-            foco comercial para crear productos que{" "}
-            <span className="text-accent">
-              cargan en milisegundos y convierten visitas en clientes
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-12 lg:gap-10">
+          <h2 className="display text-[2.6rem] uppercase text-foreground sm:text-6xl md:text-7xl lg:col-span-8 lg:text-[5.5rem]">
+            <span className="line-mask block">
+              <RevealText index={0}>Dos fundadores</RevealText>
             </span>
-            .
-          </p>
-          <div className="space-y-4 text-base leading-relaxed text-muted md:col-span-5 md:text-lg">
-            <p>
-              Sin gerentes de cuentas ni desarrolladores juniors tercerizados.
-              Comunicación diaria y sprints transparentes en staging.
-            </p>
-            <FounderVoiceWave />
+            <span className="line-mask block">
+              <RevealText index={1}>senior. Cero</RevealText>
+            </span>
+            <span className="line-mask block">
+              <RevealText index={2}>
+                <span className="text-accent">burocracia.</span>
+              </RevealText>
+            </span>
+          </h2>
+
+          <div className="flex gap-4 lg:col-span-4 lg:justify-end">
+            {team.map((member) => (
+              <div
+                key={member.id}
+                className="relative aspect-[3/4] w-1/2 max-w-[220px] overflow-hidden rounded-2xl border border-border grayscale transition-all duration-500 hover:grayscale-0"
+              >
+                <Image
+                  src={member.imageUrl ?? ""}
+                  alt={member.name ?? ""}
+                  fill
+                  sizes="220px"
+                  className="object-cover"
+                />
+              </div>
+            ))}
           </div>
         </div>
 
-        {/* Roster de Fundadores */}
-        <div className="mt-16">
-          <TeamRoster members={team} />
-        </div>
-
-        {/* Testimonios Reales de Clientes */}
-        <div className="mt-20 border-t border-border pt-16">
-          <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
-            {testimonials.map((t) => {
-              const initials = t.name
-                .split(" ")
-                .map((n) => n[0])
-                .join("")
-                .slice(0, 2);
-
-              return (
-                <blockquote
-                  key={t.id}
-                  className="group relative flex flex-col justify-between rounded-2xl border border-border bg-surface p-8 transition-all duration-500 hover:border-accent/40 hover:bg-surface-2 md:p-10"
+        <div className="mt-16 grid grid-cols-1 gap-10 md:grid-cols-2 md:gap-16">
+          {team.map((member) => (
+            <div key={member.id}>
+              <div className="flex items-center justify-between gap-4 border-b border-border pb-3">
+                <h3 className="font-medium text-foreground">{member.name}</h3>
+                <Link
+                  href={member.linkedin ?? "#"}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="focus-ring text-muted transition-colors hover:text-accent"
+                  aria-label={`LinkedIn de ${member.name}`}
                 >
-                  <span
-                    aria-hidden
-                    className="absolute left-0 top-0 h-0.5 w-0 bg-accent transition-all duration-500 group-hover:w-full"
-                  />
+                  <LinkedinIcon size={16} />
+                </Link>
+              </div>
+              <p className="mt-2 font-mono text-xs uppercase tracking-widest text-accent">
+                {member.role}
+              </p>
+              <p className="mt-4 text-base leading-relaxed text-muted md:text-lg">
+                {member.bio}
+              </p>
+            </div>
+          ))}
+        </div>
 
-                  <div>
-                    <div className="flex items-center justify-between gap-4">
-                      <Quote size={22} aria-hidden className="text-accent" />
-                      {t.highlight && (
-                        <span className="rounded-full border border-accent/30 bg-accent/10 px-3 py-0.5 font-mono text-[11px] text-accent">
-                          {t.highlight}
-                        </span>
-                      )}
-                    </div>
-
-                    <p className="mt-5 text-base leading-relaxed text-foreground md:text-lg">
-                      &ldquo;{t.quote}&rdquo;
-                    </p>
-                  </div>
-
-                  <footer className="mt-8 flex flex-wrap items-center justify-between gap-4 border-t border-border pt-6">
-                    <div className="flex items-center gap-3.5">
-                      <div className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-surface-2 font-mono text-xs font-semibold text-accent shadow-sm">
-                        {initials}
-                      </div>
-                      <div>
-                        <cite className="not-italic block font-medium text-foreground text-sm">
-                          {t.name}
-                        </cite>
-                        <span className="block text-xs text-muted">
-                          {t.role} ·{" "}
-                          <span className="text-foreground/90 font-medium">
-                            {t.company}
-                          </span>
-                        </span>
-                      </div>
-                    </div>
-
-                    {t.projectSlug && (
-                      <Link
-                        href={`/work/${t.projectSlug}`}
-                        className="focus-ring inline-flex items-center gap-1.5 font-mono text-xs text-muted transition-colors hover:text-accent"
-                      >
-                        <span>Ver caso</span>
-                        <ArrowUpRight size={13} />
-                      </Link>
-                    )}
-                  </footer>
-                </blockquote>
-              );
-            })}
-          </div>
+        <div className="mt-4 md:max-w-md">
+          <FounderVoiceWave />
         </div>
       </Container>
     </section>

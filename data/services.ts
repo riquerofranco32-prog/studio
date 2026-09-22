@@ -6,12 +6,12 @@ export const services: Service[] = [
     title: "Experiencias Digitales",
     tagline: "Landing pages & Sitios de Marca",
     description:
-      "Diseñamos y programamos landing pages inmersivas, sitios corporativos y experiencias interactivas que destacan tu propuesta y elevan la percepción de tu marca.",
+      "Diseñamos y programamos landing pages, sitios corporativos y experiencias interactivas que destacan tu propuesta y elevan la percepción de tu marca.",
     deliverables: [
       "Landing pages de alta conversión",
       "Sitios corporativos",
-      "Motion & Micro-interacciones",
-      "Optimización SEO",
+      "Animaciones y detalles",
+      "Buen posicionamiento en Google",
     ],
   },
   {
@@ -30,27 +30,27 @@ export const services: Service[] = [
   {
     number: "03",
     title: "Productos Digitales",
-    tagline: "SaaS, Plataformas & Dashboards",
+    tagline: "Plataformas y Paneles a Medida",
     description:
-      "Diseñamos y desarrollamos aplicaciones web completas (SaaS), dashboards analíticos y sistemas a medida pensados para escalar desde el día uno.",
+      "Diseñamos y desarrollamos plataformas web completas y paneles de control a medida, pensados para crecer con tu negocio desde el día uno.",
     deliverables: [
-      "Arquitectura SaaS",
-      "Dashboards y paneles",
-      "Design systems",
-      "Autenticación & Base de datos",
+      "Plataformas a medida",
+      "Paneles de control",
+      "Diseño consistente en toda la marca",
+      "Cuentas de usuario y datos seguros",
     ],
   },
   {
     number: "04",
     title: "IA y Tecnología",
-    tagline: "Automatización & Modelos Inteligentes",
+    tagline: "Automatización de Tareas y Procesos",
     description:
-      "Integración de modelos de lenguaje (LLMs), automatización de procesos internos, pipelines de datos en vivo y APIs personalizadas.",
+      "Sumamos inteligencia artificial para automatizar tareas repetitivas, conectar tus sistemas entre sí y darte datos al instante para decidir mejor.",
     deliverables: [
-      "Integraciones con OpenAI/Anthropic",
-      "APIs a medida",
-      "Procesamiento de datos",
-      "Automatizaciones",
+      "Asistentes con inteligencia artificial",
+      "Conexión entre tus sistemas",
+      "Datos en tiempo real",
+      "Tareas automáticas",
     ],
   },
 ];
@@ -61,11 +61,11 @@ export const process: ProcessStep[] = [
     title: "Descubrir & Estrategia",
     duration: "Semana 1",
     description:
-      "Analizamos tu negocio, modelo de monetización y audiencia. Definimos el alcance exacto, la arquitectura de contenidos y los objetivos clave de conversión.",
+      "Analizamos tu negocio, cómo generás ingresos y a quién le hablás. Definimos qué vamos a construir y qué resultado buscamos.",
     deliverables: [
-      "Brief estratégico",
-      "Arquitectura de información",
-      "Moodboard visual y referencias",
+      "Plan de trabajo claro",
+      "Mapa de contenidos y pantallas",
+      "Referencias visuales",
     ],
   },
   {
@@ -73,11 +73,11 @@ export const process: ProcessStep[] = [
     title: "Diseñar & Prototipar",
     duration: "Semana 2",
     description:
-      "Diseñamos la experiencia de usuario (UX) y la dirección de arte (UI). Creamos prototipos interactivos en Figma con estados, interacciones y responsive design.",
+      "Diseñamos cómo se ve y cómo se usa cada pantalla. Armamos un prototipo interactivo que podés recorrer antes de construir nada, pensado para computadora y celular.",
     deliverables: [
-      "Wireframes y flujos de usuario",
-      "Diseño UI desktop y mobile",
-      "Prototipo interactivo navegable",
+      "Boceto de cada pantalla",
+      "Diseño para computadora y celular",
+      "Prototipo interactivo para probar",
     ],
   },
   {
@@ -85,11 +85,11 @@ export const process: ProcessStep[] = [
     title: "Construir & Animar",
     duration: "Semanas 3-4",
     description:
-      "Escribimos código limpio, robusto y ultrarrápido con Next.js, TypeScript y Tailwind CSS. Implementamos animaciones fluidas a 60fps y conectamos bases de datos.",
+      "Programamos tu sitio para que cargue al instante y no tenga errores. Sumamos animaciones suaves y lo conectamos a tus datos.",
     deliverables: [
-      "Desarrollo frontend & backend",
-      "Animaciones y micro-interacciones",
-      "Entorno de pruebas (Staging) en vivo",
+      "Programación completa",
+      "Animaciones y detalles",
+      "Versión de prueba en vivo antes del lanzamiento",
     ],
   },
   {
@@ -97,10 +97,10 @@ export const process: ProcessStep[] = [
     title: "Lanzar & Optimizar",
     duration: "Lanzamiento",
     description:
-      "Desplegamos en infraestructura global (Vercel/Cloudflare), configuramos dominios, realizamos auditoría de SEO/performance y brindamos soporte post-lanzamiento.",
+      "Publicamos tu sitio con la mejor infraestructura disponible, configuramos tu dominio, revisamos que cargue rápido y aparezca bien en Google, y te acompañamos después del lanzamiento.",
     deliverables: [
-      "Auditoría de Core Web Vitals (95+)",
-      "Configuración de analítica y SEO",
+      "Revisión de velocidad y de Google",
+      "Configuración de estadísticas",
       "30 días de garantía y soporte",
     ],
   },

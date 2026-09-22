@@ -1,8 +1,8 @@
-// Visual del hero: un panel de consola que muestra el entorno de staging real
-// que se entrega en el Paso 02 del proceso (ver components/sections/process.tsx).
-// Las líneas de log usan sólo afirmaciones que ya sostenemos en otras
-// secciones (Lighthouse 100, TypeScript estricto, repo propio) — nada
-// inventado para este componente.
+// Visual del hero: un panel que muestra el sitio de prueba real que se
+// entrega en el Paso 02 del proceso (ver components/sections/process.tsx).
+// Las líneas usan sólo afirmaciones que ya sostenemos en otras secciones
+// (100/100 de rendimiento, sin errores, código propio) en lenguaje llano —
+// nada de jerga técnica, nada inventado para este componente.
 export function BuildConsole() {
   return (
     <div className="relative">
@@ -28,29 +28,27 @@ export function BuildConsole() {
         </div>
 
         <div className="space-y-2.5 px-4 py-5 font-mono text-[13px] leading-relaxed">
-          <p className="text-muted">$ vercel deploy --staging</p>
           <p className="text-foreground">
-            <span className="text-accent">✓</span> Entorno de staging listo
+            <span className="text-accent">✓</span> Sitio en línea y funcionando
           </p>
           <p className="text-foreground">
-            <span className="text-accent">✓</span> TypeScript estricto, 0
-            errores
+            <span className="text-accent">✓</span> Probado a fondo, sin errores
           </p>
           <p className="text-foreground">
-            <span className="text-accent">✓</span> Base de datos conectada
-            (Supabase)
+            <span className="text-accent">✓</span> Tus datos guardados de forma
+            segura
           </p>
-          <p className="mt-3 text-muted">$ lighthouse --audit</p>
           <p className="text-foreground">
-            <span className="text-accent">✓</span> Performance{" "}
-            <span className="text-accent">100</span> · Accesibilidad{" "}
-            <span className="text-accent">100</span>
+            <span className="text-accent">✓</span> Carga en menos de 1 segundo
+          </p>
+          <p className="text-foreground">
+            <span className="text-accent">✓</span> Se ve perfecto en el celular
           </p>
         </div>
 
         <div className="flex items-center justify-between border-t border-border px-4 py-3 font-mono text-[11px] text-muted">
-          <span>Next.js 16 · Turbopack</span>
-          <span className="text-accent">Repo 100% tuyo</span>
+          <span>Tecnología moderna</span>
+          <span className="text-accent">El código es 100% tuyo</span>
         </div>
       </div>
     </div>

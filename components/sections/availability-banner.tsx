@@ -12,15 +12,28 @@ const SLOTS_AVAILABLE = 2;
 function getAvailabilityMonth(): string {
   const now = new Date();
   const day = now.getDate();
-  const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
+  const daysInMonth = new Date(
+    now.getFullYear(),
+    now.getMonth() + 1,
+    0,
+  ).getDate();
   const monthNames = [
-    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre",
+    "Enero",
+    "Febrero",
+    "Marzo",
+    "Abril",
+    "Mayo",
+    "Junio",
+    "Julio",
+    "Agosto",
+    "Septiembre",
+    "Octubre",
+    "Noviembre",
+    "Diciembre",
   ];
   // Si queda menos del 20% del mes, mostramos el siguiente
-  const targetMonth = day > daysInMonth * 0.8
-    ? now.getMonth() + 1
-    : now.getMonth();
+  const targetMonth =
+    day > daysInMonth * 0.8 ? now.getMonth() + 1 : now.getMonth();
   const year = now.getFullYear() + (targetMonth > 11 ? 1 : 0);
   return `${monthNames[targetMonth % 12]} ${year}`;
 }
@@ -67,20 +80,22 @@ export function AvailabilityBanner() {
                     Estudio Disponible
                   </span>
                   <span className="rounded-full border border-border bg-surface px-2 py-0.5 font-mono text-[10px] text-muted">
-                    {SLOTS_AVAILABLE} slots abiertos
+                    {SLOTS_AVAILABLE} cupos abiertos
                   </span>
                 </div>
 
                 <p className="mt-1 text-lg font-semibold tracking-tight text-foreground sm:text-xl">
                   Aceptando proyectos para{" "}
-                  <span className="text-accent">{month || "próximas semanas"}</span>
+                  <span className="text-accent">
+                    {month || "próximas semanas"}
+                  </span>
                 </p>
 
                 {/* Detalles en fila */}
                 <div className="mt-3 flex flex-wrap gap-4">
                   <span className="flex items-center gap-1.5 font-mono text-xs text-muted">
                     <CalendarCheck size={13} className="text-accent/70" />
-                    Kickoff en 7 días hábiles
+                    Arrancamos en 7 días hábiles
                   </span>
                   <span className="flex items-center gap-1.5 font-mono text-xs text-muted">
                     <Clock size={13} className="text-accent/70" />
@@ -88,7 +103,7 @@ export function AvailabilityBanner() {
                   </span>
                   <span className="flex items-center gap-1.5 font-mono text-xs text-muted">
                     <Zap size={13} className="text-accent/70" />
-                    Diseño + Dev sin intermediarios
+                    Diseño y desarrollo sin intermediarios
                   </span>
                 </div>
               </div>

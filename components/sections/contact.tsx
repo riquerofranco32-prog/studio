@@ -11,9 +11,9 @@ import { SITE } from "@/data/site";
 
 const projectTypes = [
   "Landing Page",
-  "SaaS / Web App",
+  "Plataforma o App Web",
   "E-Commerce",
-  "Integración IA / API",
+  "Inteligencia Artificial",
   "Rediseño Completo",
 ];
 
@@ -155,12 +155,44 @@ export function Contact() {
               </span>
             </div>
 
-            <h2 className="display text-[2.6rem] text-foreground sm:text-5xl md:text-[3.4rem] lg:text-[4rem]">
-              <RevealText>¿Tenés una idea?</RevealText>
-              <RevealText index={1}>
-                <span className="text-accent">Construyámosla.</span>
-              </RevealText>
+            <h2 className="display text-[2.6rem] uppercase text-foreground sm:text-5xl md:text-[3.4rem] lg:text-[4rem]">
+              <span className="line-mask block">
+                <RevealText>¿Tenés una idea?</RevealText>
+              </span>
+              <span className="line-mask block">
+                <RevealText index={1}>
+                  <span className="text-accent">Construyámosla.</span>
+                </RevealText>
+              </span>
             </h2>
+
+            <div className="mt-8 flex flex-col gap-2.5">
+              {[
+                { n: "001", label: "Email", href: `mailto:${SITE.email}` },
+                { n: "002", label: "WhatsApp", href: SITE.whatsapp },
+              ].map((link) => (
+                <a
+                  key={link.n}
+                  href={link.href}
+                  target={
+                    link.href.startsWith("mailto:") ? undefined : "_blank"
+                  }
+                  rel={
+                    link.href.startsWith("mailto:")
+                      ? undefined
+                      : "noopener noreferrer"
+                  }
+                  className="focus-ring group inline-flex w-fit items-center gap-3"
+                >
+                  <span className="flex h-7 w-7 items-center justify-center rounded-full border border-border font-mono text-[10px] text-muted transition-colors group-hover:border-accent group-hover:text-accent">
+                    {link.n}
+                  </span>
+                  <span className="text-sm font-medium text-foreground transition-colors group-hover:text-accent">
+                    {link.label}
+                  </span>
+                </a>
+              ))}
+            </div>
 
             <p className="mt-8 max-w-md text-lg leading-relaxed text-muted">
               Contanos sobre tu producto u objetivo de negocio. Respondemos cada

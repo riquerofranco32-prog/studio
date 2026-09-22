@@ -1,16 +1,23 @@
 import { ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
-import { SectionHeading } from "@/components/ui/section-heading";
+import { RevealText } from "@/components/ui/reveal-text";
 import { services } from "@/data/services";
 
 export function Services() {
   return (
     <section id="services" className="border-t border-border py-20 md:py-28">
       <Container>
-        <SectionHeading
-          title="De la visión a la arquitectura final."
-          subtitle="Cuatro modalidades de desarrollo estructuradas para escalar productos digitales con velocidad y precisión."
-        />
+        <div className="max-w-2xl">
+          <h2 className="display text-4xl uppercase text-foreground md:text-6xl">
+            <span className="line-mask block">
+              <RevealText>Qué hacemos</RevealText>
+            </span>
+          </h2>
+          <p className="mt-5 text-lg leading-relaxed text-muted">
+            Cuatro formas de trabajar juntos, pensadas para que tu proyecto
+            avance rápido y sin sorpresas.
+          </p>
+        </div>
 
         <div className="mt-16 border-t border-border">
           {services.map((service) => (

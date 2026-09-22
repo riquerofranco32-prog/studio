@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Navbar } from "@/components/sections/navbar";
 import { Footer } from "@/components/sections/footer";
+import { SideNav } from "@/components/ui/side-nav";
 import { MotionProvider } from "@/components/providers/motion-provider";
 import { SmoothScroll } from "@/components/providers/smooth-scroll";
 import { SoundProvider } from "@/components/providers/sound-provider";
@@ -85,6 +86,7 @@ export default function RootLayout({
         <SoundProvider>
           <MotionProvider>
             <Navbar />
+            <SideNav />
             <main>{children}</main>
             <Footer />
             <CommandPalette />

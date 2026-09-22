@@ -7,7 +7,7 @@ import { SITE } from "@/data/site";
 
 const ROTATING_MESSAGES = [
   "2 cupos abiertos",
-  "Kickoff en 7 días",
+  "Arrancamos en 7 días",
   "Respuesta < 2 hs",
   "Sin intermediarios",
 ];
@@ -82,7 +82,9 @@ export function FloatingStatusBar() {
           <button
             type="button"
             id="floating-bar-booking"
-            onClick={() => window.dispatchEvent(new CustomEvent("open-booking-modal"))}
+            onClick={() =>
+              window.dispatchEvent(new CustomEvent("open-booking-modal"))
+            }
             className="focus-ring inline-flex items-center gap-1.5 rounded-full bg-accent/10 px-3 py-1 text-xs font-medium text-accent hover:bg-accent hover:text-background transition-colors"
           >
             <Calendar size={13} />
@@ -105,7 +107,9 @@ export function FloatingStatusBar() {
           <button
             type="button"
             id="floating-bar-cmd"
-            onClick={() => window.dispatchEvent(new CustomEvent("open-command-palette"))}
+            onClick={() =>
+              window.dispatchEvent(new CustomEvent("open-command-palette"))
+            }
             className="focus-ring inline-flex items-center gap-1 rounded-full border border-border bg-background px-2.5 py-1 font-mono text-[11px] text-muted hover:border-foreground/30 hover:text-foreground transition-colors"
             title="Abrir paleta de comandos"
           >

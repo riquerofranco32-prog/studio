@@ -33,62 +33,62 @@ const steps: ProcessStep[] = [
   {
     step: "01",
     days: "Días 1 a 3",
-    title: "Kickoff & Dirección de Arte",
-    tagline: "Estrategia, wireframes y prototipo interactivo",
+    title: "Estrategia y Diseño",
+    tagline: "Definimos el plan y armamos un prototipo navegable",
     icon: MessageSquare,
     description:
-      "Alineamos objetivos de negocio, arquitectura de información y creamos el diseño de alta fidelidad en Figma.",
+      "Alineamos los objetivos de tu negocio y diseñamos cada pantalla en detalle antes de escribir una sola línea de código.",
     tasks: [
-      "Canal directo en Slack o WhatsApp con los fundadores (Franco & Federico).",
-      "Mapeo de flujos clave de usuario y arquitectura técnica.",
-      "Prototipo interactivo en Figma navegable con diseño UI/UX aprobado.",
+      "Canal directo por WhatsApp con los fundadores (Franco & Federico).",
+      "Mapa de las pantallas y pasos clave que va a tener tu sitio.",
+      "Prototipo navegable con el diseño final aprobado por vos.",
     ],
-    deliverable: "Figma navegable aprobado y especificación técnica cerrada",
+    deliverable: "Diseño completo aprobado, listo para construir",
   },
   {
     step: "02",
     days: "Días 4 a 10",
-    title: "Ingeniería & Staging en Vivo",
-    tagline: "Desarrollo en Next.js 16 y bases de datos",
+    title: "Construcción",
+    tagline: "Programamos todo y lo conectamos a tus datos",
     icon: Code2,
     description:
-      "Construimos componentes atómicos en React 19, Server Actions y persistencia con PostgreSQL.",
+      "Programamos cada pantalla y la conectamos con tu base de datos, para que todo funcione de verdad, no solo se vea bien.",
     tasks: [
-      "Entorno privado de pruebas (staging.tudominio.com) para ver avances diarios.",
-      "Componentes atómicos con Tailwind CSS v4 y TypeScript estricto.",
-      "Integración de Supabase Postgres, autenticación segura y pasarelas de pago.",
+      "Sitio de prueba privado para ver los avances día a día.",
+      "Código prolijo y a prueba de errores.",
+      "Conexión con tu base de datos, usuarios y pagos.",
     ],
-    deliverable: "Entorno de Staging 100% funcional con datos reales",
+    deliverable: "Versión de prueba 100% funcional con tus datos reales",
   },
   {
     step: "03",
     days: "Días 11 a 16",
-    title: "Motion, Polish & Core Web Vitals",
-    tagline: "Experiencia fluida a 60 FPS y rendimiento 100/100",
+    title: "Animaciones y Ajustes Finos",
+    tagline: "Detalles, velocidad y compatibilidad en todos los dispositivos",
     icon: Sparkles,
     description:
-      "Implementamos micro-interacciones cinematográficas y optimizamos cada milisegundo de carga.",
+      "Sumamos animaciones y micro-detalles, y optimizamos cada milisegundo de carga para que se sienta rápido y prolijo.",
     tasks: [
-      "Transiciones fluidas y micro-animaciones con Framer Motion.",
-      "Auditoría técnica de Core Web Vitals para garantizar 95-100 en Lighthouse.",
-      "Pruebas de estrés y compatibilidad en iPhone, Android, Mac y Windows.",
+      "Transiciones y animaciones suaves en toda la experiencia.",
+      "Revisión a fondo de velocidad y buen posicionamiento en Google.",
+      "Pruebas en celular, tablet y computadora, en todos los navegadores.",
     ],
-    deliverable: "Lighthouse 100/100 y respuesta táctil instantánea",
+    deliverable: "Máxima puntuación de velocidad y una experiencia fluida",
   },
   {
     step: "04",
     days: "Días 17 a 21",
-    title: "Lanzamiento Global & Garantía",
-    tagline: "Despliegue perimetral en Edge y soporte directo",
+    title: "Lanzamiento y Garantía",
+    tagline: "Publicamos tu sitio y te acompañamos después",
     icon: Rocket,
     description:
-      "Desplegamos en la red perimetral de Vercel y te entregamos la propiedad total del repositorio.",
+      "Publicamos tu sitio con la mejor infraestructura disponible y te entregamos la propiedad total del proyecto.",
     tasks: [
-      "Configuración de DNS con Vercel Edge, SSL bancario y SEO Schema dinámico.",
-      "Indexación en Google Search Console y OpenGraph para redes sociales.",
-      "Transferencia del repositorio GitHub a tu nombre + 30 días de soporte post-lanzamiento.",
+      "Configuración de tu dominio y certificado de seguridad.",
+      "Indexación en Google y vista previa lista para redes sociales.",
+      "El proyecto pasa a tu nombre + 30 días de soporte post-lanzamiento.",
     ],
-    deliverable: "Producto en producción + Repositorio GitHub 100% tuyo",
+    deliverable: "Tu sitio en línea + el proyecto es 100% tuyo",
   },
 ];
 
@@ -212,7 +212,7 @@ export function Process() {
           <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-border/60 pt-4 text-xs font-mono text-muted">
             <span className="flex items-center gap-1.5">
               <Clock size={13} className="text-accent" />
-              Entregas continuas y visibilidad diaria en staging
+              Avances que podés ver todos los días, antes del lanzamiento
             </span>
             <span className="flex items-center gap-1.5">
               <ShieldCheck size={13} className="text-emerald-400" />

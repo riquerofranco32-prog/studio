@@ -36,6 +36,7 @@ export function Hero() {
 
   return (
     <section
+      id="hero"
       ref={rootRef}
       className="relative flex flex-col overflow-hidden pt-28 pb-12 md:pt-36 md:pb-16"
     >
@@ -91,7 +92,7 @@ export function Hero() {
                   className="hero-line block"
                   style={{ animationDelay: SEQUENCE.line2 }}
                 >
-                  software & craft
+                  sitios y apps
                 </span>
               </span>
               <span className="line-mask block">
@@ -99,7 +100,7 @@ export function Hero() {
                   className="hero-line block"
                   style={{ animationDelay: SEQUENCE.line3 }}
                 >
-                  para marcas que <span className="text-accent">escalan.</span>
+                  para marcas que <span className="text-accent">crecen.</span>
                 </span>
               </span>
             </h1>
@@ -109,8 +110,8 @@ export function Hero() {
                 className="hero-rise max-w-md text-lg leading-relaxed text-muted md:text-xl"
                 style={{ animationDelay: SEQUENCE.sub }}
               >
-                Estrategia de producto, diseño de sistemas y arquitectura de
-                ingeniería en Next.js 16. De 0 a producción en 2 a 3 semanas.
+                Diseñamos y construimos tu web o app de punta a punta, lista y
+                funcionando en 2 a 3 semanas.
               </p>
 
               <div

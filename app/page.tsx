@@ -1,6 +1,7 @@
 import { PageTransition } from "@/components/ui/page-transition";
 import { Hero } from "@/components/sections/hero";
 import { SelectedWork } from "@/components/sections/selected-work";
+import { Proof } from "@/components/sections/proof";
 import { Services } from "@/components/sections/services";
 import { Process } from "@/components/sections/process";
 import { About } from "@/components/sections/about";
@@ -12,6 +13,7 @@ export default function Home() {
     <PageTransition>
       <Hero />
       <SelectedWork />
+      <Proof />
       <Services />
       <Process />
       <About />

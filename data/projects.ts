@@ -6,7 +6,7 @@ export const projects: Project[] = [
     slug: "takefyy",
     number: "01",
     name: "Takefyy",
-    category: "SaaS / Producto Digital",
+    category: "Plataforma Digital",
     categoryGroup: "saas",
     year: "2025",
     shortDescription:
@@ -64,7 +64,7 @@ export const projects: Project[] = [
     slug: "sentinel",
     number: "03",
     name: "Sentinel",
-    category: "Climate Tech & Datos Satelitales",
+    category: "Tecnología Climática y Datos Satelitales",
     categoryGroup: "systems",
     year: "2025",
     shortDescription:
@@ -95,14 +95,14 @@ export const projects: Project[] = [
     slug: "apex-ai",
     number: "04",
     name: "Apex Performance",
-    category: "Software & Performance",
+    category: "Tecnología y Rendimiento",
     categoryGroup: "systems",
     year: "2025",
     shortDescription:
       "Un sitio web enfocado en alto rendimiento, tecnología y conversión.",
     description:
       "Apex Performance es una plataforma de tecnología y alto rendimiento. Diseñamos y construimos su presencia web.",
-    impactMetric: "0 fricción técnica",
+    impactMetric: "Carga instantánea",
     challenge:
       "Comunicar con claridad el valor de un producto de tecnología a una audiencia exigente.",
     approach:

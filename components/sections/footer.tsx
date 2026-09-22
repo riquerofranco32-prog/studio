@@ -30,7 +30,8 @@ export function Footer() {
                 className="h-8 w-auto"
               />
               <p className="mt-4 max-w-sm text-sm leading-relaxed text-muted">
-                Estudio boutique de software y diseño en Argentina. Construimos SaaS, E-Commerce y productos web en Next.js 16 con velocidad sub-segundo.
+                Estudio boutique de software y diseño en Argentina. Construimos
+                plataformas, tiendas online y sitios web que cargan al instante.
               </p>
 
               {/* Status & Clock */}
@@ -74,47 +75,74 @@ export function Footer() {
                 </h4>
                 <ul className="space-y-2.5 text-sm">
                   <li>
-                    <Link href="/work" className="text-muted hover:text-foreground transition-colors">
-                      Portafolio de Casos
+                    <Link
+                      href="/work"
+                      className="text-muted hover:text-foreground transition-colors"
+                    >
+                      Nuestros Trabajos
                     </Link>
                   </li>
                   <li>
-                    <Link href="/services" className="text-muted hover:text-foreground transition-colors">
-                      Servicios & Precios
+                    <Link
+                      href="/services"
+                      className="text-muted hover:text-foreground transition-colors"
+                    >
+                      Servicios y Precios
                     </Link>
                   </li>
                   <li>
-                    <Link href="/tech" className="text-muted hover:text-foreground transition-colors">
-                      Radar Tecnológico
+                    <Link
+                      href="/tech"
+                      className="text-muted hover:text-foreground transition-colors"
+                    >
+                      Tecnología
                     </Link>
                   </li>
                   <li>
-                    <Link href="/blog" className="text-muted hover:text-foreground transition-colors">
-                      Blog de Ingeniería
+                    <Link
+                      href="/blog"
+                      className="text-muted hover:text-foreground transition-colors"
+                    >
+                      Blog
                     </Link>
                   </li>
                   <li>
-                    <Link href="/testimonials" className="text-muted hover:text-foreground transition-colors">
-                      Casos de Éxito & Testimonios
+                    <Link
+                      href="/testimonials"
+                      className="text-muted hover:text-foreground transition-colors"
+                    >
+                      Testimonios
                     </Link>
                   </li>
                   <li>
-                    <Link href="/design-system" className="text-muted hover:text-foreground transition-colors">
-                      Design System & Tokens
+                    <Link
+                      href="/design-system"
+                      className="text-muted hover:text-foreground transition-colors"
+                    >
+                      Sistema de Diseño
                     </Link>
                   </li>
                   <li>
-                    <Link href="/playground" className="text-muted hover:text-foreground transition-colors">
-                      Playground Técnico
+                    <Link
+                      href="/playground"
+                      className="text-muted hover:text-foreground transition-colors"
+                    >
+                      Demos Interactivas
                     </Link>
                   </li>
                   <li>
-                    <Link href="/security" className="text-muted hover:text-foreground transition-colors">
-                      Seguridad & NDA
+                    <Link
+                      href="/security"
+                      className="text-muted hover:text-foreground transition-colors"
+                    >
+                      Seguridad y Confidencialidad
                     </Link>
                   </li>
                   <li>
-                    <Link href="/#about" className="text-muted hover:text-foreground transition-colors">
+                    <Link
+                      href="/#about"
+                      className="text-muted hover:text-foreground transition-colors"
+                    >
                       Sobre el Estudio
                     </Link>
                   </li>
@@ -128,52 +156,78 @@ export function Footer() {
                 </h4>
                 <ul className="space-y-2.5 text-sm">
                   <li>
-                    <Link href="/start" className="text-accent font-medium hover:underline flex items-center gap-1">
-                      <span>Iniciar Briefing</span>
+                    <Link
+                      href="/start"
+                      className="text-accent font-medium hover:underline flex items-center gap-1"
+                    >
+                      <span>Iniciar un Proyecto</span>
                       <ArrowUpRight size={13} />
                     </Link>
                   </li>
                   <li>
-                    <Link href="/kickoff" className="text-muted hover:text-foreground transition-colors">
-                      Portal de Kickoff
+                    <Link
+                      href="/kickoff"
+                      className="text-muted hover:text-foreground transition-colors"
+                    >
+                      Portal de Inicio
                     </Link>
                   </li>
                   <li>
-                    <Link href="/audit" className="text-muted hover:text-foreground transition-colors">
-                      Auditoría Técnica Gratuita
+                    <Link
+                      href="/audit"
+                      className="text-muted hover:text-foreground transition-colors"
+                    >
+                      Diagnóstico Gratuito
                     </Link>
                   </li>
                   <li>
-                    <Link href="/roi" className="text-muted hover:text-foreground transition-colors">
-                      Calculadora de ROI
+                    <Link
+                      href="/roi"
+                      className="text-muted hover:text-foreground transition-colors"
+                    >
+                      Calculadora de Retorno
                     </Link>
                   </li>
                   <li>
-                    <Link href="/portal" className="text-muted hover:text-foreground transition-colors">
-                      Demo Portal de Staging
+                    <Link
+                      href="/portal"
+                      className="text-muted hover:text-foreground transition-colors"
+                    >
+                      Ejemplo de Sitio en Vivo
                     </Link>
                   </li>
                   <li>
-                    <Link href="/pricing" className="text-muted hover:text-foreground transition-colors">
+                    <Link
+                      href="/pricing"
+                      className="text-muted hover:text-foreground transition-colors"
+                    >
                       Configurador de Precios
                     </Link>
                   </li>
                   <li>
                     <button
                       type="button"
-                      onClick={() => window.dispatchEvent(new CustomEvent("open-badge-generator"))}
+                      onClick={() =>
+                        window.dispatchEvent(
+                          new CustomEvent("open-badge-generator"),
+                        )
+                      }
                       className="text-muted hover:text-foreground transition-colors text-left"
                     >
-                      Insignia "Built by Se7en"
+                      Insignia "Hecho por Se7en"
                     </button>
                   </li>
                   <li>
                     <button
                       type="button"
-                      onClick={() => window.dispatchEvent(new CustomEvent("open-booking-modal"))}
+                      onClick={() =>
+                        window.dispatchEvent(
+                          new CustomEvent("open-booking-modal"),
+                        )
+                      }
                       className="text-muted hover:text-foreground transition-colors text-left"
                     >
-                      Agendar Discovery Call
+                      Agendar una Llamada
                     </button>
                   </li>
                 </ul>
@@ -228,12 +282,13 @@ export function Footer() {
 
           <div className="mt-16 flex flex-col-reverse items-start justify-between gap-4 border-t border-border pt-6 text-xs text-muted sm:flex-row sm:items-center">
             <p>
-              &copy; {new Date().getFullYear()} {SITE.name}. Todos los derechos reservados.
+              &copy; {new Date().getFullYear()} {SITE.name}. Todos los derechos
+              reservados.
             </p>
             <div className="flex items-center gap-4 font-mono text-[11px]">
-              <span>Next.js 16 · Turbopack</span>
+              <span>Tecnología moderna</span>
               <span>·</span>
-              <span className="text-emerald-400">Core Web Vitals 100/100</span>
+              <span className="text-emerald-400">Rendimiento 100/100</span>
             </div>
           </div>
         </Reveal>

@@ -4,18 +4,22 @@ import { useState } from "react";
 import { AnimatePresence } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
-import { SectionHeading } from "@/components/ui/section-heading";
+import { RevealText } from "@/components/ui/reveal-text";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Magnetic } from "@/components/ui/magnetic";
-import { CategoryFilter, CategoryOption } from "@/components/ui/category-filter";
+import {
+  CategoryFilter,
+  CategoryOption,
+} from "@/components/ui/category-filter";
 import { ProjectCard } from "@/components/work/project-card";
 import { projects } from "@/data/projects";
+import { SITE } from "@/data/site";
 
 const categories: CategoryOption[] = [
   { id: "all", label: "Todos", count: projects.length },
   {
     id: "saas",
-    label: "SaaS & Apps",
+    label: "Plataformas & Apps",
     count: projects.filter((p) => p.categoryGroup === "saas").length,
   },
   {
@@ -39,18 +43,32 @@ export function SelectedWork() {
   const [selectedCategory, setSelectedCategory] = useState("all");
 
   const filteredProjects = projects
-    .filter((p) => selectedCategory === "all" || p.categoryGroup === selectedCategory)
+    .filter(
+      (p) => selectedCategory === "all" || p.categoryGroup === selectedCategory,
+    )
     .sort((a, b) => a.order - b.order);
 
   return (
     <section id="work" className="border-t border-border py-24 md:py-32">
       <Container>
         <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
-          <SectionHeading
-            kicker="Trabajo seleccionado"
-            title="Trabajo seleccionado."
-            subtitle={`${projects.length} experiencias digitales que diseñamos y construimos con foco en conversión y estética.`}
-          />
+          <div className="max-w-2xl">
+            <h2 className="display text-4xl uppercase text-foreground md:text-6xl">
+              <span className="line-mask block">
+                <RevealText>Trabajo seleccionado</RevealText>
+              </span>
+              <span className="line-mask block">
+                <RevealText index={1}>
+                  <span className="text-accent">{SITE.stats.years}</span>
+                  <span className="text-2xl align-top md:text-3xl">©</span>
+                </RevealText>
+              </span>
+            </h2>
+            <p className="mt-5 text-lg leading-relaxed text-muted">
+              {projects.length} experiencias digitales que diseñamos y
+              construimos con foco en conversión y estética.
+            </p>
+          </div>
           <Magnetic className="shrink-0">
             <ButtonLink href="/#contact" variant="secondary">
               Quiero algo así

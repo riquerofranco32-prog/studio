@@ -25,7 +25,7 @@ const categories: {
 }[] = [
   { id: "all", label: "Todas", icon: Layers },
   { id: "pricing", label: "Tiempos & Inversión", icon: Clock },
-  { id: "tech", label: "Stack & Arquitectura", icon: Cpu },
+  { id: "tech", label: "Tecnología", icon: Cpu },
   { id: "support", label: "Garantía & Soporte", icon: ShieldCheck },
 ];
 

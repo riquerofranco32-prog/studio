@@ -23,11 +23,11 @@ import { SITE } from "@/data/site";
 export const metadata: Metadata = {
   title: "Servicios y Entregables | Se7en Studio",
   description:
-    "Desarrollo SaaS, E-commerce de alta conversión, landing pages interactivas e integraciones con Inteligencia Artificial. Conoce nuestros paquetes y entregables.",
+    "Plataformas web, tiendas online de alta conversión, landing pages y soluciones con Inteligencia Artificial. Conocé nuestros paquetes y qué incluye cada uno.",
   openGraph: {
     title: "Servicios y Entregables | Se7en Studio",
     description:
-      "Desarrollo SaaS, E-commerce de alta conversión, landing pages interactivas e integraciones con Inteligencia Artificial. Conoce nuestros paquetes y entregables.",
+      "Plataformas web, tiendas online de alta conversión, landing pages y soluciones con Inteligencia Artificial. Conocé nuestros paquetes y qué incluye cada uno.",
     url: `${SITE.url}/services`,
   },
 };
@@ -36,21 +36,22 @@ const detailedServices = [
   {
     number: "01",
     id: "saas",
-    title: "Desarrollo SaaS & Plataformas Web",
+    title: "Plataformas y Aplicaciones Web",
     tagline: "Aplicaciones web completas diseñadas para escalar",
     icon: Layout,
     timeline: "2 a 4 semanas",
     description:
-      "Construimos plataformas digitales robustas desde la base de datos hasta la interfaz de usuario. Integramos autenticación, roles de usuario, pasarelas de pago y paneles administrativos en tiempo real.",
+      "Construimos tu plataforma completa, de punta a punta. Incluye inicio de sesión, distintos tipos de usuario, pagos online y paneles de administración en tiempo real.",
     deliverables: [
-      "Arquitectura completa en Next.js 16 + React 19",
-      "Base de datos PostgreSQL relacional en Supabase con RLS",
-      "Autenticación segura (Magic Link, OAuth, contraseñas)",
-      "Paneles de administración y dashboards analíticos",
-      "Integración de pagos (Stripe, MercadoPago, Lemonsqueezy)",
-      "Despliegue automatizado con CI/CD en Vercel",
+      "Programación completa de tu plataforma",
+      "Base de datos segura y organizada",
+      "Inicio de sesión seguro (email, Google, contraseña)",
+      "Paneles de administración y estadísticas",
+      "Cobros online (tarjeta, Mercado Pago y más)",
+      "Publicación automática ante cada actualización",
     ],
-    idealFor: "Startups, fundadores técnicos y empresas que necesitan lanzar un MVP o escalar su producto.",
+    idealFor:
+      "Startups y empresas que necesitan lanzar un primer producto o hacer crecer el que ya tienen.",
   },
   {
     number: "02",
@@ -60,16 +61,17 @@ const detailedServices = [
     icon: ShoppingCart,
     timeline: "2 a 3 semanas",
     description:
-      "Desarrollamos tiendas online personalizadas que cargan al instante y convierten visitas en compradores. Sin los límites de diseño ni la lentitud de Shopify o WooCommerce estándar.",
+      "Desarrollamos tiendas online a medida que cargan al instante y convierten visitas en compras. Sin los límites de diseño ni la lentitud de las plataformas genéricas.",
     deliverables: [
       "Catálogo de productos interactivo y autogestionable",
       "Flujo de checkout fluido (directo a WhatsApp o pasarela de pago)",
       "Gestión de stock e inventario en tiempo real",
-      "Optimización de velocidad (Core Web Vitals 95+)",
+      "Máxima velocidad de carga",
       "Panel de administración intuitivo para cargar productos",
-      "Integración con Google Analytics 4 y Meta Pixel",
+      "Estadísticas de visitas y ventas conectadas",
     ],
-    idealFor: "Marcas direct-to-consumer (D2C), comercios gastronómicos y negocios con identidad propia.",
+    idealFor:
+      "Marcas que venden directo al público, comercios gastronómicos y negocios con identidad propia.",
   },
   {
     number: "03",
@@ -79,34 +81,36 @@ const detailedServices = [
     icon: Zap,
     timeline: "1 a 2 semanas",
     description:
-      "Creamos la cara digital de tu empresa con una dirección de arte impecable, animaciones fluidas a 60fps y una estructura orientada a la conversión y credibilidad inmediata.",
+      "Creamos la cara digital de tu empresa: un diseño impecable, animaciones suaves y una estructura pensada para convertir visitas en clientes.",
     deliverables: [
-      "Diseño UI/UX a medida en Figma con prototipo interactivo",
-      "Desarrollo frontend en Next.js con Tailwind CSS v4",
-      "Animaciones micro-interactivas con Framer Motion",
-      "Formularios de contacto inteligentes con anti-spam",
-      "Estructura SEO semántica y OpenGraph dinámico para redes",
-      "Adaptabilidad 100% responsiva (móvil, tablet y desktop)",
+      "Diseño a medida con un prototipo que podés probar antes de construir nada",
+      "Programación completa de tu sitio",
+      "Animaciones y detalles que le dan vida al sitio",
+      "Formulario de contacto protegido contra spam",
+      "Buen posicionamiento en Google y vista previa lista para redes",
+      "Se ve perfecto en celular, tablet y computadora",
     ],
-    idealFor: "Empresas de servicios, consultoras, lanzamientos de producto y marcas que buscan diferenciarse.",
+    idealFor:
+      "Empresas de servicios, consultoras, lanzamientos de producto y marcas que buscan diferenciarse.",
   },
   {
     number: "04",
     id: "ai",
     title: "Inteligencia Artificial & Automatización",
-    tagline: "APIs inteligentes y flujos de datos en tiempo real",
+    tagline: "Automatización inteligente y datos en tiempo real",
     icon: Bot,
     timeline: "2 a 3 semanas",
     description:
-      "Potenciamos tu producto con modelos de lenguaje de última generación (OpenAI, Anthropic), procesamiento de datos satelitales o fuentes en vivo y automatizaciones personalizadas.",
+      "Sumamos inteligencia artificial a tu producto: asistentes conversacionales, análisis de datos en vivo (incluso satelitales) y automatizaciones a medida.",
     deliverables: [
-      "Integración de LLMs (asistentes, búsqueda semántica, resúmenes)",
-      "Pipelines de consumo de datos externos (APIs, Satélites)",
-      "Automatización de workflows internos y notificaciones",
-      "Optimización de costos de tokens e inferencia",
-      "Manejo seguro de claves y rate-limiting",
+      "Asistentes con inteligencia artificial, búsqueda inteligente y resúmenes automáticos",
+      "Conexión con fuentes de datos externas, incluso satelitales",
+      "Automatización de tareas internas y notificaciones",
+      "Uso eficiente para mantener los costos bajo control",
+      "Manejo seguro de accesos y límites de uso",
     ],
-    idealFor: "Productos de Climate Tech, herramientas SaaS inteligentes y empresas con flujos repetitivos.",
+    idealFor:
+      "Productos de tecnología climática, plataformas inteligentes y empresas con tareas repetitivas.",
   },
 ];
 
@@ -122,12 +126,13 @@ export default function ServicesPage() {
           </div>
 
           <h1 className="display mt-6 text-4xl text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
-            Ingeniería y diseño. <br />
+            Diseño y desarrollo. <br />
             <span className="text-accent">Sin atajos ni plantillas.</span>
           </h1>
 
           <p className="mt-6 text-lg leading-relaxed text-muted md:text-xl">
-            Desarrollamos soluciones digitales a medida con foco en velocidad, diseño editorial y código limpio bajo tu propiedad absoluta.
+            Creamos productos digitales a medida, rápidos, prolijos y con el
+            código 100% a tu nombre.
           </p>
         </div>
 
@@ -135,25 +140,34 @@ export default function ServicesPage() {
         <div className="mt-14 grid grid-cols-1 gap-6 sm:grid-cols-3">
           <div className="rounded-xl border border-border bg-surface/60 p-6">
             <ShieldCheck className="text-accent" size={24} />
-            <h3 className="mt-3 font-medium text-foreground">30 Días de Garantía</h3>
+            <h3 className="mt-3 font-medium text-foreground">
+              30 Días de Garantía
+            </h3>
             <p className="mt-1.5 text-xs leading-relaxed text-muted">
-              Soporte técnico y ajustes post-lanzamiento sin costo adicional para asegurar estabilidad total.
+              Soporte técnico y ajustes post-lanzamiento sin costo adicional
+              para asegurar estabilidad total.
             </p>
           </div>
 
           <div className="rounded-xl border border-border bg-surface/60 p-6">
             <Code2 className="text-accent" size={24} />
-            <h3 className="mt-3 font-medium text-foreground">100% Código Propio</h3>
+            <h3 className="mt-3 font-medium text-foreground">
+              100% Código Propio
+            </h3>
             <p className="mt-1.5 text-xs leading-relaxed text-muted">
-              Repositorio de GitHub a tu nombre. Sin ataduras a plataformas propietarias ni suscripciones ocultas.
+              El código es tuyo, en tu propia cuenta de GitHub. Sin ataduras ni
+              suscripciones ocultas.
             </p>
           </div>
 
           <div className="rounded-xl border border-border bg-surface/60 p-6">
             <Rocket className="text-accent" size={24} />
-            <h3 className="mt-3 font-medium text-foreground">Entregas en 1-3 Semanas</h3>
+            <h3 className="mt-3 font-medium text-foreground">
+              Entregas en 1-3 Semanas
+            </h3>
             <p className="mt-1.5 text-xs leading-relaxed text-muted">
-              Sprints semanales con demos tangibles en staging. Sin burocracias de agencias tradicionales.
+              Avances que podés ver cada semana, sin la burocracia de una
+              agencia tradicional.
             </p>
           </div>
         </div>
@@ -194,7 +208,8 @@ export default function ServicesPage() {
                     </p>
 
                     <div className="mt-4 rounded-lg bg-background/80 border border-border/80 p-3.5 text-xs text-muted">
-                      <strong className="text-foreground">Ideal para:</strong> {service.idealFor}
+                      <strong className="text-foreground">Ideal para:</strong>{" "}
+                      {service.idealFor}
                     </div>
                   </div>
 
@@ -245,10 +260,11 @@ export default function ServicesPage() {
               Metodología de trabajo
             </span>
             <h2 className="display mt-3 text-3xl text-foreground md:text-4xl">
-              De la idea al despliegue en 4 pasos.
+              De la idea al lanzamiento en 4 pasos.
             </h2>
             <p className="mt-3 text-base text-muted">
-              Un flujo ágil, sin reuniones innecesarias y con comunicación directa con los desarrolladores y diseñadores.
+              Un flujo ágil, sin reuniones innecesarias y con comunicación
+              directa con los desarrolladores y diseñadores.
             </p>
           </div>
 
@@ -284,7 +300,8 @@ export default function ServicesPage() {
               ¿Listo para empezar tu proyecto?
             </h3>
             <p className="mt-3 max-w-lg text-base text-muted">
-              Contanos sobre tu idea y te armamos una propuesta técnica con cotización y fecha estimada de entrega.
+              Contanos sobre tu idea y te armamos una propuesta técnica con
+              cotización y fecha estimada de entrega.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
               <Link
