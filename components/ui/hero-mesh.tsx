@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import { MeshGradient } from "@paper-design/shaders-react";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
@@ -15,15 +16,35 @@ const MESH_COLORS = ["#0a0a0b", "#ff4d2e", "#0a0a0b", "#3a140a", "#0a0a0b"];
 // framer-motion para la grilla, en vez de manipular el DOM a mano.
 export function HeroMesh() {
   const reduceMotion = useReducedMotion();
+  const rootRef = useRef<HTMLDivElement>(null);
+  // El shader corre en WebGL a 60fps mientras esté montado — costoso incluso
+  // scrolleado lejos del hero, que es la mayor parte de la sesión en una
+  // landing de una sola página larga. Se desmonta fuera de viewport y se
+  // vuelve a montar al volver, igual que hace phosphor-shader.tsx.
+  const [inView, setInView] = useState(true);
+
+  useEffect(() => {
+    const el = rootRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setInView(entry.isIntersecting),
+      {
+        rootMargin: "200px",
+      },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   return (
     <div
+      ref={rootRef}
       aria-hidden
       className="pointer-events-none absolute inset-0 overflow-hidden"
     >
       {reduceMotion ? (
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,77,46,0.12),transparent_60%)]" />
-      ) : (
+      ) : inView ? (
         <MeshGradient
           className="absolute inset-0 h-full w-full opacity-50"
           colors={MESH_COLORS}
@@ -31,7 +52,7 @@ export function HeroMesh() {
           distortion={0.85}
           swirl={0.35}
         />
-      )}
+      ) : null}
 
       {/* Grilla que se dibuja al entrar */}
       <svg className="absolute inset-0 h-full w-full opacity-[0.5]">

@@ -20,12 +20,19 @@ export function CustomCursor() {
 
   useEffect(() => {
     // Desactivar en pantallas táctiles
-    if (typeof window === "undefined" || window.matchMedia("(pointer: coarse)").matches) {
+    if (
+      typeof window === "undefined" ||
+      window.matchMedia("(pointer: coarse)").matches
+    ) {
       return;
     }
     setMounted(true);
 
     function handleMouseMove(e: MouseEvent) {
+      // mouseX/mouseY son motion values: no re-renderizan React al escribirlas.
+      // cursorText/isPointer sí son state, así que sólo se tocan cuando el
+      // valor realmente cambia — si no, cada pixel de movimiento del mouse
+      // re-renderiza todo el árbol de abajo por nada.
       mouseX.set(e.clientX);
       mouseY.set(e.clientY);
       if (!visible) setVisible(true);
@@ -35,15 +42,15 @@ export function CustomCursor() {
 
       // Buscar texto contextual en el elemento o sus padres
       const textEl = target.closest("[data-cursor-text]") as HTMLElement | null;
-      if (textEl) {
-        setCursorText(textEl.getAttribute("data-cursor-text"));
-      } else {
-        setCursorText(null);
-      }
+      const nextText = textEl ? textEl.getAttribute("data-cursor-text") : null;
+      setCursorText((prev) => (prev === nextText ? prev : nextText));
 
       // Detectar elementos clickeables
-      const clickEl = target.closest("a, button, input, textarea, select, [role='button']");
-      setIsPointer(Boolean(clickEl) && !textEl);
+      const clickEl = target.closest(
+        "a, button, input, textarea, select, [role='button']",
+      );
+      const nextPointer = Boolean(clickEl) && !textEl;
+      setIsPointer((prev) => (prev === nextPointer ? prev : nextPointer));
     }
 
     function handleMouseLeave() {
@@ -80,8 +87,8 @@ export function CustomCursor() {
           cursorText
             ? "border border-accent bg-accent text-background px-3.5 py-1.5 shadow-[0_0_25px_rgba(255,77,46,0.4)] max-w-fit w-auto"
             : isPointer
-            ? "h-10 w-10 border border-accent/80 bg-accent/15 backdrop-blur-[2px]"
-            : "h-8 w-8 border border-foreground/20 bg-foreground/5 backdrop-blur-[1px]"
+              ? "h-10 w-10 border border-accent/80 bg-accent/15 backdrop-blur-[2px]"
+              : "h-8 w-8 border border-foreground/20 bg-foreground/5 backdrop-blur-[1px]"
         }`}
       >
         {cursorText && (
