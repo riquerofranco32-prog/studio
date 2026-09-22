@@ -1,5 +1,6 @@
 import { PageTransition } from "@/components/ui/page-transition";
 import { Hero } from "@/components/sections/hero";
+import { WorkWall } from "@/components/sections/work-wall";
 import { SelectedWork } from "@/components/sections/selected-work";
 import { Proof } from "@/components/sections/proof";
 import { Services } from "@/components/sections/services";
@@ -12,6 +13,7 @@ export default function Home() {
   return (
     <PageTransition>
       <Hero />
+      <WorkWall />
       <SelectedWork />
       <Proof />
       <Services />
