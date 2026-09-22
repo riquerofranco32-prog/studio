@@ -1,11 +1,11 @@
 "use client";
 
-import Image from "next/image";
 import Link from "next/link";
 import { LinkedinIcon } from "@/components/ui/brand-icons";
 import { Container } from "@/components/ui/container";
 import { RevealText } from "@/components/ui/reveal-text";
 import { FounderVoiceWave } from "@/components/ui/founder-voice-wave";
+import { FounderShowcase } from "@/components/ui/founder-showcase";
 import { team } from "@/data/team";
 
 export function About() {
@@ -27,21 +27,8 @@ export function About() {
             </span>
           </h2>
 
-          <div className="flex gap-4 lg:col-span-4 lg:justify-end">
-            {team.map((member) => (
-              <div
-                key={member.id}
-                className="relative aspect-[3/4] w-1/2 max-w-[220px] overflow-hidden rounded-2xl border border-border grayscale transition-all duration-500 hover:grayscale-0"
-              >
-                <Image
-                  src={member.imageUrl ?? ""}
-                  alt={member.name ?? ""}
-                  fill
-                  sizes="220px"
-                  className="object-cover"
-                />
-              </div>
-            ))}
+          <div className="lg:col-span-4 lg:flex lg:justify-end">
+            <FounderShowcase members={team} />
           </div>
         </div>
 
