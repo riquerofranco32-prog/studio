@@ -50,7 +50,7 @@ export function HeroMesh() {
           colors={MESH_COLORS}
           speed={0.25}
           distortion={0.85}
-          swirl={0.35}
+          swirl={0.5}
         />
       ) : null}
 

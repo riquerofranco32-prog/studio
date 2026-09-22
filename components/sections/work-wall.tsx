@@ -34,21 +34,25 @@ export function WorkWall() {
 
   const scale = useTransform(scrollYProgress, [0, 0.55, 1], [0.4, 1, 1.3]);
   const radius = useTransform(scrollYProgress, [0, 0.55, 1], [9999, 28, 0]);
+  // Arranca a aparecer recién en 0.4: el intro (texto + tags) ya terminó de
+  // desvanecerse en 0.3, así que hay un margen de 0.1 donde ninguno de los
+  // dos está visible en vez de superponerse (bug: quedaban 0.2→0.35 los dos
+  // en pantalla a la vez, texto encima de la card).
   const videoOpacity = useTransform(
     scrollYProgress,
-    [0, 0.2, 0.85, 1],
+    [0.3, 0.4, 0.85, 1],
     [0, 1, 1, 0],
   );
 
   const introOpacity = useTransform(
     scrollYProgress,
-    [0, 0.12, 0.35, 0.5],
+    [0, 0.12, 0.2, 0.3],
     [0, 1, 1, 0],
   );
-  const introY = useTransform(scrollYProgress, [0, 0.5], [0, -40]);
+  const introY = useTransform(scrollYProgress, [0, 0.3], [0, -40]);
   const tagsOpacity = useTransform(
     scrollYProgress,
-    [0.08, 0.22, 0.35, 0.5],
+    [0.08, 0.16, 0.2, 0.3],
     [0, 1, 1, 0],
   );
 

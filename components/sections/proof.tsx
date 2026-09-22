@@ -17,7 +17,7 @@ export function Proof() {
   const brands = [...projects].sort((a, b) => a.order - b.order);
 
   return (
-    <section className="border-t border-border py-16 md:py-20">
+    <section className="border-t border-border py-20 md:py-28">
       <Container>
         <p className="text-center font-mono text-xs tracking-widest text-muted uppercase">
           Marcas y productos que diseñamos, programamos y escalamos
@@ -52,7 +52,7 @@ export function Proof() {
               <span className="display block text-5xl text-foreground md:text-6xl">
                 <CountUp value={stat.value} />
               </span>
-              <p className="mt-2 font-mono text-xs uppercase tracking-wider text-muted">
+              <p className="mt-2 font-mono text-xs uppercase tracking-widest text-muted">
                 {stat.label}
               </p>
             </div>

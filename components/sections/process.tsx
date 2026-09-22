@@ -176,7 +176,7 @@ export function Process() {
                 <Icon size={24} />
               </div>
               <div>
-                <span className="font-mono text-xs text-accent uppercase font-bold">
+                <span className="font-mono text-xs text-accent uppercase tracking-widest font-bold">
                   Paso {current.step} · {current.days}
                 </span>
                 <h3 className="display mt-0.5 text-2xl text-foreground sm:text-3xl">

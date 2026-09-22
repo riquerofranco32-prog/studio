@@ -39,7 +39,7 @@ export function Services() {
 
               <div className="md:col-span-5">
                 {service.tagline && (
-                  <p className="font-mono text-xs text-accent uppercase tracking-wider mb-2">
+                  <p className="font-mono text-xs text-accent uppercase tracking-widest mb-2">
                     {service.tagline}
                   </p>
                 )}
