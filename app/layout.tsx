@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Navbar } from "@/components/sections/navbar";
-import { Footer } from "@/components/sections/footer";
+import Se7enFooter from "@/components/footer/Se7enFooter";
 import { SideNav } from "@/components/ui/side-nav";
 import { MotionProvider } from "@/components/providers/motion-provider";
 import { SmoothScroll } from "@/components/providers/smooth-scroll";
@@ -90,7 +90,7 @@ export default function RootLayout({
             <Navbar />
             <SideNav />
             <main>{children}</main>
-            <Footer />
+            <Se7enFooter />
             <CommandPalette />
             <BookingModal />
             <FloatingStatusBar />
