@@ -16,6 +16,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { Marquee } from "@/components/ui/marquee";
 import { Magnetic } from "@/components/ui/magnetic";
 import { BuildConsole } from "@/components/ui/build-console";
+import { TubesBackground } from "@/components/ui/tubes-background";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { EASE } from "@/lib/motion";
 import { projects } from "@/data/projects";
@@ -79,6 +80,10 @@ export function Hero() {
         aria-hidden
         className="pointer-events-none absolute -left-40 bottom-0 h-[420px] w-[420px] rounded-full bg-foreground/[0.03] blur-3xl"
       />
+      {/* Tubo de luz que persigue al cursor — three.js real, un solo tono. */}
+      <div className="pointer-events-none absolute inset-0">
+        <TubesBackground className="h-full w-full" />
+      </div>
 
       <Container className="relative flex flex-1 flex-col justify-start md:justify-center">
         <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-12 lg:gap-10">
