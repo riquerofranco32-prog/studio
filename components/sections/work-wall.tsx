@@ -5,23 +5,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
-import { Marquee } from "@/components/ui/marquee";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { projects } from "@/data/projects";
 import { capabilities } from "@/data/services";
 
-// Cierre del Hero, estilo John Moore: titular + tags que se revelan y un
-// proyecto real que crece hasta ocupar la pantalla, con un muro de palabras
-// de fondo. Puente hacia "Trabajo seleccionado".
-const WALL_WORDS = [
-  "DISEÑO",
-  "DESARROLLO",
-  "E-COMMERCE",
-  "INTELIGENCIA ARTIFICIAL",
-  "PERFORMANCE",
-  "IDENTIDAD DE MARCA",
-];
-
+// Cierre del Hero: titular + tags que se revelan y un proyecto real que
+// crece hasta ocupar la pantalla. Puente hacia "Trabajo seleccionado".
 export function WorkWall() {
   const rootRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
@@ -57,20 +46,6 @@ export function WorkWall() {
   if (reduceMotion) {
     return (
       <section className="relative overflow-hidden border-y border-border bg-background py-20">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 flex flex-col justify-center gap-2 opacity-[0.06]"
-        >
-          {WALL_WORDS.map((word) => (
-            <span
-              key={word}
-              className="display whitespace-nowrap px-6 text-[9vw] leading-none text-foreground"
-            >
-              {word.repeat(4)}
-            </span>
-          ))}
-        </div>
-
         <div className="relative mx-auto max-w-2xl px-6 text-center">
           <h2 className="display text-3xl text-foreground sm:text-4xl">
             Así construimos.
@@ -106,20 +81,7 @@ export function WorkWall() {
   return (
     <section ref={rootRef} className="relative h-[340vh] bg-background">
       <div className="sticky top-0 flex h-screen flex-col items-center justify-center overflow-hidden border-y border-border">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 flex flex-col justify-center gap-2 opacity-[0.06]"
-        >
-          {WALL_WORDS.map((word, i) => (
-            <Marquee key={word} duration={22 + i * 6}>
-              <span className="display whitespace-nowrap px-6 text-[9vw] leading-none text-foreground">
-                {word}
-              </span>
-            </Marquee>
-          ))}
-        </div>
-
-        {/* Titular y tags que se revelan antes de que el video crezca */}
+        {/* Titular y tags que se revelan antes de que la imagen crezca */}
         <motion.div
           style={{ opacity: introOpacity, y: introY }}
           className="pointer-events-none absolute z-10 mx-auto max-w-2xl px-6 text-center"

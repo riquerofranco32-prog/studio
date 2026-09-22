@@ -11,13 +11,7 @@ import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/ui/reveal";
 import { LiveClock } from "@/components/ui/live-clock";
 import { SITE } from "@/data/site";
-import {
-  ArrowUpRight,
-  ArrowUp,
-  Sparkles,
-  MessageCircle,
-  Mail,
-} from "lucide-react";
+import { ArrowUpRight, ArrowUp, MessageCircle, Mail } from "lucide-react";
 
 export function Footer() {
   return (
@@ -166,7 +160,7 @@ export function Footer() {
                       href="/start"
                       className="text-accent font-medium hover:underline flex items-center gap-1"
                     >
-                      <span>Iniciar un Proyecto</span>
+                      <span>Iniciar un proyecto</span>
                       <ArrowUpRight size={13} />
                     </Link>
                   </li>
@@ -220,7 +214,7 @@ export function Footer() {
                       }
                       className="text-muted hover:text-foreground transition-colors text-left"
                     >
-                      Insignia "Hecho por Se7en"
+                      Insignia &ldquo;Hecho por Se7en&rdquo;
                     </button>
                   </li>
                   <li>

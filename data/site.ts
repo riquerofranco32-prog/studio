@@ -18,6 +18,6 @@ export const SITE = {
   stats: {
     projects: "6+",
     people: "2",
-    years: "2025–2026",
+    years: "2025-2026",
   },
 };

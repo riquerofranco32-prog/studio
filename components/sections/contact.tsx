@@ -33,7 +33,7 @@ function buildMailto(data: {
   budget: string;
   idea: string;
 }) {
-  const subject = `Nuevo proyecto: ${data.projectType} — ${data.name}${
+  const subject = `Nuevo proyecto: ${data.projectType} - ${data.name}${
     data.company ? ` (${data.company})` : ""
   }`;
   const body = [

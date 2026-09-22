@@ -16,7 +16,6 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { Marquee } from "@/components/ui/marquee";
 import { Magnetic } from "@/components/ui/magnetic";
 import { BuildConsole } from "@/components/ui/build-console";
-import { TubesBackground } from "@/components/ui/tubes-background";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { EASE } from "@/lib/motion";
 import { projects } from "@/data/projects";
@@ -26,7 +25,6 @@ const SEQUENCE = {
   kicker: "0.05s",
   line1: "0.35s",
   line2: "0.55s",
-  line3: "0.75s",
   sub: "1.05s",
   cta: "1.2s",
   console: "1.15s",
@@ -63,7 +61,7 @@ export function Hero() {
     <section
       id="hero"
       ref={rootRef}
-      className="relative flex flex-col overflow-hidden pt-28 pb-12 md:pt-36 md:pb-16"
+      className="relative flex flex-col overflow-hidden pt-20 pb-12 md:pt-24 md:pb-16"
     >
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-background/40 to-background" />
       <motion.div
@@ -80,10 +78,6 @@ export function Hero() {
         aria-hidden
         className="pointer-events-none absolute -left-40 bottom-0 h-[420px] w-[420px] rounded-full bg-foreground/[0.03] blur-3xl"
       />
-      {/* Tubo de luz que persigue al cursor — three.js real, un solo tono. */}
-      <div className="pointer-events-none absolute inset-0">
-        <TubesBackground className="h-full w-full" />
-      </div>
 
       <Container className="relative flex flex-1 flex-col justify-start md:justify-center">
         <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-12 lg:gap-10">
@@ -107,27 +101,19 @@ export function Hero() {
               </div>
             </div>
 
-            <h1 className="display text-[2.4rem] text-foreground sm:text-5xl md:text-6xl lg:text-7xl">
+            <h1 className="display text-[2.2rem] text-foreground sm:text-4xl md:text-5xl lg:text-6xl">
               <span className="line-mask block">
                 <span
                   className="hero-line block"
                   style={{ animationDelay: SEQUENCE.line1 }}
                 >
-                  Construimos
+                  Construimos sitios y apps
                 </span>
               </span>
               <span className="line-mask block">
                 <span
                   className="hero-line block"
                   style={{ animationDelay: SEQUENCE.line2 }}
-                >
-                  sitios y apps
-                </span>
-              </span>
-              <span className="line-mask block">
-                <span
-                  className="hero-line block"
-                  style={{ animationDelay: SEQUENCE.line3 }}
                 >
                   para marcas que <span className="text-accent">crecen.</span>
                 </span>

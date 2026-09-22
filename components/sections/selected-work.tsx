@@ -71,7 +71,7 @@ export function SelectedWork() {
           </div>
           <Magnetic className="shrink-0">
             <ButtonLink href="/#contact" variant="secondary">
-              Quiero algo así
+              Iniciar un proyecto
               <ArrowRight
                 size={16}
                 className="transition-transform duration-300 group-hover:translate-x-1"
