@@ -16,6 +16,7 @@ import { ButtonLink } from "@/components/ui/button-link";
 import { Marquee } from "@/components/ui/marquee";
 import { Magnetic } from "@/components/ui/magnetic";
 import { BuildConsole } from "@/components/ui/build-console";
+import { ScrambleText } from "@/components/ui/scramble-text";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { EASE } from "@/lib/motion";
 import { projects } from "@/data/projects";
@@ -61,7 +62,7 @@ export function Hero() {
     <section
       id="hero"
       ref={rootRef}
-      className="relative flex flex-col overflow-hidden pt-20 pb-12 md:pt-24 md:pb-16"
+      className="relative flex min-h-[100dvh] flex-col justify-center overflow-hidden pt-20 pb-12 md:pt-24 md:pb-16"
     >
       <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-transparent via-background/40 to-background" />
       <motion.div
@@ -79,79 +80,82 @@ export function Hero() {
         className="pointer-events-none absolute -left-40 bottom-0 h-[420px] w-[420px] rounded-full bg-foreground/[0.03] blur-3xl"
       />
 
-      <Container className="relative flex flex-1 flex-col justify-start md:justify-center">
-        <div className="grid grid-cols-1 items-center gap-16 lg:grid-cols-12 lg:gap-10">
-          <div className="lg:col-span-7">
-            <div
-              className="hero-rise mb-8 flex flex-wrap items-center gap-3"
-              style={{ animationDelay: SEQUENCE.kicker }}
+      <Container className="relative">
+        <div
+          className="hero-rise mb-8 flex flex-wrap items-center gap-3"
+          style={{ animationDelay: SEQUENCE.kicker }}
+        >
+          <div className="inline-flex items-center gap-2.5 rounded-full border border-border bg-surface/80 px-3.5 py-1.5 font-mono text-xs text-muted backdrop-blur-md">
+            <span className="relative flex h-2 w-2">
+              {!reduceMotion && (
+                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
+              )}
+              <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
+            </span>
+            <span className="text-foreground font-medium">Estudio Abierto</span>
+            <span className="text-border">·</span>
+            <span>Patagonia AR</span>
+          </div>
+        </div>
+
+        <h1 className="display max-w-5xl text-[2.6rem] text-foreground sm:text-6xl md:text-7xl lg:text-[5.5rem]">
+          <span className="line-mask block">
+            <span
+              className="hero-line block"
+              style={{ animationDelay: SEQUENCE.line1 }}
             >
-              <div className="inline-flex items-center gap-2.5 rounded-full border border-border bg-surface/80 px-3.5 py-1.5 font-mono text-xs text-muted backdrop-blur-md">
-                <span className="relative flex h-2 w-2">
-                  {!reduceMotion && (
-                    <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
-                  )}
-                  <span className="relative inline-flex h-2 w-2 rounded-full bg-accent" />
-                </span>
-                <span className="text-foreground font-medium">
-                  Estudio Abierto
-                </span>
-                <span className="text-border">·</span>
-                <span>Patagonia AR</span>
-              </div>
-            </div>
-
-            <h1 className="display text-[2.2rem] text-foreground sm:text-4xl md:text-5xl lg:text-6xl">
-              <span className="line-mask block">
-                <span
-                  className="hero-line block"
-                  style={{ animationDelay: SEQUENCE.line1 }}
-                >
-                  Construimos sitios y apps
-                </span>
+              Construimos sitios y apps
+            </span>
+          </span>
+          <span className="line-mask block">
+            <span
+              className="hero-line block"
+              style={{ animationDelay: SEQUENCE.line2 }}
+            >
+              para marcas que{" "}
+              <span className="text-accent">
+                {reduceMotion ? (
+                  "crecen."
+                ) : (
+                  <ScrambleText text="crecen." speed={22} />
+                )}
               </span>
-              <span className="line-mask block">
-                <span
-                  className="hero-line block"
-                  style={{ animationDelay: SEQUENCE.line2 }}
-                >
-                  para marcas que <span className="text-accent">crecen.</span>
-                </span>
-              </span>
-            </h1>
+            </span>
+          </span>
+        </h1>
 
-            <div className="mt-10 flex flex-col gap-8">
-              <p
-                className="hero-rise max-w-md text-lg leading-relaxed text-muted md:text-xl"
-                style={{ animationDelay: SEQUENCE.sub }}
-              >
-                Diseñamos y construimos tu web o app de punta a punta, lista y
-                funcionando en 2 a 3 semanas.
-              </p>
+        <div className="mt-12 grid grid-cols-1 items-end gap-10 lg:grid-cols-12">
+          <div className="lg:col-span-7">
+            <p
+              className="hero-rise max-w-md text-lg leading-relaxed text-muted md:text-xl"
+              style={{ animationDelay: SEQUENCE.sub }}
+            >
+              Diseñamos y construimos tu web o app de punta a punta, lista y
+              funcionando en 2 a 3 semanas.
+            </p>
 
-              <div
-                className="hero-rise flex flex-wrap items-center gap-3"
-                style={{ animationDelay: SEQUENCE.cta }}
-              >
-                <Magnetic>
-                  <ButtonLink href="/#contact">
-                    Iniciar un proyecto
-                    <ArrowRight
-                      size={16}
-                      className="transition-transform duration-300 group-hover:translate-x-1"
-                    />
-                  </ButtonLink>
-                </Magnetic>
-                <Magnetic>
-                  <ButtonLink href="/pricing" variant="secondary">
-                    Ver Precios & Alcance
-                    <ArrowUpRight
-                      size={16}
-                      className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
-                    />
-                  </ButtonLink>
-                </Magnetic>
-              </div>
+            <div
+              className="hero-rise mt-8 flex flex-wrap items-center gap-3"
+              style={{ animationDelay: SEQUENCE.cta }}
+            >
+              <Magnetic>
+                <ButtonLink href="/#contact">
+                  Iniciar un proyecto
+                  <ArrowRight
+                    size={16}
+                    className="transition-transform duration-300 group-hover:translate-x-1"
+                  />
+                </ButtonLink>
+              </Magnetic>
+              <Magnetic>
+                <ButtonLink href="/pricing" variant="secondary">
+                  Ver Precios & Alcance
+                  <ArrowUpRight
+                    size={16}
+                    className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                  />
+                </ButtonLink>
+              </Magnetic>
             </div>
           </div>
 

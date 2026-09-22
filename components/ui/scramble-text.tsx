@@ -11,7 +11,7 @@ interface ScrambleTextProps {
   speed?: number;
 }
 
-const GLYPHS = "!<>-_\\/[]{}—=+*^?#0123456789";
+const GLYPHS = "!<>-_\\/[]{}=+*^?#0123456789";
 
 export function ScrambleText({
   text,
@@ -42,7 +42,7 @@ export function ScrambleText({
             }
             return GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
           })
-          .join("")
+          .join(""),
       );
 
       if (iteration >= maxIterations) {
