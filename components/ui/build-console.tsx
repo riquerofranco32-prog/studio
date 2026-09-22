@@ -1,9 +1,34 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useMediaQuery, COARSE_POINTER } from "@/lib/use-media-query";
+
 // Visual del hero: un panel que muestra el sitio de prueba real que se
 // entrega en el Paso 02 del proceso (ver components/sections/process.tsx).
-// Las líneas usan sólo afirmaciones que ya sostenemos en otras secciones
-// (100/100 de rendimiento, sin errores, código propio) en lenguaje llano —
-// nada de jerga técnica, nada inventado para este componente.
+// Dos líneas son reales, medidas en el momento para quien está mirando esto:
+// el tiempo de carga de esta misma página y el tipo de dispositivo detectado.
+// El resto son afirmaciones que ya sostenemos en otras secciones (código
+// propio, sin errores) en lenguaje llano — nada de jerga técnica.
 export function BuildConsole() {
+  const [loadMs, setLoadMs] = useState<number | null>(null);
+  const isTouch = useMediaQuery(COARSE_POINTER);
+
+  useEffect(() => {
+    function measure() {
+      const [nav] = performance.getEntriesByType(
+        "navigation",
+      ) as PerformanceNavigationTiming[];
+      if (nav) setLoadMs(Math.max(1, Math.round(nav.duration)));
+    }
+
+    if (document.readyState === "complete") {
+      measure();
+    } else {
+      window.addEventListener("load", measure);
+      return () => window.removeEventListener("load", measure);
+    }
+  }, []);
+
   return (
     <div className="relative">
       <span
@@ -39,10 +64,19 @@ export function BuildConsole() {
             segura
           </p>
           <p className="text-foreground">
-            <span className="text-accent">✓</span> Carga en menos de 1 segundo
+            <span className="text-accent">✓</span>{" "}
+            {loadMs !== null ? (
+              <>
+                Esta misma página cargó en{" "}
+                <span className="text-accent">{loadMs} ms</span>
+              </>
+            ) : (
+              "Midiendo el tiempo de carga…"
+            )}
           </p>
           <p className="text-foreground">
-            <span className="text-accent">✓</span> Se ve perfecto en el celular
+            <span className="text-accent">✓</span> Se ve perfecto en tu{" "}
+            {isTouch ? "celular" : "computadora"}
           </p>
         </div>
 
