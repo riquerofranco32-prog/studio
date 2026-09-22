@@ -1,7 +1,15 @@
 "use client";
 
-import { useRef } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef, useState } from "react";
+import Image from "next/image";
+import {
+  AnimatePresence,
+  motion,
+  useMotionValue,
+  useScroll,
+  useSpring,
+  useTransform,
+} from "framer-motion";
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { ButtonLink } from "@/components/ui/button-link";
@@ -9,7 +17,9 @@ import { Marquee } from "@/components/ui/marquee";
 import { Magnetic } from "@/components/ui/magnetic";
 import { BuildConsole } from "@/components/ui/build-console";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
+import { EASE } from "@/lib/motion";
 import { projects } from "@/data/projects";
+import type { Project } from "@/types";
 
 const SEQUENCE = {
   kicker: "0.05s",
@@ -33,6 +43,20 @@ export function Hero() {
   const gridY = useTransform(scrollYProgress, [0, 1], ["0%", "15%"]);
 
   const clientBrands = [...projects].sort((a, b) => a.order - b.order);
+
+  // Preview circular que sigue al cursor al pasar por la marquesina: el
+  // clip-path arranca en un punto y se abre a un rectángulo redondeado,
+  // versión con framer-motion (sin GSAP) de un reveal circular por scroll.
+  const [hovered, setHovered] = useState<Project | null>(null);
+  const previewX = useMotionValue(0);
+  const previewY = useMotionValue(0);
+  const springX = useSpring(previewX, { damping: 25, stiffness: 300 });
+  const springY = useSpring(previewY, { damping: 25, stiffness: 300 });
+
+  function handleMarqueeMouseMove(e: React.MouseEvent<HTMLDivElement>) {
+    previewX.set(e.clientX);
+    previewY.set(e.clientY);
+  }
 
   return (
     <section
@@ -153,11 +177,16 @@ export function Hero() {
       <div
         className="hero-rise relative mt-20 border-y border-border py-4 bg-surface/30"
         style={{ animationDelay: SEQUENCE.ticker }}
+        onMouseMove={reduceMotion ? undefined : handleMarqueeMouseMove}
+        onMouseLeave={reduceMotion ? undefined : () => setHovered(null)}
       >
         <Marquee duration={35}>
           {clientBrands.map((project) => (
             <span
               key={project.slug}
+              onMouseEnter={
+                reduceMotion ? undefined : () => setHovered(project)
+              }
               className="flex items-center gap-8 pr-8 text-lg font-medium tracking-tight text-muted transition-colors hover:text-foreground md:text-xl"
             >
               <span>{project.name}</span>
@@ -171,6 +200,47 @@ export function Hero() {
           ))}
         </Marquee>
       </div>
+
+      {/* Preview flotante: se abre en círculo desde el cursor al pasar sobre
+          una marca de la marquesina, con un clip de ese proyecto adentro. */}
+      {!reduceMotion && (
+        <AnimatePresence>
+          {hovered && (
+            <motion.div
+              aria-hidden
+              style={{ left: springX, top: springY }}
+              className="pointer-events-none fixed z-50 -translate-x-1/2 -translate-y-1/2"
+              initial={{ clipPath: "circle(0% at 50% 50%)", opacity: 0 }}
+              animate={{ clipPath: "circle(75% at 50% 50%)", opacity: 1 }}
+              exit={{ clipPath: "circle(0% at 50% 50%)", opacity: 0 }}
+              transition={{ duration: 0.45, ease: EASE }}
+            >
+              <div className="relative h-40 w-64 overflow-hidden rounded-2xl border border-border shadow-2xl">
+                {hovered.video ? (
+                  <video
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    className="h-full w-full object-cover"
+                  >
+                    <source src={hovered.video.webm} type="video/webm" />
+                    <source src={hovered.video.mp4} type="video/mp4" />
+                  </video>
+                ) : (
+                  <Image
+                    src={hovered.image}
+                    alt={hovered.name}
+                    fill
+                    sizes="256px"
+                    className="object-cover"
+                  />
+                )}
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
+      )}
     </section>
   );
 }
