@@ -76,19 +76,22 @@ export default function Se7enFooter() {
     // centrada del puente. Una amplitud menor + contenedor más bajo (ver
     // clases del div [data-art] más abajo) muestra una porción más ancha
     // de la escena a costa de un paneo vertical más sutil.
-    const ampVh = window.matchMedia("(max-width: 768px)").matches ? 5 : 14;
+    const isMobile = window.matchMedia("(max-width: 768px)").matches;
+    const ampVh = isMobile ? 5 : 14;
     const apply = bindScene(el, ampVh);
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       apply(1);
       return;
     }
 
+    // En mobile el footer no se pinea (fluye normal): el progreso se mide
+    // sobre la altura de la escena, así el puente termina de armarse cuando
+    // entra entera y los links de abajo ya están revelados al llegar a ellos.
+    const art = el.querySelector<HTMLElement>("[data-art]");
+    const span = () => (isMobile && art ? art.offsetHeight : el.offsetHeight);
     const target = () => {
       const r = el.getBoundingClientRect();
-      return Math.max(
-        0,
-        Math.min(1, (window.innerHeight - r.top) / el.offsetHeight),
-      );
+      return Math.max(0, Math.min(1, (window.innerHeight - r.top) / span()));
     };
     let cur = target(),
       raf = 0;
@@ -117,13 +120,13 @@ export default function Se7enFooter() {
   return (
     <footer
       ref={root}
-      className="relative h-[200vh] bg-[#0a0a0b] text-[#f5f5f4] antialiased md:h-[240vh]"
+      className="relative bg-[#0a0a0b] text-[#f5f5f4] antialiased md:h-[240vh]"
     >
-      <div className="sticky top-0 h-screen overflow-hidden [isolation:isolate]">
+      <div className="relative overflow-hidden [isolation:isolate] md:sticky md:top-0 md:h-screen">
         {/* escena */}
         <div
           data-art
-          className="absolute inset-x-0 -top-[5vh] h-[65vh] will-change-transform [&>svg]:absolute [&>svg]:inset-0 [&>svg]:h-full [&>svg]:w-full md:-top-[14vh] md:h-[114vh]"
+          className="relative -mt-[5vh] h-[60vh] will-change-transform md:absolute md:inset-x-0 md:mt-0 [&>svg]:absolute [&>svg]:inset-0 [&>svg]:h-full [&>svg]:w-full md:-top-[14vh] md:h-[114vh]"
           dangerouslySetInnerHTML={{ __html: svg }}
         />
 
@@ -141,7 +144,7 @@ export default function Se7enFooter() {
         </div>
 
         {/* panel de links */}
-        <div className="absolute inset-x-0 bottom-0 z-10 bg-[linear-gradient(to_top,#0a0a0b_88%,rgba(10,10,11,.9)_94%,transparent)] px-4 pb-4 pt-20 md:bg-[linear-gradient(to_top,#0a0a0b_62%,rgba(10,10,11,.85)_80%,transparent)] md:px-10 md:pb-[22px] md:pt-[120px]">
+        <div className="relative z-10 -mt-24 bg-[linear-gradient(to_top,#0a0a0b_88%,rgba(10,10,11,.9)_94%,transparent)] px-4 pb-24 pt-20 md:absolute md:inset-x-0 md:bottom-0 md:mt-0 md:bg-[linear-gradient(to_top,#0a0a0b_62%,rgba(10,10,11,.85)_80%,transparent)] md:px-10 md:pb-[22px] md:pt-[120px]">
           <div className="mx-auto grid max-w-[1360px] grid-cols-2 gap-6 md:grid-cols-[1.4fr_1fr_1fr_1.1fr] md:gap-10">
             <div
               data-reveal=".86"
@@ -259,7 +262,7 @@ export default function Se7enFooter() {
 
           <div
             data-reveal=".94"
-            className={`${reveal} ${mono} mx-auto mt-[30px] flex max-w-[1360px] flex-wrap justify-between gap-4 border-t border-white/[.08] pt-4 text-xs text-[#8a8a8e]`}
+            className={`${reveal} ${mono} mx-auto mt-[30px] flex max-w-[1360px] flex-col gap-3 border-t md:flex-row md:flex-wrap md:justify-between md:gap-4 border-white/[.08] pt-4 text-xs text-[#8a8a8e]`}
           >
             <span>
               © {new Date().getFullYear()} {SITE.name}. Todos los derechos
@@ -272,7 +275,7 @@ export default function Se7enFooter() {
             <button
               type="button"
               onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="transition-colors hover:text-[#f5f5f4]"
+              className="self-start transition-colors hover:text-[#f5f5f4]"
             >
               VOLVER ARRIBA ↑
             </button>
