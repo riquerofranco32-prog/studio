@@ -22,6 +22,13 @@ export function HeroMesh() {
   // landing de una sola página larga. Se desmonta fuera de viewport y se
   // vuelve a montar al volver, igual que hace phosphor-shader.tsx.
   const [inView, setInView] = useState(true);
+  // Compilar el shader WebGL es trabajo síncrono de main thread, y compite
+  // directo con el primer paint del texto del hero (que es el LCP de toda
+  // la página — confirmado con Lighthouse: el elemento LCP no tenía nada
+  // pesado propio, pero tardaba segundos en pintar por trabajo de otros
+  // componentes montando al mismo tiempo). Se difiere el montaje del shader
+  // dos frames para que ese primer paint gane la carrera.
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     const el = rootRef.current;
@@ -36,6 +43,13 @@ export function HeroMesh() {
     return () => io.disconnect();
   }, []);
 
+  useEffect(() => {
+    const raf = requestAnimationFrame(() =>
+      requestAnimationFrame(() => setReady(true)),
+    );
+    return () => cancelAnimationFrame(raf);
+  }, []);
+
   return (
     <div
       ref={rootRef}
@@ -44,7 +58,7 @@ export function HeroMesh() {
     >
       {reduceMotion ? (
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(255,77,46,0.12),transparent_60%)]" />
-      ) : inView ? (
+      ) : inView && ready ? (
         <MeshGradient
           className="absolute inset-0 h-full w-full opacity-50"
           colors={MESH_COLORS}
