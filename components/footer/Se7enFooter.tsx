@@ -55,7 +55,7 @@ function Clock() {
 function StatusTag() {
   return (
     <span
-      className={`${mono} inline-flex items-center gap-2 rounded-full border border-white/[.08] bg-[#17171a]/70 px-3 py-1.5 text-xs text-[#f5f5f4] backdrop-blur`}
+      className={`${mono} inline-flex items-center gap-2 rounded-full border border-white/[.08] bg-[#17171a]/70 px-3 py-1.5 text-xs text-[#f5f5f4] md:backdrop-blur`}
     >
       <i className="h-[7px] w-[7px] rounded-full bg-[#ff4d2e] shadow-[0_0_10px_#ff4d2e]" />
       Estudio Abierto <span className="text-[#8a8a8e]">· Patagonia AR</span>
@@ -93,26 +93,43 @@ export default function Se7enFooter() {
       const r = el.getBoundingClientRect();
       return Math.max(0, Math.min(1, (window.innerHeight - r.top) / span()));
     };
+    // El SVG tiene ~900 nodos: re-escribirlo cada frame en reposo es lo que
+    // laguea. El rAF corre sólo mientras hay movimiento (scroll/resize) y se
+    // apaga solo cuando la inercia llega al target.
     let cur = target(),
       raf = 0;
     const tick = () => {
       const t = target();
       cur += (t - cur) * 0.12; // inercia
-      if (Math.abs(t - cur) < 1e-4) cur = t;
+      const done = Math.abs(t - cur) < 1e-3;
+      if (done) cur = t;
       apply(cur);
-      raf = requestAnimationFrame(tick);
+      raf = done ? 0 : requestAnimationFrame(tick);
+    };
+    const kick = () => {
+      if (!raf) raf = requestAnimationFrame(tick);
     };
     apply(cur);
     const io = new IntersectionObserver(
       ([e]) => {
-        cancelAnimationFrame(raf);
-        if (e.isIntersecting) tick(); // rAF solo mientras el footer está a la vista
+        if (e.isIntersecting) {
+          window.addEventListener("scroll", kick, { passive: true });
+          window.addEventListener("resize", kick);
+          kick();
+        } else {
+          window.removeEventListener("scroll", kick);
+          window.removeEventListener("resize", kick);
+          cancelAnimationFrame(raf);
+          raf = 0;
+        }
       },
       { rootMargin: "100px" },
     );
     io.observe(el);
     return () => {
       io.disconnect();
+      window.removeEventListener("scroll", kick);
+      window.removeEventListener("resize", kick);
       cancelAnimationFrame(raf);
     };
   }, []);
@@ -241,7 +258,7 @@ export default function Se7enFooter() {
 
             <div
               data-reveal=".92"
-              className={`${reveal} col-span-2 rounded-[18px] border border-white/[.08] bg-[#17171a]/60 p-[22px] backdrop-blur-md md:col-span-1`}
+              className={`${reveal} col-span-2 rounded-[18px] border border-white/[.08] bg-[#17171a]/60 p-[22px] md:backdrop-blur-md md:col-span-1`}
             >
               <h4
                 className={`${mono} mb-4 text-[11px] font-medium tracking-[.14em] text-[#8a8a8e]`}
