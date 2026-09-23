@@ -70,7 +70,14 @@ export default function Se7enFooter() {
   useEffect(() => {
     const el = root.current;
     if (!el) return;
-    const apply = bindScene(el);
+    // En mobile el contenedor de la escena es mucho más angosto que alto:
+    // con la amplitud de paneo pensada para desktop (14vh), el slice de
+    // aspect-ratio del SVG termina mostrando sólo una tira angosta y
+    // centrada del puente. Una amplitud menor + contenedor más bajo (ver
+    // clases del div [data-art] más abajo) muestra una porción más ancha
+    // de la escena a costa de un paneo vertical más sutil.
+    const ampVh = window.matchMedia("(max-width: 768px)").matches ? 5 : 14;
+    const apply = bindScene(el, ampVh);
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
       apply(1);
       return;
@@ -116,7 +123,7 @@ export default function Se7enFooter() {
         {/* escena */}
         <div
           data-art
-          className="absolute inset-x-0 -top-[14vh] h-[114vh] will-change-transform [&>svg]:absolute [&>svg]:inset-0 [&>svg]:h-full [&>svg]:w-full"
+          className="absolute inset-x-0 -top-[5vh] h-[65vh] will-change-transform [&>svg]:absolute [&>svg]:inset-0 [&>svg]:h-full [&>svg]:w-full md:-top-[14vh] md:h-[114vh]"
           dangerouslySetInnerHTML={{ __html: svg }}
         />
 
@@ -134,7 +141,7 @@ export default function Se7enFooter() {
         </div>
 
         {/* panel de links */}
-        <div className="absolute inset-x-0 bottom-0 z-10 bg-[linear-gradient(to_top,#0a0a0b_62%,rgba(10,10,11,.85)_80%,transparent)] px-4 pb-4 pt-20 md:px-10 md:pb-[22px] md:pt-[120px]">
+        <div className="absolute inset-x-0 bottom-0 z-10 bg-[linear-gradient(to_top,#0a0a0b_88%,rgba(10,10,11,.9)_94%,transparent)] px-4 pb-4 pt-20 md:bg-[linear-gradient(to_top,#0a0a0b_62%,rgba(10,10,11,.85)_80%,transparent)] md:px-10 md:pb-[22px] md:pt-[120px]">
           <div className="mx-auto grid max-w-[1360px] grid-cols-2 gap-6 md:grid-cols-[1.4fr_1fr_1fr_1.1fr] md:gap-10">
             <div
               data-reveal=".86"
