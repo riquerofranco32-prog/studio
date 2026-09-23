@@ -29,6 +29,30 @@ const categories: {
   { id: "support", label: "Garantía & Soporte", icon: ShieldCheck },
 ];
 
+function StillHaveQuestions() {
+  return (
+    <div className="rounded-xl border border-border bg-surface p-6">
+      <p className="flex items-center gap-2 text-sm font-medium text-foreground">
+        <HelpCircle size={18} className="text-accent" />
+        ¿Tenés otra consulta específica?
+      </p>
+      <p className="mt-2 text-sm leading-relaxed text-muted">
+        Escribinos directamente a nuestro WhatsApp o envianos un email. Te
+        respondemos en menos de 2 horas.
+      </p>
+      <a
+        href={SITE.whatsapp}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="focus-ring mt-4 inline-flex items-center gap-2 text-sm font-medium text-accent transition-colors hover:underline"
+      >
+        <MessageCircle size={16} />
+        Consultar por WhatsApp &rarr;
+      </a>
+    </div>
+  );
+}
+
 export function FAQ() {
   const [selectedCategory, setSelectedCategory] = useState<FAQCategory>("all");
   const [searchQuery, setSearchQuery] = useState("");
@@ -60,24 +84,13 @@ export function FAQ() {
               subtitle="Resolvemos las dudas más habituales sobre cómo trabajamos, plazos y metodología."
             />
 
-            <div className="mt-8 rounded-xl border border-border bg-surface p-6">
-              <p className="flex items-center gap-2 text-sm font-medium text-foreground">
-                <HelpCircle size={18} className="text-accent" />
-                ¿Tenés otra consulta específica?
-              </p>
-              <p className="mt-2 text-sm leading-relaxed text-muted">
-                Escribinos directamente a nuestro WhatsApp o envianos un email.
-                Te respondemos en menos de 2 horas.
-              </p>
-              <a
-                href={SITE.whatsapp}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="focus-ring mt-4 inline-flex items-center gap-2 text-sm font-medium text-accent transition-colors hover:underline"
-              >
-                <MessageCircle size={16} />
-                Consultar por WhatsApp &rarr;
-              </a>
+            {/* En desktop va acá, debajo del título. En mobile este layout
+                pasa a una sola columna y quedaría ANTES de la lista de
+                preguntas — se oculta y se repite al final (ver más abajo),
+                donde tiene sentido leerla: después de que ya viste las
+                respuestas, no antes. */}
+            <div className="mt-8 hidden lg:block">
+              <StillHaveQuestions />
             </div>
           </div>
 
@@ -195,6 +208,10 @@ export function FAQ() {
                   );
                 })}
               </AnimatePresence>
+            </div>
+
+            <div className="mt-8 lg:hidden">
+              <StillHaveQuestions />
             </div>
           </div>
         </div>

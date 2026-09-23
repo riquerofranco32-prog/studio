@@ -155,7 +155,7 @@ export function Contact() {
               </span>
             </div>
 
-            <h2 className="display text-[2.6rem] uppercase text-foreground sm:text-5xl md:text-[3.4rem] lg:text-[4rem]">
+            <h2 className="display text-[2.15rem] uppercase text-foreground sm:text-5xl md:text-[3.4rem] lg:text-[4rem]">
               <span className="line-mask block">
                 <RevealText>¿Tenés una idea?</RevealText>
               </span>
