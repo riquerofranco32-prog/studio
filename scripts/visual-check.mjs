@@ -101,6 +101,13 @@ for (const { label, width, height } of BREAKPOINTS) {
       window.scrollTo(0, y);
       await new Promise((r) => setTimeout(r, 200));
     }
+    // Los saltos de 0.8 viewport con Lenis a veces no cruzan el umbral del
+    // IntersectionObserver de un titular: pasar por cada máscara garantiza que
+    // todos los reveals disparen antes de medir (si no, sale un falso recorte).
+    for (const mask of document.querySelectorAll(".line-mask")) {
+      mask.scrollIntoView({ block: "center" });
+      await new Promise((r) => setTimeout(r, 120));
+    }
     window.scrollTo(0, 0);
     await new Promise((r) => setTimeout(r, 250));
     window.scrollTo(0, 0);
@@ -170,6 +177,8 @@ for (const { label, width, height } of BREAKPOINTS) {
         if (!clipper || clipper === document.documentElement) continue;
         // El wordmark del footer se recorta a propósito: sangra por abajo.
         if (clipper.closest("footer")) continue;
+        // Texturas decorativas (aria-hidden) sangran a propósito: nadie las lee.
+        if (el.closest('[aria-hidden="true"]')) continue;
 
         rango.selectNodeContents(el);
         const rects = [...rango.getClientRects()];

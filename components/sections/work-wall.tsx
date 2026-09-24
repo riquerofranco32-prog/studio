@@ -68,7 +68,7 @@ export function WorkWall() {
           {WALL_WORDS.map((word) => (
             <span
               key={word}
-              className="display whitespace-nowrap px-6 text-[min(9vw,12vh)] leading-[1.2] text-foreground"
+              className="display whitespace-nowrap px-6 text-[min(9vw,12vh)] leading-none text-foreground"
             >
               {word.repeat(4)}
             </span>
@@ -118,7 +118,7 @@ export function WorkWall() {
             <Marquee key={word} duration={22 + i * 6}>
               {/* min() con vh: en pantallas bajas las 6 filas no entraban en
                   el h-screen y la última quedaba cortada. */}
-              <span className="display whitespace-nowrap px-6 text-[min(9vw,12vh)] leading-[1.2] text-foreground">
+              <span className="display whitespace-nowrap px-6 text-[min(9vw,12vh)] leading-none text-foreground">
                 {word}
               </span>
             </Marquee>
