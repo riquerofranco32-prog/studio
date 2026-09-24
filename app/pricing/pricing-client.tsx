@@ -24,6 +24,7 @@ import {
 import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/ui/reveal";
 import { useSoundFx } from "@/components/providers/sound-provider";
+import { SITE } from "@/data/site";
 
 interface ProductBase {
   id: string;
@@ -220,7 +221,7 @@ export function PricingClient() {
     setTimeout(() => setCopied(false), 2000);
   }
 
-  const whatsappUrl = `https://wa.me/5492994247985?text=${encodeURIComponent(
+  const whatsappUrl = `${SITE.whatsapp}?text=${encodeURIComponent(
     `Hola Franco y Federico! Estuve configurando mi presupuesto en su web:\n\n${proposalSummary}\n\n¿Podemos coordinar para iniciar?`
   )}`;
 

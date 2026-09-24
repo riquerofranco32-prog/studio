@@ -17,6 +17,7 @@ import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Magnetic } from "@/components/ui/magnetic";
 import Link from "next/link";
+import { SITE } from "@/data/site";
 
 interface ProductTypeOption {
   id: string;
@@ -202,7 +203,7 @@ export function ProjectEstimator() {
 • Módulos incluidos: ${featureNames || "Básico"}`;
 
   const whatsappMessage = `Hola Se7en Studio! Estuve probando el cotizador interactivo:\n\n${summaryText}\n\n¿Podemos coordinar para revisarlo?`;
-  const whatsappUrl = `https://wa.me/5492994247985?text=${encodeURIComponent(whatsappMessage)}`;
+  const whatsappUrl = `${SITE.whatsapp}?text=${encodeURIComponent(whatsappMessage)}`;
 
   function handleCopy() {
     navigator.clipboard.writeText(summaryText);

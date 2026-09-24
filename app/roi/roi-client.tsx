@@ -20,6 +20,7 @@ import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/ui/reveal";
 import { CountUp } from "@/components/ui/count-up";
 import { useSoundFx } from "@/components/providers/sound-provider";
+import { SITE } from "@/data/site";
 
 interface PlatformPreset {
   id: string;
@@ -128,7 +129,7 @@ export function RoiCalculatorClient() {
     setTimeout(() => setCopied(false), 2000);
   }
 
-  const whatsappUrl = `https://wa.me/5492994247985?text=${encodeURIComponent(
+  const whatsappUrl = `${SITE.whatsapp}?text=${encodeURIComponent(
     `Hola Se7en Studio! Estuve calculando el ahorro de mi negocio:\n\n${reportText}\n\n¿Podemos evaluar la migración a un producto propio?`
   )}`;
 

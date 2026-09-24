@@ -18,6 +18,8 @@ import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/ui/reveal";
 import { useSoundFx } from "@/components/providers/sound-provider";
 import { SITE } from "@/data/site";
+import { sendLead } from "@/lib/send-lead";
+import { LeadError } from "@/components/ui/lead-error";
 
 const platformOptions = [
   "WordPress / WooCommerce",
@@ -44,6 +46,7 @@ export function AuditClient() {
   const [whatsapp, setWhatsapp] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
 
   const { playClick, playPop, playSuccess } = useSoundFx();
 
@@ -59,38 +62,32 @@ export function AuditClient() {
     if (!url || !email || !name) return;
 
     setIsSubmitting(true);
+    setSendError(null);
     playClick();
 
     const payload = {
       name,
       email,
-      whatsapp,
-      service: "Auditoría Técnica Gratuita",
+      projectType: "Auditoría Técnica Gratuita",
       budget: "N/A (Auditoría Gratuita)",
-      message: `[Solicitud de Auditoría Técnica]:
+      idea: `[Solicitud de Auditoría Técnica]:
 • URL a auditar: ${url}
 • Plataforma actual: ${platform}
 • Dolores seleccionados: ${selectedPains.join(", ")}
 • WhatsApp de contacto: ${whatsapp || "No especificado"}`,
     };
 
-    try {
-      await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      playSuccess();
-      setSubmitted(true);
-    } catch {
-      setSubmitted(true);
-    } finally {
-      setIsSubmitting(false);
+    const result = await sendLead(payload);
+    setIsSubmitting(false);
+    if (!result.ok) {
+      setSendError(result.error);
+      return;
     }
+    playSuccess();
+    setSubmitted(true);
   }
 
-  const whatsappDirectUrl = `https://wa.me/5492994247985?text=${encodeURIComponent(
+  const whatsappDirectUrl = `${SITE.whatsapp}?text=${encodeURIComponent(
     `Hola Franco y Federico! Quiero solicitar la auditoría técnica gratuita de mi sitio:\n• URL: ${url || "Mi web"}\n• Plataforma: ${platform}\n• Mi email: ${email}`
   )}`;
 
@@ -258,6 +255,8 @@ export function AuditClient() {
                     />
                   </div>
                 </div>
+
+                <LeadError error={sendError} whatsappUrl={whatsappDirectUrl} />
 
                 {/* Botón de Envío */}
                 <button

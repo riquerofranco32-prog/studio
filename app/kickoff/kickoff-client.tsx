@@ -20,6 +20,9 @@ import {
 import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/ui/reveal";
 import { useSoundFx } from "@/components/providers/sound-provider";
+import { SITE } from "@/data/site";
+import { sendLead } from "@/lib/send-lead";
+import { LeadError } from "@/components/ui/lead-error";
 
 export function KickoffClient() {
   const [step, setStep] = useState(1);
@@ -33,6 +36,8 @@ export function KickoffClient() {
   const [domainName, setDomainName] = useState("");
   const [copied, setCopied] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
 
   const { playClick, playPop, playSuccess } = useSoundFx();
 
@@ -67,27 +72,24 @@ export function KickoffClient() {
   }
 
   async function handleFinalSubmit() {
+    setSending(true);
+    setSendError(null);
+    const result = await sendLead({
+      name: contactLeader || projectName || "Cliente Kickoff",
+      projectType: "Kickoff de Proyecto",
+      budget: "Confirmado",
+      idea: kickoffSummary,
+    });
+    setSending(false);
+    if (!result.ok) {
+      setSendError(result.error);
+      return;
+    }
     playSuccess();
     setSubmitted(true);
-
-    try {
-      await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: contactLeader || projectName || "Cliente Kickoff",
-          email: "kickoff@se7enstudios.com",
-          service: "Kickoff de Proyecto",
-          budget: "Confirmado",
-          message: kickoffSummary,
-        }),
-      });
-    } catch {
-      // Graceful fallback
-    }
   }
 
-  const whatsappDirectUrl = `https://wa.me/5492994247985?text=${encodeURIComponent(
+  const whatsappDirectUrl = `${SITE.whatsapp}?text=${encodeURIComponent(
     `Hola Franco y Federico! Completamos nuestra Ficha de Kickoff para iniciar el proyecto:\n\n${kickoffSummary}\n\n¿Abrimos el canal de comunicación?`
   )}`;
 
@@ -421,6 +423,7 @@ export function KickoffClient() {
                 )}
 
                 {/* Botones de Navegación de Pasos */}
+                {step === 4 && <LeadError error={sendError} whatsappUrl={whatsappDirectUrl} />}
                 <div className="mt-10 flex items-center justify-between border-t border-border pt-6">
                   {step > 1 ? (
                     <button
@@ -448,10 +451,11 @@ export function KickoffClient() {
                     <button
                       type="button"
                       onClick={handleFinalSubmit}
-                      className="focus-ring inline-flex items-center gap-2 rounded-full bg-emerald-500 px-6 py-3 text-xs font-bold text-white hover:bg-emerald-600 transition-colors shadow-[0_0_20px_rgba(16,185,129,0.3)]"
+                      disabled={sending}
+                      className="focus-ring inline-flex items-center gap-2 rounded-full bg-emerald-500 px-6 py-3 text-xs font-bold text-white hover:bg-emerald-600 transition-colors shadow-[0_0_20px_rgba(16,185,129,0.3)] disabled:opacity-50"
                     >
                       <CheckCircle2 size={15} />
-                      <span>Finalizar & Generar Ficha de Kickoff</span>
+                      <span>{sending ? "Enviando ficha..." : "Finalizar & Generar Ficha de Kickoff"}</span>
                     </button>
                   )}
                 </div>

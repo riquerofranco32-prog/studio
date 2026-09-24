@@ -14,6 +14,8 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { SITE } from "@/data/site";
+import { sendLead } from "@/lib/send-lead";
+import { LeadError } from "@/components/ui/lead-error";
 
 const availableSlots = [
   "10:00 AM (GMT-3)",
@@ -39,11 +41,13 @@ export function BookingModal() {
   const [projectIdea, setProjectIdea] = useState("");
   const [booked, setBooked] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
 
   useEffect(() => {
     function handleOpen() {
       setOpen(true);
       setBooked(false);
+      setSendError(null);
     }
     window.addEventListener("open-booking-modal", handleOpen);
     return () => window.removeEventListener("open-booking-modal", handleOpen);
@@ -53,29 +57,25 @@ export function BookingModal() {
     e.preventDefault();
     setLoading(true);
 
-    // Enviar consulta o simular confirmación
-    try {
-      await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          email,
-          projectType: "Discovery Call (15 min)",
-          budget: "Llamada inicial",
-          timeline: `${selectedDay} — ${selectedSlot}`,
-          idea: `Solicitud de reunión de 15 min: ${projectIdea || "Revisión general de proyecto"}`,
-        }),
-      });
-    } catch {
-      // Continuar con confirmación
-    } finally {
-      setLoading(false);
-      setBooked(true);
+    setSendError(null);
+
+    const result = await sendLead({
+      name,
+      email,
+      projectType: "Discovery Call (15 min)",
+      budget: "Llamada inicial",
+      timeline: `${selectedDay} — ${selectedSlot}`,
+      idea: `Solicitud de reunión de 15 min: ${projectIdea || "Revisión general de proyecto"}`,
+    });
+    setLoading(false);
+    if (!result.ok) {
+      setSendError(result.error);
+      return;
     }
+    setBooked(true);
   }
 
-  const whatsappBooking = `https://wa.me/5492994247985?text=${encodeURIComponent(
+  const whatsappBooking = `${SITE.whatsapp}?text=${encodeURIComponent(
     `Hola Se7en Studio! Me gustaría coordinar una Discovery Call de 15 min (${selectedDay} - ${selectedSlot}) para charlar sobre un proyecto.`
   )}`;
 
@@ -264,6 +264,8 @@ export function BookingModal() {
                     className="focus-ring w-full rounded-lg border border-border bg-background px-3 py-2 text-xs text-foreground placeholder:text-muted/60 focus:border-accent"
                   />
                 </div>
+
+                <LeadError error={sendError} whatsappUrl={whatsappBooking} />
 
                 {/* Footer Buttons */}
                 <div className="flex flex-wrap items-center justify-between gap-3 pt-2">

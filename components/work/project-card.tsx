@@ -33,8 +33,7 @@ export function ProjectCard({
 
   // El spotlight escribe MotionValues a mano, así que <MotionProvider> no lo
   // toca: un elemento que persigue el cursor es justo lo que la preferencia
-  // pide evitar, y hay que apagarlo acá. Mismo criterio que el retrato del
-  // roster en team-roster.tsx.
+  // pide evitar, y hay que apagarlo acá.
   const reduceMotion = useReducedMotion();
 
   // El clip sólo existe si hay archivos, hay hover de verdad y nadie pidió

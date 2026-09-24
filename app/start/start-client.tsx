@@ -25,6 +25,8 @@ import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/ui/reveal";
 import { useSoundFx } from "@/components/providers/sound-provider";
 import { SITE } from "@/data/site";
+import { sendLead } from "@/lib/send-lead";
+import { LeadError } from "@/components/ui/lead-error";
 
 const productTypes = [
   {
@@ -113,6 +115,7 @@ export function StartClient() {
 
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [sendError, setSendError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
 
   const { playClick, playPop, playSuccess, playSwitch } = useSoundFx();
@@ -150,33 +153,27 @@ ${extraDetails ? `• Detalles: ${extraDetails}` : ""}
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
+    setSendError(null);
 
-    try {
-      await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          email,
-          company,
-          projectType: selectedTypeName,
-          budget: selectedBudget,
-          timeline: selectedTimeline,
-          idea: `${briefSummary}\n\nObjetivo: ${selectedGoal}\nReferencias: ${references}\nDetalles adicionales: ${extraDetails}`,
-        }),
-      });
-
-      playSuccess();
-      setSubmitted(true);
-    } catch {
-      // Fallback
-      setSubmitted(true);
-    } finally {
-      setLoading(false);
+    const result = await sendLead({
+      name,
+      email,
+      company,
+      projectType: selectedTypeName,
+      budget: selectedBudget,
+      timeline: selectedTimeline,
+      idea: `${briefSummary}\n\nObjetivo: ${selectedGoal}\nReferencias: ${references}\nDetalles adicionales: ${extraDetails}`,
+    });
+    setLoading(false);
+    if (!result.ok) {
+      setSendError(result.error);
+      return;
     }
+    playSuccess();
+    setSubmitted(true);
   }
 
-  const whatsappBriefUrl = `https://wa.me/5492994247985?text=${encodeURIComponent(
+  const whatsappBriefUrl = `${SITE.whatsapp}?text=${encodeURIComponent(
     `Hola Se7en Studio! Acabo de completar el Briefing Interactivo en la web:\n\n${briefSummary}\n\n¿Cuándo podemos coordinar los próximos pasos?`
   )}`;
 
@@ -579,6 +576,7 @@ ${extraDetails ? `• Detalles: ${extraDetails}` : ""}
                         />
                       </div>
 
+                      <LeadError error={sendError} whatsappUrl={whatsappBriefUrl} />
                       <div className="pt-4 flex items-center justify-between">
                         <button
                           type="button"

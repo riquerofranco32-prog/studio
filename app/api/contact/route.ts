@@ -1,93 +1,127 @@
 import { NextResponse } from "next/server";
 import { SITE } from "@/data/site";
 
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const MAX_FIELD = 200;
+const MAX_IDEA = 5000;
+
+function escapeHtml(value: string): string {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function field(value: unknown, fallback: string, max = MAX_FIELD): string {
+  return typeof value === "string" && value.trim() ? value.trim().slice(0, max) : fallback;
+}
+
 export async function POST(request: Request) {
+  let body: Record<string, unknown>;
   try {
-    const body = await request.json();
-    const { name, email, company, projectType, budget, idea, timeline, honeypot } = body;
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "Solicitud inválida." }, { status: 400 });
+  }
 
-    // Protección anti-spam con trampa honeypot
-    if (honeypot) {
-      return NextResponse.json({ success: true, message: "Mensaje procesado." }, { status: 200 });
-    }
+  // Trampa anti-spam: los bots completan el campo oculto.
+  if (body.honeypot) {
+    return NextResponse.json({ success: true }, { status: 200 });
+  }
 
-    // Validaciones básicas
-    if (!name || typeof name !== "string" || name.trim().length === 0) {
-      return NextResponse.json({ error: "El nombre es obligatorio." }, { status: 400 });
-    }
+  const name = field(body.name, "");
+  if (!name) {
+    return NextResponse.json({ error: "El nombre es obligatorio." }, { status: 400 });
+  }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!email || typeof email !== "string" || !emailRegex.test(email.trim())) {
-      return NextResponse.json({ error: "Ingresá un email válido." }, { status: 400 });
-    }
+  // Email opcional (el kickoff no lo pide), pero si viene tiene que ser válido.
+  const rawEmail = typeof body.email === "string" ? body.email.trim().toLowerCase() : "";
+  if (rawEmail && !EMAIL_RE.test(rawEmail)) {
+    return NextResponse.json({ error: "Ingresá un email válido." }, { status: 400 });
+  }
 
-    const sanitizedData = {
-      name: name.trim(),
-      email: email.trim().toLowerCase(),
-      company: typeof company === "string" ? company.trim() : "",
-      projectType: typeof projectType === "string" ? projectType : "General",
-      budget: typeof budget === "string" ? budget : "A definir",
-      timeline: typeof timeline === "string" ? timeline : "Flexible",
-      idea: typeof idea === "string" ? idea.trim() : "",
-    };
+  const lead = {
+    name,
+    email: rawEmail,
+    company: field(body.company, ""),
+    projectType: field(body.projectType, "General"),
+    budget: field(body.budget, "A definir"),
+    timeline: field(body.timeline, "Flexible"),
+    // `message` se acepta como alias histórico de `idea`.
+    idea: field(body.idea ?? body.message, "", MAX_IDEA),
+  };
 
-    const resendApiKey = process.env.RESEND_API_KEY;
-    const recipientEmail = process.env.CONTACT_EMAIL || SITE.email;
-
-    if (resendApiKey) {
-      const emailHtml = `
-        <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #111; line-height: 1.6;">
-          <h2 style="color: #000; border-bottom: 2px solid #eaeaea; padding-bottom: 8px;">Nuevo contacto desde Se7en Studio</h2>
-          <p><strong>Nombre:</strong> ${sanitizedData.name}</p>
-          <p><strong>Email:</strong> <a href="mailto:${sanitizedData.email}">${sanitizedData.email}</a></p>
-          ${sanitizedData.company ? `<p><strong>Empresa:</strong> ${sanitizedData.company}</p>` : ""}
-          <p><strong>Tipo de Proyecto:</strong> ${sanitizedData.projectType}</p>
-          <p><strong>Presupuesto:</strong> ${sanitizedData.budget}</p>
-          <p><strong>Plazo deseado:</strong> ${sanitizedData.timeline}</p>
-          <div style="margin-top: 20px; padding: 16px; background-color: #f9f9f9; border-radius: 8px;">
-            <strong>Detalle de la idea:</strong>
-            <p style="white-space: pre-wrap; margin-top: 8px;">${sanitizedData.idea || "Sin detalle adicional"}</p>
-          </div>
-        </div>
-      `;
-
-      const res = await fetch("https://api.resend.com/emails", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${resendApiKey}`,
-        },
-        body: JSON.stringify({
-          from: "Se7en Studio <contacto@se7enstudios.com>",
-          to: [recipientEmail],
-          reply_to: sanitizedData.email,
-          subject: `Nuevo Proyecto: ${sanitizedData.projectType} — ${sanitizedData.name}`,
-          html: emailHtml,
-        }),
-      });
-
-      if (!res.ok) {
-        const errorData = await res.json().catch(() => ({}));
-        console.error("Error al enviar email con Resend:", errorData);
-      }
-    } else {
-      // Entorno de desarrollo o sin API key configurada
-      console.log("📨 [Contacto Recibido - Modo Simulación]", sanitizedData);
-    }
-
+  const resendApiKey = process.env.RESEND_API_KEY;
+  if (!resendApiKey) {
+    // Sin proveedor no hay envío: responder éxito acá perdía leads en silencio.
+    console.error("[contact] RESEND_API_KEY no configurada; lead no enviado:", lead.name);
     return NextResponse.json(
-      {
-        success: true,
-        message: "¡Mensaje recibido con éxito! Nos pondremos en contacto dentro de las 24 horas.",
-        data: sanitizedData,
-      },
-      { status: 200 }
-    );
-  } catch (error) {
-    console.error("Error procesando solicitud de contacto:", error);
-    return NextResponse.json(
-      { error: "Ocurrió un error inesperado al enviar el mensaje. Por favor intentá por WhatsApp o mail." },
-      { status: 500 }
+      { error: "El formulario no está disponible ahora. Escribinos por WhatsApp o mail." },
+      { status: 503 }
     );
   }
+
+  const e = {
+    name: escapeHtml(lead.name),
+    email: escapeHtml(lead.email),
+    company: escapeHtml(lead.company),
+    projectType: escapeHtml(lead.projectType),
+    budget: escapeHtml(lead.budget),
+    timeline: escapeHtml(lead.timeline),
+    idea: escapeHtml(lead.idea),
+  };
+
+  const html = `
+    <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto; color: #111; line-height: 1.6;">
+      <h2 style="color: #000; border-bottom: 2px solid #eaeaea; padding-bottom: 8px;">Nuevo contacto desde Se7en Studio</h2>
+      <p><strong>Nombre:</strong> ${e.name}</p>
+      ${e.email ? `<p><strong>Email:</strong> <a href="mailto:${e.email}">${e.email}</a></p>` : ""}
+      ${e.company ? `<p><strong>Empresa:</strong> ${e.company}</p>` : ""}
+      <p><strong>Tipo de Proyecto:</strong> ${e.projectType}</p>
+      <p><strong>Presupuesto:</strong> ${e.budget}</p>
+      <p><strong>Plazo deseado:</strong> ${e.timeline}</p>
+      <div style="margin-top: 20px; padding: 16px; background-color: #f9f9f9; border-radius: 8px;">
+        <strong>Detalle:</strong>
+        <p style="white-space: pre-wrap; margin-top: 8px;">${e.idea || "Sin detalle adicional"}</p>
+      </div>
+    </div>
+  `;
+
+  try {
+    const res = await fetch("https://api.resend.com/emails", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${resendApiKey}`,
+      },
+      body: JSON.stringify({
+        // ponytail: onboarding@resend.dev sólo entrega al dueño de la cuenta de
+        // Resend; con dominio verificado, setear RESEND_FROM.
+        from: process.env.RESEND_FROM || "Se7en Studio <onboarding@resend.dev>",
+        to: [process.env.CONTACT_EMAIL || SITE.email],
+        ...(lead.email ? { reply_to: lead.email } : {}),
+        subject: `Nuevo Proyecto: ${lead.projectType} — ${lead.name}`,
+        html,
+      }),
+    });
+
+    if (!res.ok) {
+      const detail = await res.text().catch(() => "");
+      console.error("[contact] Resend rechazó el envío:", res.status, detail);
+      return NextResponse.json(
+        { error: "No pudimos enviar tu mensaje. Escribinos por WhatsApp o mail." },
+        { status: 502 }
+      );
+    }
+  } catch (error) {
+    console.error("[contact] Error de red con Resend:", error);
+    return NextResponse.json(
+      { error: "No pudimos enviar tu mensaje. Escribinos por WhatsApp o mail." },
+      { status: 502 }
+    );
+  }
+
+  return NextResponse.json({ success: true }, { status: 200 });
 }

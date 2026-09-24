@@ -5,9 +5,7 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Search,
-  Command,
   ArrowRight,
-  ExternalLink,
   Layers,
   Calculator,
   Mail,
@@ -17,7 +15,6 @@ import {
   Zap,
   Code2,
   FolderGit2,
-  X,
   TrendingUp,
   Terminal,
   ShieldCheck,
@@ -69,12 +66,20 @@ export function CommandPalette() {
     };
   }, [open]);
 
-  useEffect(() => {
+  // Reset al abrir, durante el render (no en un effect: evita un render en cascada).
+  const [prevOpen, setPrevOpen] = useState(open);
+  if (open !== prevOpen) {
+    setPrevOpen(open);
     if (open) {
       setQuery("");
       setSelectedIndex(0);
-      setTimeout(() => inputRef.current?.focus(), 50);
     }
+  }
+
+  useEffect(() => {
+    if (!open) return;
+    const id = setTimeout(() => inputRef.current?.focus(), 50);
+    return () => clearTimeout(id);
   }, [open]);
 
   const items: CommandItem[] = useMemo(() => {
@@ -149,7 +154,7 @@ export function CommandPalette() {
         keywords: ["whatsapp", "chat", "mensaje", "contacto"],
         action: () => {
           setOpen(false);
-          window.open("https://wa.me/5492994247985?text=Hola%20Se7en%20Studio!", "_blank");
+          window.open(`${SITE.whatsapp}?text=Hola%20Se7en%20Studio!`, "_blank");
         },
       },
       {
@@ -368,10 +373,6 @@ export function CommandPalette() {
 
   // Manejo de flechas y selección
   useEffect(() => {
-    setSelectedIndex(0);
-  }, [query]);
-
-  useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
       if (!open) return;
 
@@ -421,7 +422,10 @@ export function CommandPalette() {
                 ref={inputRef}
                 type="text"
                 value={query}
-                onChange={(e) => setQuery(e.target.value)}
+                onChange={(e) => {
+                  setQuery(e.target.value);
+                  setSelectedIndex(0);
+                }}
                 placeholder="Escribí para buscar proyectos, servicios o acciones..."
                 className="w-full bg-transparent px-3 text-sm text-foreground placeholder:text-muted/60 focus:outline-none"
               />
