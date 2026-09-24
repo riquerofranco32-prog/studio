@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { Navbar } from "@/components/sections/navbar";
 import Se7enFooter from "@/components/footer/Se7enFooter";
@@ -19,6 +19,8 @@ import { BadgeGeneratorModal } from "@/components/ui/badge-generator";
 import { KonamiEasterEgg } from "@/components/ui/konami-easter-egg";
 import { ConsoleEasterEgg } from "@/components/ui/console-easter-egg";
 import { SITE } from "@/data/site";
+import { team } from "@/data/team";
+import { capabilities } from "@/data/services";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -53,18 +55,41 @@ export const metadata: Metadata = {
   },
 };
 
+// Mismo fondo que --background en globals.css: pinta la barra del navegador en
+// mobile del color de la página en vez de blanco.
+export const viewport: Viewport = {
+  themeColor: "#0a0a0b",
+  colorScheme: "dark",
+};
+
+const sameAs = [
+  SITE.social.instagram,
+  SITE.social.linkedin,
+  SITE.social.github,
+].filter((url): url is string => Boolean(url));
+
+// Sólo datos reales de data/: nada de redes o direcciones inventadas.
 const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "ProfessionalService",
+  "@id": `${SITE.url}/#organization`,
   name: SITE.name,
   description: SITE.description,
   url: SITE.url,
+  logo: `${SITE.url}/logo.png`,
+  image: `${SITE.url}/logo.png`,
   email: SITE.email,
-  sameAs: [
-    SITE.social.instagram,
-    SITE.social.linkedin,
-    SITE.social.github,
-  ].filter((url): url is string => Boolean(url)),
+  telephone: `+${SITE.whatsapp.replace(/\D/g, "")}`,
+  address: { "@type": "PostalAddress", addressCountry: "AR" },
+  areaServed: { "@type": "Country", name: "Argentina" },
+  founder: team.map((member) => ({
+    "@type": "Person",
+    name: member.name,
+    jobTitle: member.role,
+    ...(member.linkedin && { sameAs: [member.linkedin] }),
+  })),
+  knowsAbout: capabilities,
+  ...(sameAs.length > 0 && { sameAs }),
 };
 
 export default function RootLayout({
@@ -78,7 +103,7 @@ export default function RootLayout({
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{
-            __html: JSON.stringify(organizationJsonLd),
+            __html: JSON.stringify(organizationJsonLd).replace(/</g, "\\u003c"),
           }}
         />
         <ScrollProgress />

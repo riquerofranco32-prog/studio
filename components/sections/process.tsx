@@ -1,8 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import Link from "next/link";
-import { motion, AnimatePresence } from "framer-motion";
+import { useRef, useState } from "react";
 import {
   MessageSquare,
   Code2,
@@ -12,10 +10,10 @@ import {
   ArrowRight,
   ShieldCheck,
   Clock,
-  Laptop,
 } from "lucide-react";
 import { Container } from "@/components/ui/container";
-import { SectionHeading } from "@/components/ui/section-heading";
+import { RevealText } from "@/components/ui/reveal-text";
+import { ButtonLink } from "@/components/ui/button-link";
 import { useSoundFx } from "@/components/providers/sound-provider";
 
 interface ProcessStep {
@@ -94,89 +92,137 @@ const steps: ProcessStep[] = [
 
 export function Process() {
   const [activeStep, setActiveStep] = useState(0);
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const { playClick } = useSoundFx();
 
   const current = steps[activeStep];
   const Icon = current.icon;
 
+  function select(idx: number) {
+    playClick();
+    setActiveStep(idx);
+  }
+
+  // Patrón de tabs de WAI-ARIA con activación automática: flechas, Home y End
+  // mueven el foco y seleccionan. Sólo la tab activa entra en el orden de Tab.
+  function handleKeyDown(e: React.KeyboardEvent<HTMLButtonElement>) {
+    const last = steps.length - 1;
+    const forward = activeStep === last ? 0 : activeStep + 1;
+    const back = activeStep === 0 ? last : activeStep - 1;
+    const next: Record<string, number> = {
+      ArrowRight: forward,
+      ArrowDown: forward,
+      ArrowLeft: back,
+      ArrowUp: back,
+      Home: 0,
+      End: last,
+    };
+    if (!(e.key in next)) return;
+    e.preventDefault();
+    select(next[e.key]);
+    tabRefs.current[next[e.key]]?.focus();
+  }
+
   return (
     <section id="process" className="border-t border-border py-20 md:py-28">
       <Container>
-        <div className="flex flex-col justify-between gap-6 md:flex-row md:items-end">
-          <SectionHeading
-            kicker="Metodología & Velocidad"
-            title="De la idea a producción en 2 a 3 semanas."
-            subtitle="Un proceso estructurado, transparente y sin burocracia: sabés exactamente qué se entrega cada semana."
-          />
-
-          <div className="flex items-center gap-3 shrink-0">
-            <Link
-              href="/#contact"
-              className="focus-ring inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-xs font-semibold text-background transition-colors hover:bg-accent/90"
-            >
-              <span>Iniciar un proyecto</span>
-              <ArrowRight size={14} />
-            </Link>
+        <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
+          <div className="max-w-2xl">
+            <p className="mb-5 font-mono text-xs tracking-widest text-muted uppercase">
+              <span className="text-accent">●</span> Proceso
+            </p>
+            <h2 className="display text-4xl uppercase text-foreground md:text-6xl">
+              <RevealText>De la idea a producción en 2 a 3 semanas.</RevealText>
+            </h2>
+            <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted">
+              Cuatro etapas, cada una con un entregable concreto. Ves el avance
+              todos los días en un sitio de prueba privado.
+            </p>
           </div>
+          <ButtonLink
+            href="/#contact"
+            variant="secondary"
+            className="shrink-0 self-start md:self-auto"
+          >
+            Iniciar un proyecto
+            <ArrowRight
+              size={16}
+              className="transition-transform duration-300 group-hover:translate-x-1"
+            />
+          </ButtonLink>
         </div>
 
-        {/* Timeline / Selector de Pasos en Barra Horizontal */}
-        <div className="mt-12 grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-4">
+        <div
+          role="tablist"
+          aria-label="Etapas del proceso"
+          className="mt-12 grid grid-cols-2 gap-3 lg:grid-cols-4"
+        >
           {steps.map((item, idx) => {
-            const StepIcon = item.icon;
             const isSelected = activeStep === idx;
 
             return (
               <button
                 key={item.step}
-                type="button"
-                onClick={() => {
-                  playClick();
-                  setActiveStep(idx);
+                ref={(el) => {
+                  tabRefs.current[idx] = el;
                 }}
-                className={`focus-ring relative text-left rounded-2xl border p-5 transition-all duration-300 ${
+                id={`process-tab-${item.step}`}
+                type="button"
+                role="tab"
+                aria-selected={isSelected}
+                aria-controls="process-panel"
+                tabIndex={isSelected ? 0 : -1}
+                onClick={() => select(idx)}
+                onKeyDown={handleKeyDown}
+                className={`focus-ring relative overflow-hidden rounded-2xl border p-4 text-left transition-colors duration-300 sm:p-5 ${
                   isSelected
-                    ? "border-accent bg-surface"
-                    : "border-border bg-surface/50 hover:border-foreground/30 hover:bg-surface"
+                    ? "border-accent/60 bg-surface"
+                    : "border-border bg-surface/40 hover:border-foreground/30 hover:bg-surface"
                 }`}
               >
-                <div className="flex items-center justify-between">
-                  <span className="font-mono text-xs font-bold text-accent">
-                    Paso {item.step}
+                {/* Barra superior: se llena en la etapa activa. */}
+                <span
+                  aria-hidden
+                  className={`absolute inset-x-0 top-0 h-0.5 origin-left bg-accent transition-transform duration-500 ${
+                    isSelected ? "scale-x-100" : "scale-x-0"
+                  }`}
+                />
+                <span className="flex flex-wrap items-baseline justify-between gap-x-3 gap-y-1 font-mono text-[11px]">
+                  <span
+                    className={`font-bold ${isSelected ? "text-accent" : "text-muted"}`}
+                  >
+                    {item.step}
                   </span>
-                  <span className="font-mono text-[10px] rounded-full border border-border bg-background px-2 py-0.5 text-muted">
-                    {item.days}
-                  </span>
-                </div>
-
-                <h4 className="mt-3 text-sm font-semibold text-foreground">
+                  <span className="text-muted">{item.days}</span>
+                </span>
+                <span
+                  className={`mt-3 block text-sm font-semibold transition-colors ${
+                    isSelected ? "text-foreground" : "text-foreground/70"
+                  }`}
+                >
                   {item.title}
-                </h4>
-
-                <p className="mt-1 text-xs text-muted line-clamp-1">
+                </span>
+                <span className="mt-1 hidden text-xs text-muted sm:line-clamp-1">
                   {item.tagline}
-                </p>
-
-                {isSelected && (
-                  <motion.div
-                    layoutId="process-indicator"
-                    className="absolute -bottom-2 left-1/2 -translate-x-1/2 h-1 w-10 rounded-full bg-accent"
-                  />
-                )}
+                </span>
               </button>
             );
           })}
         </div>
 
-        {/* Detalle Dinámico del Paso Activo */}
-        <div className="mt-6 rounded-2xl border border-border bg-surface p-6 md:p-8">
-          <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between border-b border-border/80 pb-6">
+        <div
+          id="process-panel"
+          role="tabpanel"
+          aria-labelledby={`process-tab-${current.step}`}
+          className="mt-4 rounded-2xl border border-border bg-surface p-6 md:p-8"
+        >
+          <div className="flex flex-col gap-4 border-b border-border/80 pb-6 lg:flex-row lg:items-center lg:justify-between">
             <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-accent/10 text-accent shrink-0">
-                <Icon size={24} />
+              <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-2xl bg-accent/10 text-accent">
+                <Icon size={24} aria-hidden />
               </div>
               <div>
-                <span className="font-mono text-xs text-accent uppercase tracking-widest font-bold">
+                <span className="font-mono text-xs font-bold tracking-widest text-accent uppercase">
                   Paso {current.step} · {current.days}
                 </span>
                 <h3 className="display mt-0.5 text-2xl text-foreground sm:text-3xl">
@@ -185,38 +231,42 @@ export function Process() {
               </div>
             </div>
 
-            <div className="inline-flex items-center gap-2 rounded-xl border border-accent/25 bg-accent/5 px-4 py-2 font-mono text-xs text-foreground">
-              <span className="text-accent font-semibold">Entregable:</span>
-              <span className="text-muted">{current.deliverable}</span>
+            <div className="inline-flex items-start gap-2 self-start rounded-xl border border-accent/25 bg-accent/5 px-4 py-2 font-mono text-xs lg:self-auto">
+              <span className="font-semibold text-accent">Entregable:</span>
+              <span className="text-foreground/80">{current.deliverable}</span>
             </div>
           </div>
 
-          <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
-            {current.tasks.map((task, i) => (
-              <div
-                key={i}
-                className="rounded-xl border border-border/80 bg-background/60 p-4"
-              >
-                <div className="flex items-start gap-3">
-                  <CheckCircle2
-                    size={16}
-                    className="text-accent shrink-0 mt-0.5"
-                  />
-                  <p className="text-xs leading-relaxed text-muted">{task}</p>
-                </div>
-              </div>
-            ))}
-          </div>
+          <p className="mt-6 max-w-2xl text-sm leading-relaxed text-muted md:text-base">
+            {current.description}
+          </p>
 
-          {/* Micro Footer del Paso */}
-          <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-border/60 pt-4 text-xs font-mono text-muted">
+          <ul className="mt-6 grid grid-cols-1 gap-3 md:grid-cols-3">
+            {current.tasks.map((task) => (
+              <li
+                key={task}
+                className="flex items-start gap-3 rounded-xl border border-border/80 bg-background/60 p-4"
+              >
+                <CheckCircle2
+                  size={16}
+                  aria-hidden
+                  className="mt-0.5 shrink-0 text-accent"
+                />
+                <p className="text-sm leading-relaxed text-foreground/80">
+                  {task}
+                </p>
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-border/60 pt-4 font-mono text-xs text-muted">
             <span className="flex items-center gap-1.5">
-              <Clock size={13} className="text-accent" />
-              Avances que podés ver todos los días, antes del lanzamiento
+              <Clock size={13} aria-hidden className="text-accent" />
+              Avances visibles todos los días, antes del lanzamiento
             </span>
             <span className="flex items-center gap-1.5">
-              <ShieldCheck size={13} className="text-emerald-400" />
-              Garantía de 30 días post-lanzamiento incluida
+              <ShieldCheck size={13} aria-hidden className="text-accent" />
+              30 días de soporte post-lanzamiento incluidos
             </span>
           </div>
         </div>

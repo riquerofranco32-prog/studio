@@ -1,49 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { ArrowRight, Zap, CalendarCheck, Clock } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { SITE } from "@/data/site";
-
-// Slots disponibles — actualizar manualmente según disponibilidad real del estudio.
-const SLOTS_AVAILABLE = 2;
-
-// Mes de disponibilidad próxima (se actualiza automáticamente al mes siguiente si es fin de mes).
-function getAvailabilityMonth(): string {
-  const now = new Date();
-  const day = now.getDate();
-  const daysInMonth = new Date(
-    now.getFullYear(),
-    now.getMonth() + 1,
-    0,
-  ).getDate();
-  const monthNames = [
-    "Enero",
-    "Febrero",
-    "Marzo",
-    "Abril",
-    "Mayo",
-    "Junio",
-    "Julio",
-    "Agosto",
-    "Septiembre",
-    "Octubre",
-    "Noviembre",
-    "Diciembre",
-  ];
-  // Si queda menos del 20% del mes, mostramos el siguiente
-  const targetMonth =
-    day > daysInMonth * 0.8 ? now.getMonth() + 1 : now.getMonth();
-  const year = now.getFullYear() + (targetMonth > 11 ? 1 : 0);
-  return `${monthNames[targetMonth % 12]} ${year}`;
-}
+import { SLOTS, useMonthName } from "@/lib/availability";
 
 export function AvailabilityBanner() {
-  const [month, setMonth] = useState("");
+  const month = useMonthName();
   const [pulse, setPulse] = useState(false);
 
   useEffect(() => {
-    setMonth(getAvailabilityMonth());
     // Pulse periódico para llamar la atención
     const id = setInterval(() => setPulse((p) => !p), 4000);
     return () => clearInterval(id);
@@ -80,7 +48,7 @@ export function AvailabilityBanner() {
                     Estudio Disponible
                   </span>
                   <span className="rounded-full border border-border bg-surface px-2 py-0.5 font-mono text-[10px] text-muted">
-                    {SLOTS_AVAILABLE} cupos abiertos
+                    {SLOTS} {SLOTS === 1 ? "cupo abierto" : "cupos abiertos"}
                   </span>
                 </div>
 
@@ -99,7 +67,7 @@ export function AvailabilityBanner() {
                   </span>
                   <span className="flex items-center gap-1.5 font-mono text-xs text-muted">
                     <Clock size={13} className="text-accent/70" />
-                    Respuesta &lt; 2 hs hábiles
+                    Respuesta &lt; 24 h hábiles
                   </span>
                   <span className="flex items-center gap-1.5 font-mono text-xs text-muted">
                     <Zap size={13} className="text-accent/70" />
@@ -111,7 +79,7 @@ export function AvailabilityBanner() {
 
             {/* Derecha: CTA */}
             <div className="flex shrink-0 items-center gap-3">
-              <a
+              <Link
                 href="/#contact"
                 id="availability-cta"
                 className="focus-ring group inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-semibold text-background shadow-[0_0_24px_rgba(255,77,46,0.3)] transition-all duration-300 hover:bg-accent/90 hover:shadow-[0_0_32px_rgba(255,77,46,0.45)]"
@@ -121,7 +89,7 @@ export function AvailabilityBanner() {
                   size={15}
                   className="transition-transform duration-300 group-hover:translate-x-1"
                 />
-              </a>
+              </Link>
 
               <a
                 href={SITE.whatsapp}

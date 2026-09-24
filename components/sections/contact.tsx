@@ -1,161 +1,235 @@
 "use client";
 
-import { useState, FormEvent } from "react";
-import { Mail, MessageCircle, Send } from "lucide-react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type FormEvent,
+  type ReactNode,
+} from "react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Check,
+  Mail,
+  MessageCircle,
+} from "lucide-react";
 import { InstagramIcon, LinkedinIcon } from "@/components/ui/brand-icons";
 import { Container } from "@/components/ui/container";
-import { Magnetic } from "@/components/ui/magnetic";
 import { RevealText } from "@/components/ui/reveal-text";
 import { CopyButton } from "@/components/ui/copy-button";
 import { SITE } from "@/data/site";
+import { SLOTS, useMonthName } from "@/lib/availability";
 
 const projectTypes = [
-  "Landing Page",
-  "Plataforma o App Web",
-  "E-Commerce",
-  "Inteligencia Artificial",
-  "Rediseño Completo",
+  "Landing page",
+  "Plataforma o app web",
+  "E-commerce",
+  "Inteligencia artificial",
+  "Rediseño",
 ];
 
 const budgetRanges = [
-  "< $1.500 USD",
-  "$1.500 - $3.000 USD",
-  "$3.000 - $6.000 USD",
-  "$6.000+ USD",
-  "A definir",
+  "Menos de USD 1.500",
+  "USD 1.500 – 3.000",
+  "USD 3.000 – 6.000",
+  "Más de USD 6.000",
+  "Todavía no sé",
 ];
 
-function buildMailto(data: {
-  name: string;
-  email: string;
-  company: string;
+const STEPS = ["Proyecto", "Idea", "Contacto"] as const;
+const IDEA_MIN = 20;
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+type Values = {
   projectType: string;
   budget: string;
   idea: string;
-}) {
-  const subject = `Nuevo proyecto: ${data.projectType} - ${data.name}${
-    data.company ? ` (${data.company})` : ""
-  }`;
-  const body = [
-    `Nombre: ${data.name}`,
-    `Email: ${data.email}`,
-    data.company ? `Empresa: ${data.company}` : null,
-    `Tipo de proyecto: ${data.projectType}`,
-    `Presupuesto estimado: ${data.budget}`,
+  name: string;
+  email: string;
+  company: string;
+};
+type FieldName = keyof Values;
+type Errors = Partial<Record<FieldName, string>>;
+type Channel = "email" | "whatsapp";
+
+const EMPTY: Values = {
+  projectType: "",
+  budget: "",
+  idea: "",
+  name: "",
+  email: "",
+  company: "",
+};
+
+// Qué campos valida cada paso, en el orden en que se enfoca el primero inválido.
+const STEP_FIELDS: FieldName[][] = [
+  ["projectType", "budget"],
+  ["idea"],
+  ["name", "email"],
+];
+
+function validateField(field: FieldName, v: Values): string | undefined {
+  switch (field) {
+    case "projectType":
+      return v.projectType ? undefined : "Elegí el tipo de proyecto.";
+    case "budget":
+      return v.budget ? undefined : "Elegí un rango (vale «Todavía no sé»).";
+    case "idea": {
+      const len = v.idea.trim().length;
+      if (len === 0) return "Contanos en dos líneas qué querés lograr.";
+      return len < IDEA_MIN
+        ? `Un poco más de detalle: faltan ${IDEA_MIN - len} caracteres.`
+        : undefined;
+    }
+    case "name":
+      return v.name.trim() ? undefined : "¿Cómo te llamás?";
+    case "email":
+      // Opcional: por mail responde el remitente, por WhatsApp el número.
+      return v.email.trim() && !EMAIL_RE.test(v.email.trim())
+        ? "Revisá el email: parece incompleto (ej: vos@empresa.com)."
+        : undefined;
+    default:
+      return undefined;
+  }
+}
+
+function validateStep(step: number, v: Values): Errors {
+  const errors: Errors = {};
+  for (const field of STEP_FIELDS[step]) {
+    const error = validateField(field, v);
+    if (error) errors[field] = error;
+  }
+  return errors;
+}
+
+function buildMessage(v: Values): string {
+  return [
+    `Hola Se7en Studio! Soy ${v.name.trim()}${
+      v.company.trim() ? ` (${v.company.trim()})` : ""
+    }.`,
     "",
-    "Detalle de la idea:",
-    data.idea,
+    `Proyecto: ${v.projectType}`,
+    `Presupuesto: ${v.budget}`,
+    v.email.trim() ? `Email: ${v.email.trim()}` : null,
+    "",
+    v.idea.trim(),
   ]
     .filter((line) => line !== null)
     .join("\n");
-
-  return `mailto:${SITE.email}?subject=${encodeURIComponent(
-    subject,
-  )}&body=${encodeURIComponent(body)}`;
 }
 
+function buildHref(channel: Channel, v: Values): string {
+  const message = buildMessage(v);
+  if (channel === "whatsapp") {
+    return `${SITE.whatsapp}?text=${encodeURIComponent(message)}`;
+  }
+  const subject = `Nuevo proyecto: ${v.projectType} — ${v.name.trim()}`;
+  return `mailto:${SITE.email}?subject=${encodeURIComponent(
+    subject,
+  )}&body=${encodeURIComponent(message)}`;
+}
+
+const labelClass =
+  "mb-2 block font-mono text-xs tracking-widest text-muted uppercase";
+const inputClass =
+  "focus-ring w-full rounded-lg border bg-background px-4 py-3.5 text-base text-foreground transition-colors placeholder:text-muted/60 hover:border-foreground/25 focus:border-accent aria-[invalid=true]:border-red-500/60";
+
 export function Contact() {
-  const [selectedType, setSelectedType] = useState(projectTypes[0]);
-  const [selectedBudget, setSelectedBudget] = useState(budgetRanges[0]);
-  const [loading, setLoading] = useState(false);
-  const [sent, setSent] = useState(false);
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const month = useMonthName();
+  const [values, setValues] = useState<Values>(EMPTY);
+  const [errors, setErrors] = useState<Errors>({});
+  const [step, setStep] = useState(0);
+  const [sent, setSent] = useState<{ channel: Channel; href: string } | null>(
+    null,
+  );
+  const [announce, setAnnounce] = useState("");
+  const stepRef = useRef<HTMLDivElement>(null);
+  const doneRef = useRef<HTMLHeadingElement>(null);
+  const hasNavigated = useRef(false);
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    setErrorMessage(null);
-    setLoading(true);
+  // Al cambiar de paso el foco va al primer control del paso nuevo; si no, el
+  // teclado queda en un botón que acaba de desaparecer. No en el primer render:
+  // robarle el foco a quien recién entra a la página sería peor.
+  useEffect(() => {
+    if (!hasNavigated.current) return;
+    stepRef.current
+      ?.querySelector<HTMLElement>("input, textarea")
+      ?.focus();
+  }, [step]);
 
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-    const payload = {
-      name: String(formData.get("name") ?? ""),
-      email: String(formData.get("email") ?? ""),
-      company: String(formData.get("company") ?? ""),
-      projectType: selectedType,
-      budget: selectedBudget,
-      idea: String(formData.get("idea") ?? ""),
-      honeypot: String(formData.get("website_hp") ?? ""),
-    };
+  useEffect(() => {
+    if (sent) doneRef.current?.focus();
+  }, [sent]);
 
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payload),
-      });
-
-      const data = await res.json();
-      if (!res.ok) {
-        throw new Error(
-          data.error || "Ocurrió un problema al enviar la consulta.",
-        );
-      }
-
-      setSent(true);
-      form.reset();
-    } catch (err: unknown) {
-      console.error(err);
-      setErrorMessage(
-        err instanceof Error
-          ? err.message
-          : "Error al enviar. Probá enviarnos un mensaje por WhatsApp o email directo.",
-      );
-    } finally {
-      setLoading(false);
+  function update(field: FieldName, value: string) {
+    const next = { ...values, [field]: value };
+    setValues(next);
+    // Una vez marcado, el error se re-evalúa al tipear: desaparece apenas se
+    // corrige, pero no aparece mientras la persona todavía está escribiendo.
+    if (errors[field]) {
+      setErrors({ ...errors, [field]: validateField(field, next) });
     }
   }
 
-  const whatsappPrefilled = `https://wa.me/5492994247985?text=${encodeURIComponent(
-    `Hola Se7en Studio! Me gustaría consultarles por un proyecto de ${selectedType}.`,
-  )}`;
-
-  function getAvailabilityMonth(): string {
-    const now = new Date();
-    const day = now.getDate();
-    const daysInMonth = new Date(
-      now.getFullYear(),
-      now.getMonth() + 1,
-      0,
-    ).getDate();
-    const monthNames = [
-      "Enero",
-      "Febrero",
-      "Marzo",
-      "Abril",
-      "Mayo",
-      "Junio",
-      "Julio",
-      "Agosto",
-      "Septiembre",
-      "Octubre",
-      "Noviembre",
-      "Diciembre",
-    ];
-    const targetMonth =
-      day > daysInMonth * 0.8 ? now.getMonth() + 1 : now.getMonth();
-    const year = now.getFullYear() + (targetMonth > 11 ? 1 : 0);
-    return `${monthNames[targetMonth % 12]} ${year}`;
+  function goTo(nextStep: number) {
+    hasNavigated.current = true;
+    setStep(nextStep);
+    setAnnounce(`Paso ${nextStep + 1} de ${STEPS.length}: ${STEPS[nextStep]}.`);
   }
 
-  const currentMonth = getAvailabilityMonth();
+  function checkStep(): boolean {
+    const stepErrors = validateStep(step, values);
+    setErrors({ ...errors, ...stepErrors });
+    const firstInvalid = STEP_FIELDS[step].find((f) => stepErrors[f]);
+    if (!firstInvalid) return true;
+    setAnnounce(stepErrors[firstInvalid] ?? "");
+    document.querySelector<HTMLElement>(`[name="${firstInvalid}"]`)?.focus();
+    return false;
+  }
+
+  function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!checkStep()) return;
+    if (step < STEPS.length - 1) return goTo(step + 1);
+
+    const submitter = (e.nativeEvent as SubmitEvent).submitter;
+    const channel: Channel =
+      submitter?.getAttribute("value") === "whatsapp" ? "whatsapp" : "email";
+    const href = buildHref(channel, values);
+    // ponytail: sin backend. Se abre la app del visitante con el mensaje
+    // armado; no podemos confirmar el envío, y el éxito lo dice así.
+    if (channel === "whatsapp") {
+      window.open(href, "_blank", "noopener,noreferrer");
+    } else {
+      window.location.href = href;
+    }
+    setSent({ channel, href });
+    setAnnounce("");
+  }
 
   return (
     <section id="contact" className="border-t border-border py-20 md:py-28">
       <Container>
-        <div className="grid grid-cols-1 gap-16 md:grid-cols-12 md:gap-x-10 lg:gap-x-20">
-          <div className="md:col-span-5">
-            <div className="mb-6 flex flex-wrap items-center gap-2">
+        <div className="grid grid-cols-1 gap-16 lg:grid-cols-12 lg:gap-x-20">
+          <div className="@container min-w-0 lg:col-span-5">
+            <div className="mb-6">
               <span className="inline-flex items-center gap-2 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-3 py-1 font-mono text-xs text-emerald-400">
-                <span className="relative flex h-2 w-2">
+                <span className="relative flex h-2 w-2" aria-hidden="true">
                   <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
                   <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
                 </span>
-                <span>{currentMonth}: 2 cupos abiertos</span>
+                <span>
+                  {month ? `${month}: ` : ""}
+                  {SLOTS} cupos abiertos
+                </span>
               </span>
             </div>
 
-            <h2 className="display text-[2.15rem] uppercase text-foreground sm:text-5xl md:text-[3.4rem] lg:text-[4rem]">
+            {/* El tamaño sigue al ancho de la columna (cqw), no al viewport:
+                "CONSTRUYÁMOSLA." mide ~9.3em y con tamaños fijos por
+                breakpoint desbordaba en mobile, tablet y desktop. */}
+            <h2 className="display text-[clamp(1.6rem,10cqw,4rem)] uppercase text-foreground">
               <span className="line-mask block">
                 <RevealText>¿Tenés una idea?</RevealText>
               </span>
@@ -166,43 +240,16 @@ export function Contact() {
               </span>
             </h2>
 
-            <div className="mt-8 flex flex-col gap-2.5">
-              {[
-                { n: "001", label: "Email", href: `mailto:${SITE.email}` },
-                { n: "002", label: "WhatsApp", href: SITE.whatsapp },
-              ].map((link) => (
-                <a
-                  key={link.n}
-                  href={link.href}
-                  target={
-                    link.href.startsWith("mailto:") ? undefined : "_blank"
-                  }
-                  rel={
-                    link.href.startsWith("mailto:")
-                      ? undefined
-                      : "noopener noreferrer"
-                  }
-                  className="focus-ring group inline-flex w-fit items-center gap-3"
-                >
-                  <span className="flex h-7 w-7 items-center justify-center rounded-full border border-border font-mono text-[10px] text-muted transition-colors group-hover:border-accent group-hover:text-accent">
-                    {link.n}
-                  </span>
-                  <span className="text-sm font-medium text-foreground transition-colors group-hover:text-accent">
-                    {link.label}
-                  </span>
-                </a>
-              ))}
-            </div>
-
             <p className="mt-8 max-w-md text-lg leading-relaxed text-muted">
-              Contanos sobre tu producto u objetivo de negocio. Respondemos cada
-              mensaje de manera personalizada dentro de las 24 horas.
+              Tres pasos cortos y te llega a nosotros por email o WhatsApp.
+              Respondemos cada mensaje, personalmente, dentro de las 24 h
+              hábiles.
             </p>
 
             <div className="mt-10 space-y-4 rounded-xl border border-border bg-surface/60 p-6">
-              <div className="flex items-center justify-between gap-4">
+              <div className="flex flex-wrap items-center justify-between gap-4">
                 <span className="font-mono text-xs text-muted">
-                  Canal directo:
+                  ¿Preferís escribir directo?
                 </span>
                 <CopyButton text={SITE.email} label="Copiar email" />
               </div>
@@ -210,20 +257,28 @@ export function Contact() {
               <div className="flex flex-col gap-3 pt-2">
                 <a
                   href={`mailto:${SITE.email}`}
-                  className="focus-ring inline-flex items-center gap-2.5 text-sm text-foreground transition-colors hover:text-accent"
+                  className="focus-ring inline-flex min-w-0 items-center gap-2.5 text-sm text-foreground transition-colors hover:text-accent"
                 >
-                  <Mail size={16} className="text-accent" />
-                  <span>{SITE.email}</span>
+                  <Mail
+                    size={16}
+                    className="shrink-0 text-accent"
+                    aria-hidden="true"
+                  />
+                  <span className="truncate">{SITE.email}</span>
                 </a>
 
                 <a
-                  href={whatsappPrefilled}
+                  href={SITE.whatsapp}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="focus-ring inline-flex items-center gap-2.5 text-sm text-emerald-400 transition-colors hover:text-emerald-300"
                 >
-                  <MessageCircle size={16} />
-                  <span>WhatsApp directo (+54 9 299 424-7985)</span>
+                  <MessageCircle
+                    size={16}
+                    className="shrink-0"
+                    aria-hidden="true"
+                  />
+                  <span>WhatsApp +54 9 299 424-7985</span>
                 </a>
               </div>
             </div>
@@ -248,175 +303,161 @@ export function Contact() {
             )}
           </div>
 
-          <div className="md:col-span-7">
+          <div className="min-w-0 lg:col-span-7">
+            <p role="status" aria-live="polite" className="sr-only">
+              {announce}
+            </p>
+
             {sent ? (
               <div className="rounded-2xl border border-emerald-500/30 bg-surface p-8 text-center md:p-12">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-500/10 text-emerald-400">
-                  <Send size={28} />
+                  <Check size={28} aria-hidden="true" />
                 </div>
-                <h3 className="display mt-6 text-2xl text-foreground sm:text-3xl">
-                  ¡Mensaje recibido con éxito!
+                <h3
+                  ref={doneRef}
+                  tabIndex={-1}
+                  className="display mt-6 text-2xl text-foreground outline-none sm:text-3xl"
+                >
+                  Tu mensaje está listo.
                 </h3>
                 <p className="mx-auto mt-3 max-w-md text-base leading-relaxed text-muted">
-                  Analizaremos tu proyecto ({selectedType}) y te responderemos
-                  por correo en menos de 24 horas con una propuesta y próximos
-                  pasos.
+                  Lo abrimos en{" "}
+                  {sent.channel === "email" ? "tu app de email" : "WhatsApp"}{" "}
+                  con todo cargado. Sólo falta tocar{" "}
+                  <strong className="text-foreground">Enviar</strong> ahí.
                 </p>
-                <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+                <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
                   <a
-                    href={whatsappPrefilled}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="focus-ring inline-flex items-center gap-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 px-6 py-3 text-sm font-medium text-emerald-400 transition-colors hover:bg-emerald-500/20"
+                    href={sent.href}
+                    data-testid="contact-handoff"
+                    {...(sent.channel === "whatsapp"
+                      ? { target: "_blank", rel: "noopener noreferrer" }
+                      : {})}
+                    className="focus-ring inline-flex items-center gap-2 rounded-full bg-accent px-6 py-3 text-sm font-medium text-background transition-colors hover:bg-accent/90"
                   >
-                    <MessageCircle size={16} />
-                    <span>Continuar por WhatsApp</span>
+                    ¿No se abrió? Abrir de nuevo
                   </a>
+                  <CopyButton
+                    text={buildMessage(values)}
+                    label="Copiar mensaje"
+                  />
                   <button
                     type="button"
-                    onClick={() => setSent(false)}
+                    onClick={() => setSent(null)}
                     className="focus-ring rounded-full border border-border bg-background px-6 py-3 text-sm font-medium text-muted transition-colors hover:text-foreground"
                   >
-                    Enviar otro mensaje
+                    Editar
                   </button>
                 </div>
               </div>
             ) : (
               <form
                 onSubmit={handleSubmit}
+                noValidate
+                aria-label="Contanos tu proyecto"
                 className="rounded-2xl border border-border bg-surface p-6 md:p-10"
               >
-                {/* Honeypot anti-spam oculto */}
-                <input
-                  type="text"
-                  name="website_hp"
-                  tabIndex={-1}
-                  autoComplete="off"
-                  style={{ display: "none" }}
-                  aria-hidden="true"
-                />
+                <StepProgress step={step} />
 
-                {/* Selector de Tipo de Proyecto */}
-                <div className="mb-6">
-                  <label className="mb-2.5 block font-mono text-xs tracking-widest text-muted uppercase">
-                    1. ¿Qué tipo de proyecto querés construir?
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {projectTypes.map((type) => (
-                      <button
-                        key={type}
-                        type="button"
-                        onClick={() => setSelectedType(type)}
-                        className={`focus-ring rounded-lg border px-3 py-1.5 font-mono text-xs transition-all ${
-                          selectedType === type
-                            ? "border-accent bg-accent text-background font-medium"
-                            : "border-border bg-background text-muted hover:border-foreground/30 hover:text-foreground"
-                        }`}
-                      >
-                        {type}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Selector de Presupuesto */}
-                <div className="mb-8">
-                  <label className="mb-2.5 block font-mono text-xs tracking-widest text-muted uppercase">
-                    2. Presupuesto estimado
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {budgetRanges.map((range) => (
-                      <button
-                        key={range}
-                        type="button"
-                        onClick={() => setSelectedBudget(range)}
-                        className={`focus-ring rounded-lg border px-3 py-1.5 font-mono text-xs transition-all ${
-                          selectedBudget === range
-                            ? "border-accent bg-accent text-background font-medium"
-                            : "border-border bg-background text-muted hover:border-foreground/30 hover:text-foreground"
-                        }`}
-                      >
-                        {range}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-
-                {/* Campos de texto */}
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                  <Field
-                    name="name"
-                    label="Nombre"
-                    placeholder="Tu nombre completo"
-                    required
-                  />
-                  <Field
-                    name="email"
-                    label="Email de contacto"
-                    type="email"
-                    placeholder="tu@empresa.com"
-                    required
-                  />
-                </div>
-
-                <div className="mt-6">
-                  <Field
-                    name="company"
-                    label="Empresa / Marca"
-                    placeholder="Nombre de tu proyecto o empresa (opcional)"
-                  />
-                </div>
-
-                <div className="mt-6">
-                  <label
-                    htmlFor="idea"
-                    className="mb-2 block font-mono text-xs tracking-widest text-muted uppercase"
-                  >
-                    Contanos los detalles de tu idea
-                  </label>
-                  <textarea
-                    id="idea"
-                    name="idea"
-                    rows={4}
-                    required
-                    placeholder="Describí brevemente qué querés lograr, funcionalidades principales o fecha estimada de lanzamiento."
-                    className="focus-ring w-full resize-none rounded-lg border border-border bg-background px-4 py-3.5 text-base text-foreground transition-colors placeholder:text-muted/60 hover:border-foreground/25 focus:border-accent"
-                  />
-                </div>
-
-                {errorMessage && (
-                  <div className="mt-4 rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-xs text-red-400">
-                    {errorMessage}
-                  </div>
-                )}
-
-                <div className="mt-8 flex flex-wrap items-center justify-between gap-4">
-                  <Magnetic>
-                    <button
-                      type="submit"
-                      disabled={loading}
-                      className="focus-ring group inline-flex items-center gap-2 rounded-full bg-accent px-8 py-4 text-sm font-medium text-background transition-all duration-300 hover:bg-accent/90 hover:shadow-[0_0_25px_rgba(255,77,46,0.35)] disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <span>{loading ? "Enviando..." : "Enviar consulta"}</span>
-                      <Send
-                        size={16}
-                        className={`transition-transform duration-300 group-hover:translate-x-1 ${
-                          loading ? "animate-pulse" : ""
-                        }`}
+                <div ref={stepRef} className="mt-8">
+                  {step === 0 && (
+                    <div className="space-y-8">
+                      <ChoiceGroup
+                        name="projectType"
+                        legend="¿Qué querés construir?"
+                        options={projectTypes}
+                        value={values.projectType}
+                        error={errors.projectType}
+                        onChange={(v) => update("projectType", v)}
                       />
-                    </button>
-                  </Magnetic>
+                      <ChoiceGroup
+                        name="budget"
+                        legend="Presupuesto estimado"
+                        options={budgetRanges}
+                        value={values.budget}
+                        error={errors.budget}
+                        onChange={(v) => update("budget", v)}
+                      />
+                    </div>
+                  )}
 
-                  <a
-                    href={whatsappPrefilled}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="focus-ring inline-flex items-center gap-2 rounded-full border border-border bg-background px-5 py-3 text-xs font-mono text-muted transition-colors hover:border-emerald-500/40 hover:text-emerald-400"
-                  >
-                    <MessageCircle size={14} className="text-emerald-400" />
-                    <span>O escribir por WhatsApp</span>
-                  </a>
+                  {step === 1 && (
+                    <Field
+                      name="idea"
+                      label="Contanos tu idea"
+                      hint="Qué querés lograr, funcionalidades clave o una fecha objetivo."
+                      error={errors.idea}
+                    >
+                      {(a11y) => (
+                        <textarea
+                          {...a11y}
+                          rows={5}
+                          value={values.idea}
+                          onChange={(e) => update("idea", e.target.value)}
+                          placeholder="Ej: una tienda para vender ropa con Mercado Pago, lista para marzo."
+                          className={`${inputClass} resize-y`}
+                        />
+                      )}
+                    </Field>
+                  )}
+
+                  {step === 2 && (
+                    <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                      <Field name="name" label="Nombre" error={errors.name}>
+                        {(a11y) => (
+                          <input
+                            {...a11y}
+                            type="text"
+                            autoComplete="name"
+                            value={values.name}
+                            onChange={(e) => update("name", e.target.value)}
+                            className={inputClass}
+                          />
+                        )}
+                      </Field>
+                      <Field
+                        name="email"
+                        label="Email (opcional)"
+                        error={errors.email}
+                      >
+                        {(a11y) => (
+                          <input
+                            {...a11y}
+                            type="email"
+                            inputMode="email"
+                            autoComplete="email"
+                            spellCheck={false}
+                            value={values.email}
+                            onChange={(e) => update("email", e.target.value)}
+                            placeholder="vos@empresa.com"
+                            className={inputClass}
+                          />
+                        )}
+                      </Field>
+                      <div className="sm:col-span-2">
+                        <Field
+                          name="company"
+                          label="Empresa o marca (opcional)"
+                        >
+                          {(a11y) => (
+                            <input
+                              {...a11y}
+                              type="text"
+                              autoComplete="organization"
+                              value={values.company}
+                              onChange={(e) =>
+                                update("company", e.target.value)
+                              }
+                              className={inputClass}
+                            />
+                          )}
+                        </Field>
+                      </div>
+                    </div>
+                  )}
                 </div>
+
+                <StepActions step={step} onBack={() => goTo(step - 1)} />
               </form>
             )}
           </div>
@@ -426,36 +467,194 @@ export function Contact() {
   );
 }
 
+function StepProgress({ step }: { step: number }) {
+  return (
+    <div>
+      <p className="font-mono text-xs text-muted">
+        Paso {step + 1} de {STEPS.length}
+      </p>
+      <ol className="mt-3 grid grid-cols-3 gap-2">
+        {STEPS.map((label, i) => (
+          <li
+            key={label}
+            aria-current={i === step ? "step" : undefined}
+            className="min-w-0"
+          >
+            <span
+              aria-hidden="true"
+              className={`block h-1 rounded-full transition-colors duration-300 ${
+                i <= step ? "bg-accent" : "bg-border"
+              }`}
+            />
+            <span
+              className={`mt-2 flex items-center gap-1 truncate font-mono text-[11px] tracking-widest uppercase ${
+                i === step ? "text-foreground" : "text-muted"
+              }`}
+            >
+              {i < step && (
+                <Check
+                  size={12}
+                  className="shrink-0 text-accent"
+                  aria-hidden="true"
+                />
+              )}
+              {label}
+              {i < step && <span className="sr-only"> (completo)</span>}
+            </span>
+          </li>
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+function StepActions({ step, onBack }: { step: number; onBack: () => void }) {
+  const isLast = step === STEPS.length - 1;
+  const primary =
+    "focus-ring inline-flex items-center justify-center gap-2 rounded-full bg-accent px-7 py-3.5 text-sm font-medium text-background transition-colors duration-300 hover:bg-accent/90";
+
+  return (
+    <div className="mt-10 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
+      {step > 0 ? (
+        <button
+          type="button"
+          onClick={onBack}
+          className="focus-ring inline-flex items-center justify-center gap-2 rounded-full px-4 py-3 text-sm text-muted transition-colors hover:text-foreground"
+        >
+          <ArrowLeft size={16} aria-hidden="true" />
+          Atrás
+        </button>
+      ) : (
+        <span className="hidden sm:block" />
+      )}
+
+      {isLast ? (
+        <div className="flex flex-col gap-3 sm:flex-row">
+          <button
+            type="submit"
+            name="channel"
+            value="whatsapp"
+            className="focus-ring inline-flex items-center justify-center gap-2 rounded-full border border-emerald-500/40 px-6 py-3.5 text-sm font-medium text-emerald-400 transition-colors hover:bg-emerald-500/10"
+          >
+            <MessageCircle size={16} aria-hidden="true" />
+            Enviar por WhatsApp
+          </button>
+          <button
+            type="submit"
+            name="channel"
+            value="email"
+            className={primary}
+          >
+            <Mail size={16} aria-hidden="true" />
+            Enviar por email
+          </button>
+        </div>
+      ) : (
+        <button type="submit" className={primary}>
+          Siguiente
+          <ArrowRight size={16} aria-hidden="true" />
+        </button>
+      )}
+    </div>
+  );
+}
+
+function ChoiceGroup({
+  name,
+  legend,
+  options,
+  value,
+  error,
+  onChange,
+}: {
+  name: FieldName;
+  legend: string;
+  options: string[];
+  value: string;
+  error?: string;
+  onChange: (value: string) => void;
+}) {
+  const errorId = `${name}-error`;
+  // Radios nativos: flechas, Tab y lector de pantalla gratis. El chip es sólo
+  // la piel del <input>, que queda visualmente oculto pero enfocable.
+  return (
+    <fieldset
+      aria-describedby={error ? errorId : undefined}
+    >
+      <legend className={labelClass}>{legend}</legend>
+      <div className="flex flex-wrap gap-2">
+        {options.map((option) => (
+          <label key={option} className="relative cursor-pointer">
+            <input
+              type="radio"
+              name={name}
+              value={option}
+              checked={value === option}
+              onChange={() => onChange(option)}
+              className="peer sr-only"
+            />
+            <span className="inline-block rounded-lg border border-border bg-background px-3 py-2 font-mono text-xs text-muted transition-colors hover:border-foreground/30 hover:text-foreground peer-checked:border-accent peer-checked:bg-accent peer-checked:font-medium peer-checked:text-background peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-accent">
+              {option}
+            </span>
+          </label>
+        ))}
+      </div>
+      <FieldError id={errorId} message={error} />
+    </fieldset>
+  );
+}
+
+type A11yProps = {
+  id: string;
+  name: string;
+  "aria-invalid"?: boolean;
+  "aria-describedby"?: string;
+};
+
 function Field({
   name,
   label,
-  placeholder,
-  type = "text",
-  required = false,
+  hint,
+  error,
+  children,
 }: {
-  name: string;
+  name: FieldName;
   label: string;
-  placeholder?: string;
-  type?: string;
-  required?: boolean;
+  hint?: string;
+  error?: string;
+  children: (a11y: A11yProps) => ReactNode;
 }) {
+  const hintId = hint ? `${name}-hint` : undefined;
+  const errorId = error ? `${name}-error` : undefined;
+  const describedBy = [errorId, hintId].filter(Boolean).join(" ") || undefined;
+
   return (
     <div>
-      <label
-        htmlFor={name}
-        className="mb-2 block font-mono text-xs tracking-widest text-muted uppercase"
-      >
+      <label htmlFor={name} className={labelClass}>
         {label}
       </label>
-      <input
-        id={name}
-        name={name}
-        type={type}
-        required={required}
-        placeholder={placeholder}
-        className="focus-ring w-full rounded-lg border border-border bg-background px-4 py-3.5 text-base text-foreground transition-colors placeholder:text-muted/60 hover:border-foreground/25 focus:border-accent"
-      />
+      {children({
+        id: name,
+        name,
+        "aria-invalid": error ? true : undefined,
+        "aria-describedby": describedBy,
+      })}
+      {hint && !error && (
+        <p id={hintId} className="mt-2 text-xs text-muted">
+          {hint}
+        </p>
+      )}
+      <FieldError id={`${name}-error`} message={error} />
     </div>
+  );
+}
+
+function FieldError({ id, message }: { id: string; message?: string }) {
+  if (!message) return null;
+  return (
+    <p id={id} className="mt-2 text-xs text-red-400">
+      {message}
+    </p>
   );
 }
 

@@ -15,6 +15,10 @@ export const SITE = {
     linkedin: undefined as string | undefined,
     github: undefined as string | undefined,
   },
+  // Única fuente de disponibilidad: la leen contacto, status bar y banners.
+  availability: {
+    slots: 2,
+  },
   stats: {
     projects: "6+",
     people: "2",

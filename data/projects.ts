@@ -40,7 +40,7 @@ export const projects: Project[] = [
       "Una experiencia de marca de e-commerce construida alrededor de una identidad visual distintiva y un catálogo de productos.",
     description:
       "Poné La Pava es una experiencia de marca de e-commerce. Diseñamos y construimos el local, el catálogo de productos y el flujo de checkout.",
-    impactMetric: "+120% conversión",
+    impactMetric: "Stock en tiempo real",
     challenge:
       "Traducir una identidad de marca fuerte en una tienda online rápida y enfocada en la conversión.",
     approach:

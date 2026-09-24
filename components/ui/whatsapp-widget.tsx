@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { MessageCircle, X, Send, Sparkles, ArrowRight, ShieldCheck, Zap } from "lucide-react";
+import { MessageCircle, X, Send, ArrowRight } from "lucide-react";
 import { SITE } from "@/data/site";
 import { useSoundFx } from "@/components/providers/sound-provider";
+import { useFooterInView } from "@/components/ui/floating-status-bar";
 
 interface IntentOption {
   icon: string;
@@ -39,6 +40,9 @@ export function WhatsAppWidget() {
   const [open, setOpen] = useState(false);
   const [customMessage, setCustomMessage] = useState("");
   const { playClick, playPop, playSuccess } = useSoundFx();
+  // En el footer se esconde (salvo abierto): ahí tapaba el "Volver arriba" del
+  // copyright y el footer ya tiene su propio link a WhatsApp.
+  const hidden = useFooterInView() && !open;
 
   function handleSend(text: string) {
     playSuccess();
@@ -56,7 +60,12 @@ export function WhatsAppWidget() {
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-40 flex flex-col items-end">
+    <div
+      className={`fixed bottom-6 right-6 z-40 flex flex-col items-end transition-all duration-300 ${
+        hidden ? "pointer-events-none translate-y-4 opacity-0" : ""
+      }`}
+      inert={hidden}
+    >
       {/* Ventana Emergente de Chat */}
       <AnimatePresence>
         {open && (
@@ -93,7 +102,8 @@ export function WhatsAppWidget() {
                     playClick();
                     setOpen(false);
                   }}
-                  className="rounded-full bg-black/10 p-1.5 text-white/80 hover:bg-black/20 hover:text-white transition-colors"
+                  aria-label="Cerrar chat"
+                  className="focus-ring rounded-full bg-black/10 p-1.5 text-white/80 hover:bg-black/20 hover:text-white transition-colors"
                 >
                   <X size={16} />
                 </button>
@@ -156,6 +166,8 @@ export function WhatsAppWidget() {
         type="button"
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
+        aria-expanded={open}
+        aria-label="WhatsApp directo"
         onClick={() => {
           playPop();
           setOpen((prev) => !prev);

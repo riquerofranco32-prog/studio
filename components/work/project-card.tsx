@@ -86,7 +86,7 @@ export function ProjectCard({
           onMouseEnter={reduceMotion ? undefined : handleMouseEnter}
           onMouseMove={reduceMotion ? undefined : handleMouseMove}
           onMouseLeave={conVideo ? handleMouseLeave : undefined}
-          className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-surface"
+          className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-surface transition-[border-color,transform] duration-500 ease-out group-hover:border-foreground/20 motion-safe:group-hover:-translate-y-1"
         >
           {!reduceMotion && (
             <motion.div
@@ -114,7 +114,7 @@ export function ProjectCard({
                   fill
                   priority={priority}
                   sizes={sizes}
-                  className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.04]"
+                  className="object-cover object-top transition-transform duration-700 ease-out motion-safe:group-hover:scale-[1.04]"
                   onError={(e) => {
                     (e.currentTarget as HTMLImageElement).style.display =
                       "none";
@@ -146,46 +146,44 @@ export function ProjectCard({
             </span>
           </div>
 
-          {/* Velo inferior: sostiene la etiqueta "Ver caso" al hacer hover. */}
-          <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/10 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+          {/* Velo inferior: sostiene la pastilla "Ver caso" al hacer hover. */}
+          <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100 group-focus-visible:opacity-100" />
 
-          <span className="absolute left-4 top-4 rounded-full border border-white/15 bg-background/70 px-3 py-1.5 font-mono text-[11px] tracking-wide text-foreground backdrop-blur-md">
-            {project.year}
-          </span>
-
-          <span className="absolute right-4 top-4 flex h-10 w-10 -translate-y-2 items-center justify-center rounded-full bg-accent text-background opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100">
-            <ArrowUpRight size={18} />
-          </span>
-
-          <span className="absolute bottom-5 left-5 translate-y-3 text-sm font-medium text-foreground opacity-0 transition-all duration-500 group-hover:translate-y-0 group-hover:opacity-100">
-            Ver caso de estudio →
+          <span className="absolute bottom-4 left-4 inline-flex translate-y-2 items-center gap-1.5 rounded-full bg-accent px-3.5 py-1.5 text-xs font-semibold text-background opacity-0 transition-all duration-300 group-hover:translate-y-0 group-hover:opacity-100 group-focus-visible:translate-y-0 group-focus-visible:opacity-100">
+            Ver caso
+            <ArrowUpRight size={14} />
           </span>
         </div>
 
-        <div className="mt-5 flex flex-col gap-2">
-          <div className="flex items-baseline justify-between gap-4">
-            <div className="flex items-baseline gap-3">
-              <span className="font-mono text-xs text-muted">
-                {project.number}
-              </span>
-              <h3 className="text-xl font-medium tracking-tight text-foreground transition-colors duration-300 group-hover:text-accent md:text-2xl">
-                {project.name}
-              </h3>
-            </div>
-            {project.impactMetric ? (
-              <span className="rounded-md border border-accent/30 bg-accent/10 px-2 py-0.5 font-mono text-[11px] text-accent">
-                {project.impactMetric}
-              </span>
-            ) : (
-              <span className="font-mono text-xs text-muted">
-                {project.category}
-              </span>
-            )}
-          </div>
-          <p className="line-clamp-2 text-sm leading-relaxed text-muted">
-            {project.shortDescription}
-          </p>
+        {/* Metadata en el mismo orden en todas las tarjetas: número · categoría
+            · año, después nombre, bajada y el dato del proyecto si existe. */}
+        <div className="mt-5 flex items-center justify-between gap-4 font-mono text-[11px] tracking-wide text-muted uppercase">
+          <span className="min-w-0 truncate">
+            <span className="text-accent">{project.number}</span>
+            <span className="mx-2 text-border">/</span>
+            {project.category}
+          </span>
+          <span className="shrink-0">{project.year}</span>
         </div>
+        <div className="mt-3 flex items-start justify-between gap-4">
+          <h3 className="text-xl font-medium tracking-tight text-foreground transition-colors duration-300 group-hover:text-accent md:text-2xl">
+            {project.name}
+          </h3>
+          <span
+            aria-hidden
+            className="mt-0.5 flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-border text-muted transition-all duration-300 group-hover:border-accent group-hover:bg-accent group-hover:text-background motion-safe:group-hover:rotate-45"
+          >
+            <ArrowUpRight size={15} />
+          </span>
+        </div>
+        <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-muted">
+          {project.shortDescription}
+        </p>
+        {project.impactMetric && (
+          <span className="mt-4 inline-flex rounded-md border border-accent/30 bg-accent/10 px-2 py-0.5 font-mono text-[11px] text-accent">
+            {project.impactMetric}
+          </span>
+        )}
       </Link>
     </Reveal>
   );

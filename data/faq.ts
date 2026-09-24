@@ -2,51 +2,51 @@ export interface FAQItem {
   id: string;
   question: string;
   answer: string;
-  category: "process" | "tech" | "pricing" | "support";
 }
 
+// El orden es el de la lista y el del JSON-LD: primero lo que decide si se
+// avanza (precio, plazos, pago), después el cómo.
 export const faqs: FAQItem[] = [
   {
-    id: "services-scope",
-    question: "¿Qué tipo de proyectos y productos digitales construyen?",
+    id: "price",
+    question: "¿Cuánto cuesta un proyecto?",
     answer:
-      "Desarrollamos desde landing pages y sitios web corporativos de alto impacto visual hasta plataformas complejas, tiendas online a medida y soluciones con Inteligencia Artificial. Cada producto se diseña desde cero, sin plantillas genéricas.",
-    category: "process",
+      "Depende del alcance. Como referencia, una landing arranca en USD 1.200 y una tienda online en USD 2.400; en la página de precios podés armar un estimado según lo que necesites. Antes de empezar acordamos por escrito el alcance y el precio.",
   },
   {
     id: "timeline",
-    question: "¿Cuánto tiempo toma típicamente el desarrollo de un proyecto?",
+    question: "¿Cuánto tarda?",
     answer:
-      "Una landing page o sitio institucional suele requerir entre 1 y 2 semanas. Proyectos más complejos, como plataformas, paneles de administración o tiendas online, toman entre 2 y 4 semanas, con avances que podés ir viendo en el camino.",
-    category: "pricing",
+      "Una landing o sitio institucional lleva entre 1 y 2 semanas. Plataformas, paneles de administración o tiendas online, entre 2 y 4 semanas. Vas viendo avances en el camino, no sólo al final.",
+  },
+  {
+    id: "payments",
+    question: "¿Cómo se paga? ¿Trabajan con clientes de afuera?",
+    answer:
+      "Sí, trabajamos 100% remoto, así que la ubicación no es un problema. Aceptamos transferencia en ARS o USD, transferencia internacional (SWIFT / ACH), Stripe, Wise y cripto (USDT / USDC).",
   },
   {
     id: "communication",
-    question: "¿Cómo es el proceso de trabajo y la comunicación?",
+    question: "¿Cómo es el proceso y la comunicación?",
     answer:
-      "Trabajás directamente con nosotros (los dos fundadores, a cargo del desarrollo y el diseño), sin intermediarios ni capas burocráticas. Mantenemos comunicación fluida por WhatsApp, con demos en vivo y respuestas en menos de 2 horas hábiles.",
-    category: "process",
+      "Hablás directo con los dos fundadores, que diseñamos y programamos el proyecto. Sin intermediarios: seguimiento por WhatsApp, demos en vivo y respuesta dentro de las 24 h hábiles.",
   },
   {
-    id: "international",
-    question:
-      "¿Trabajan con clientes internacionales y qué métodos de pago aceptan?",
+    id: "services-scope",
+    question: "¿Qué tipo de proyectos hacen?",
     answer:
-      "Sí, colaboramos activamente con clientes en Argentina, Latinoamérica, Estados Unidos y Europa. Aceptamos transferencias bancarias locales en ARS/USD, transferencias internacionales (SWIFT / ACH), Stripe, Wise y criptoactivos (USDT/USDC).",
-    category: "pricing",
+      "Landing pages, sitios institucionales, plataformas web, tiendas online a medida y productos con inteligencia artificial. Todo se diseña desde cero, sin plantillas.",
   },
   {
     id: "tech-stack",
-    question: "¿Con qué tecnología trabajan y qué ventajas tiene?",
+    question: "¿Con qué tecnología trabajan?",
     answer:
-      "Usamos las herramientas más modernas y confiables del mercado. Eso se traduce en sitios que cargan al instante, aparecen bien en Google y no dependen de plugins ni de terceros que después dejan de funcionar. El código queda 100% a tu nombre.",
-    category: "tech",
+      "Next.js, React y TypeScript, con hosting en Vercel. En la práctica: sitios que cargan rápido, se indexan bien en Google y no dependen de plugins de terceros. El código queda 100% a tu nombre.",
   },
   {
     id: "post-launch",
-    question: "¿Ofrecen soporte y garantía luego del lanzamiento?",
+    question: "¿Qué pasa después del lanzamiento?",
     answer:
-      "Absolutamente. Todos nuestros proyectos incluyen 30 días de garantía y soporte post-lanzamiento sin costo adicional para asegurar estabilidad total. Además, seguimos disponibles para ayudarte a mejorar tu producto a medida que crece.",
-    category: "support",
+      "Todos los proyectos incluyen 30 días de garantía y soporte sin costo. Después seguimos disponibles para mantener y mejorar el producto a medida que crece.",
   },
 ];

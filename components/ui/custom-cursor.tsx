@@ -3,10 +3,13 @@
 import { useEffect, useState } from "react";
 import { motion, useMotionValue, useSpring } from "framer-motion";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
+import { useMediaQuery } from "@/lib/use-media-query";
 
 export function CustomCursor() {
   const reduceMotion = useReducedMotion();
-  const [mounted, setMounted] = useState(false);
+  // false en servidor, en la hidratación y en touch: el cursor sólo existe
+  // con mouse real.
+  const hasFinePointer = useMediaQuery("(pointer: fine)");
   const [visible, setVisible] = useState(false);
   const [cursorText, setCursorText] = useState<string | null>(null);
   const [isPointer, setIsPointer] = useState(false);
@@ -19,14 +22,7 @@ export function CustomCursor() {
   const smoothY = useSpring(mouseY, springConfig);
 
   useEffect(() => {
-    // Desactivar en pantallas táctiles
-    if (
-      typeof window === "undefined" ||
-      window.matchMedia("(pointer: coarse)").matches
-    ) {
-      return;
-    }
-    setMounted(true);
+    if (!hasFinePointer) return;
 
     function handleMouseMove(e: MouseEvent) {
       // mouseX/mouseY son motion values: no re-renderizan React al escribirlas.
@@ -64,9 +60,9 @@ export function CustomCursor() {
       window.removeEventListener("mousemove", handleMouseMove);
       document.removeEventListener("mouseleave", handleMouseLeave);
     };
-  }, [mouseX, mouseY, visible]);
+  }, [hasFinePointer, mouseX, mouseY, visible]);
 
-  if (!mounted || reduceMotion) return null;
+  if (!hasFinePointer || reduceMotion) return null;
 
   return (
     <div className="pointer-events-none fixed inset-0 z-50 overflow-hidden">

@@ -16,9 +16,9 @@ import { Container } from "@/components/ui/container";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Marquee } from "@/components/ui/marquee";
 import { Magnetic } from "@/components/ui/magnetic";
-import { BuildConsole } from "@/components/ui/build-console";
 import { ScrambleText } from "@/components/ui/scramble-text";
 import { HeroMesh } from "@/components/ui/hero-mesh";
+import { DeliveryCard } from "@/components/sections/hero/delivery-card";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { EASE } from "@/lib/motion";
 import { projects } from "@/data/projects";
@@ -113,7 +113,7 @@ export function Hero() {
           </div>
         </div>
 
-        <h1 className="display max-w-5xl text-[2.6rem] text-foreground sm:text-6xl md:text-7xl lg:text-[5.5rem]">
+        <h1 className="display max-w-5xl text-[2.6rem] text-foreground sm:text-5xl md:text-[3.5rem] lg:text-7xl xl:text-[5.5rem]">
           <span className="line-mask block">
             <span
               className="hero-line block"
@@ -139,8 +139,8 @@ export function Hero() {
           </span>
         </h1>
 
-        <div className="mt-12 grid grid-cols-1 items-end gap-10 lg:grid-cols-12">
-          <div className="lg:col-span-7">
+        <div className="mt-8 grid grid-cols-1 items-center gap-10 md:mt-10 lg:grid-cols-12 lg:gap-8">
+          <div className="lg:col-span-6">
             <p
               className="hero-rise max-w-md text-lg leading-relaxed text-muted md:text-xl"
               style={{ animationDelay: SEQUENCE.sub }}
@@ -175,17 +175,17 @@ export function Hero() {
           </div>
 
           <div
-            className="hero-rise lg:col-span-5"
+            className="hero-rise lg:col-span-6 xl:col-span-5 xl:col-start-8"
             style={{ animationDelay: SEQUENCE.console }}
           >
-            <BuildConsole />
+            <DeliveryCard />
           </div>
         </div>
       </Container>
 
       {/* Marquee de Clientes y Productos */}
       <div
-        className="hero-rise relative mt-20 border-y border-border py-4 bg-surface/30"
+        className="hero-rise relative mt-14 border-y md:mt-16 border-border py-4 bg-surface/30"
         style={{ animationDelay: SEQUENCE.ticker }}
         onMouseMove={reduceMotion ? undefined : handleMarqueeMouseMove}
         onMouseLeave={reduceMotion ? undefined : () => setHovered(null)}

@@ -143,7 +143,7 @@ export function CommandPalette() {
       {
         id: "action-whatsapp",
         title: "Escribirnos directamente por WhatsApp",
-        subtitle: "+54 9 299 424-7985 (Respuesta en < 2hs)",
+        subtitle: "+54 9 299 424-7985 (Respuesta en < 24 h)",
         category: "Acciones Rápidas",
         icon: MessageCircle,
         keywords: ["whatsapp", "chat", "mensaje", "contacto"],

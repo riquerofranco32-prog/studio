@@ -49,24 +49,23 @@ export function SelectedWork() {
     .sort((a, b) => a.order - b.order);
 
   return (
-    <section id="work" className="border-t border-border py-24 md:py-32">
+    <section id="work" className="border-t border-border py-20 md:py-28">
       <Container>
         <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
           <div className="max-w-2xl">
+            <p className="mb-5 font-mono text-xs tracking-widest text-muted uppercase">
+              <span className="text-accent">●</span> Trabajo
+            </p>
             <h2 className="display text-4xl uppercase text-foreground md:text-6xl">
-              <span className="line-mask block">
-                <RevealText>Trabajo seleccionado</RevealText>
-              </span>
-              <span className="line-mask block">
-                <RevealText index={1}>
-                  <span className="text-accent">{SITE.stats.years}</span>
-                  <span className="text-2xl align-top md:text-3xl">©</span>
-                </RevealText>
-              </span>
+              <RevealText>Trabajo seleccionado</RevealText>
+              <RevealText index={1}>
+                <span className="text-accent">{SITE.stats.years}</span>
+                <span className="align-top text-2xl md:text-3xl">©</span>
+              </RevealText>
             </h2>
-            <p className="mt-5 text-lg leading-relaxed text-muted">
-              {projects.length} experiencias digitales que diseñamos y
-              construimos con foco en conversión y estética.
+            <p className="mt-5 max-w-xl text-lg leading-relaxed text-muted">
+              {projects.length} proyectos que diseñamos y programamos de punta
+              a punta, con foco en conversión y en cómo se ven.
             </p>
           </div>
           <Magnetic className="shrink-0">
@@ -87,13 +86,17 @@ export function SelectedWork() {
             selected={selectedCategory}
             onSelect={setSelectedCategory}
           />
-          <span className="hidden font-mono text-xs text-muted md:inline">
+          <span
+            aria-live="polite"
+            className="hidden shrink-0 font-mono text-xs whitespace-nowrap text-muted lg:inline"
+          >
             Mostrando {filteredProjects.length} de {projects.length}
           </span>
         </div>
 
-        {/* Grilla dinámica de proyectos */}
-        <div className="mt-12 grid grid-cols-1 gap-x-8 gap-y-12 md:grid-cols-2 lg:grid-cols-2">
+        {/* Grilla: 2 columnas desde md, así que alcanza el `sizes` por defecto
+            de ProjectCard (50vw desde 768px). */}
+        <div className="mt-12 grid grid-cols-1 gap-x-8 gap-y-14 md:grid-cols-2">
           <AnimatePresence mode="popLayout">
             {filteredProjects.map((project, i) => (
               <ProjectCard
@@ -101,7 +104,6 @@ export function SelectedWork() {
                 project={project}
                 priority={i === 0}
                 className="w-full"
-                sizes="(min-width: 1024px) 50vw, 100vw"
                 index={i % 2}
               />
             ))}

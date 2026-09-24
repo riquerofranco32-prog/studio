@@ -3,12 +3,13 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { Menu, X, ArrowUpRight, Search, Volume2, VolumeX } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { SITE } from "@/data/site";
 import { useSoundFx } from "@/components/providers/sound-provider";
+import { useActiveSection } from "@/components/ui/side-nav";
 
 const links = [
   { href: "/work", id: "work", label: "Casos" },
@@ -23,7 +24,16 @@ export function Navbar() {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
-  const [active, setActive] = useState<string | null>(null);
+  const sectionActive = useActiveSection(pathname === "/");
+  const toggleRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // Ruta propia (/work, /blog/x…) o, en la home, la misma sección que marca la
+  // side-nav: así los dos indicadores nunca se contradicen.
+  const active =
+    links.find(
+      (l) => pathname === l.href || pathname.startsWith(`${l.href}/`),
+    )?.id ?? (pathname === "/" ? sectionActive : null);
 
   useEffect(() => {
     function onScroll() {
@@ -34,55 +44,38 @@ export function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
+  // Menú mobile: foco al primer link, Escape cierra y devuelve el foco al
+  // botón, y Tab queda atrapado entre el botón y los links mientras está abierto.
   useEffect(() => {
-    if (pathname === "/work" || pathname.startsWith("/work/")) {
-      setActive("work");
-      return;
-    }
-    if (pathname === "/services") {
-      setActive("services");
-      return;
-    }
-    if (pathname === "/tech") {
-      setActive("tech");
-      return;
-    }
-    if (pathname === "/pricing") {
-      setActive("pricing");
-      return;
-    }
-    if (pathname === "/blog" || pathname.startsWith("/blog/")) {
-      setActive("blog");
-      return;
-    }
+    if (!open) return;
+    const focusables = () =>
+      [
+        toggleRef.current,
+        ...(menuRef.current?.querySelectorAll<HTMLElement>("a") ?? []),
+      ].filter((el): el is HTMLElement => el !== null);
+    focusables()[1]?.focus();
 
-    if (pathname !== "/") {
-      setActive(null);
-      return;
+    function onKey(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        setOpen(false);
+        toggleRef.current?.focus();
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const items = focusables();
+      const first = items[0];
+      const last = items[items.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
     }
-
-    const sections = links
-      .filter((link) => link.href.startsWith("/#"))
-      .map((link) => document.getElementById(link.id))
-      .filter((el): el is HTMLElement => el !== null);
-    if (sections.length === 0) return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) {
-            setActive(entry.target.id);
-          } else {
-            setActive((cur) => (cur === entry.target.id ? null : cur));
-          }
-        }
-      },
-      { rootMargin: "-45% 0px -50% 0px", threshold: 0 },
-    );
-
-    sections.forEach((section) => observer.observe(section));
-    return () => observer.disconnect();
-  }, [pathname]);
+    document.addEventListener("keydown", onKey);
+    return () => document.removeEventListener("keydown", onKey);
+  }, [open]);
 
   return (
     <header
@@ -119,7 +112,7 @@ export function Navbar() {
             />
           </Link>
 
-          <ul className="hidden items-center gap-10 md:flex">
+          <ul className="hidden items-center gap-10 lg:flex">
             {links.map((link) => (
               <li key={link.href}>
                 <Link
@@ -141,7 +134,7 @@ export function Navbar() {
             ))}
           </ul>
 
-          <div className="hidden items-center gap-3 md:flex">
+          <div className="hidden items-center gap-3 lg:flex">
             {/* Toggle de sonido */}
             <button
               type="button"
@@ -192,7 +185,7 @@ export function Navbar() {
             </Link>
           </div>
 
-          <div className="flex items-center gap-1 md:hidden">
+          <div className="flex items-center gap-1 lg:hidden">
             <button
               type="button"
               onClick={() =>
@@ -204,8 +197,11 @@ export function Navbar() {
               <Search size={20} />
             </button>
             <button
+              ref={toggleRef}
+              type="button"
               aria-label={open ? "Cerrar menú" : "Abrir menú"}
               aria-expanded={open}
+              aria-controls="mobile-menu"
               onClick={() => setOpen((v) => !v)}
               className="focus-ring p-2"
             >
@@ -218,11 +214,13 @@ export function Navbar() {
       <AnimatePresence>
         {open && (
           <motion.div
+            ref={menuRef}
+            id="mobile-menu"
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="overflow-hidden border-b border-border bg-background md:hidden"
+            className="overflow-hidden border-b border-border bg-background lg:hidden"
           >
             <Container className="flex flex-col gap-1 py-4">
               {links.map((link) => (
@@ -236,7 +234,7 @@ export function Navbar() {
                 </Link>
               ))}
               <Link
-                href="/#contact"
+                href="/start"
                 onClick={() => setOpen(false)}
                 className="focus-ring mt-3 mb-2 inline-flex items-center justify-center gap-1.5 rounded-full bg-accent px-5 py-3.5 text-base font-medium text-background"
               >
