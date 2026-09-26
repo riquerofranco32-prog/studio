@@ -41,8 +41,8 @@
   --color-surface-2: var(--surface-2);
   --color-accent: var(--accent);
   --color-accent-soft: var(--accent-soft);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-archivo);
+  --font-mono: var(--font-chivo-mono);
 }
 
 * {
@@ -145,7 +145,7 @@ body::after {
 /* Máscara de reveal por línea, para el titular del hero y para RevealText.
    Las dos animaciones necesitan recortar la línea —- una con clip-path, la otra
    con un translateY —- y las dos recortaban en el borde de la caja de línea.
-   Con .display esa caja mide 0.95em y la tinta de Geist llega a ~1.31em, así
+   Con .display esa caja mide 0.95em y la tinta de la sans llega a ~1.31em, así
    que a la panza de p, g, q e y le comían 18px a 104px de fuente. Se veía en
    producción en "experiencias digitales" y en "para marcas que".
    El padding del hijo le da lugar a la tinta dentro de la zona recortada; el

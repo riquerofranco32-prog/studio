@@ -177,7 +177,7 @@ export function buildSVG(): string {
   const spandrel = "M200 366 H1400 V860 H1260 C1130 250 470 250 340 860 H200 Z";
   const bp = (d: string, extra = "") =>
     `<path class="bp" pathLength="1" d="${d}" ${extra}/>`;
-  const MONO = `style="font-family:var(--font-geist-mono,'Geist Mono'),ui-monospace,monospace"`;
+  const MONO = `style="font-family:var(--font-chivo-mono,'Chivo Mono'),ui-monospace,monospace"`;
 
   return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
   <defs>
@@ -196,7 +196,7 @@ export function buildSVG(): string {
   <rect width="${W}" height="${H}" fill="url(#s7-sky)"/>
   <g data-k="stars">${stars}</g>
   <ellipse data-k="glow" cx="800" cy="600" rx="700" ry="380" fill="url(#s7-glow)"/>
-  <g data-k="word"><text x="800" y="352" text-anchor="middle" style="font-family:var(--font-geist-sans,'Geist'),system-ui,sans-serif" font-weight="800" font-size="250" letter-spacing="-12" fill="url(#s7-word)" stroke="#f5f5f4" stroke-opacity=".12" stroke-width="1.2">SE<tspan fill="#ff4d2e" fill-opacity=".38" stroke="#ff4d2e" stroke-opacity=".7">7</tspan>EN</text></g>
+  <g data-k="word"><text x="800" y="352" text-anchor="middle" style="font-family:var(--font-archivo,'Archivo'),system-ui,sans-serif" font-weight="800" font-size="250" letter-spacing="-12" fill="url(#s7-word)" stroke="#f5f5f4" stroke-opacity=".12" stroke-width="1.2">SE<tspan fill="#ff4d2e" fill-opacity=".38" stroke="#ff4d2e" stroke-opacity=".7">7</tspan>EN</text></g>
   <g data-k="far"><path d="${FAR}" fill="#131316"/><path d="${FAR}" fill="none" stroke="${ACC}" stroke-opacity=".35" stroke-width="1.5"/></g>
   <g data-k="mid"><path d="${MID}" fill="#0e0e10"/><path d="${MID}" fill="none" stroke="${ACC}" stroke-opacity=".18" stroke-width="1.2"/><rect y="560" width="${W}" height="340" fill="url(#s7-fog)"/></g>
   <g data-k="grid" stroke="${ACC}" stroke-opacity=".07" stroke-width="1" opacity="0">${grid}</g>

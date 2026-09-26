@@ -170,18 +170,6 @@ export function CommandPalette() {
         },
       },
       {
-        id: "action-badge",
-        title: "Generar Insignia 'Built by Se7en'",
-        subtitle: "Obtené el snippet JSX / HTML / SVG oficial para tu footer",
-        category: "Acciones Rápidas",
-        icon: Sparkles,
-        keywords: ["badge", "insignia", "built", "logo", "creditos"],
-        action: () => {
-          setOpen(false);
-          window.dispatchEvent(new CustomEvent("open-badge-generator"));
-        },
-      },
-      {
         id: "action-copy-email",
         title: "Copiar correo electrónico oficial",
         subtitle: SITE.email,

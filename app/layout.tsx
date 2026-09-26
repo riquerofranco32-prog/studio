@@ -1,35 +1,27 @@
 import type { Metadata, Viewport } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Archivo, Chivo_Mono } from "next/font/google";
 import { Navbar } from "@/components/sections/navbar";
 import Se7enFooter from "@/components/footer/Se7enFooter";
-import { SideNav } from "@/components/ui/side-nav";
 import { MotionProvider } from "@/components/providers/motion-provider";
 import { SmoothScroll } from "@/components/providers/smooth-scroll";
 import { SoundProvider } from "@/components/providers/sound-provider";
 import { CommandPalette } from "@/components/ui/command-palette";
 import { BookingModal } from "@/components/ui/booking-modal";
-import { FloatingStatusBar } from "@/components/ui/floating-status-bar";
-import { CustomCursor } from "@/components/ui/custom-cursor";
-import { ScrollProgress } from "@/components/ui/scroll-progress";
-import { AuroraBackground } from "@/components/ui/aurora-background";
-import { ShortcutsModal } from "@/components/ui/shortcuts-modal";
-import { VideoTheaterModal } from "@/components/ui/video-theater-modal";
 import { WhatsAppWidget } from "@/components/ui/whatsapp-widget";
-import { BadgeGeneratorModal } from "@/components/ui/badge-generator";
-import { KonamiEasterEgg } from "@/components/ui/konami-easter-egg";
-import { ConsoleEasterEgg } from "@/components/ui/console-easter-egg";
 import { SITE } from "@/data/site";
 import { team } from "@/data/team";
 import { capabilities } from "@/data/services";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
+// Archivo y Chivo Mono: familias de Omnibus-Type (Buenos Aires), en lugar de la
+// Geist que trae por defecto create-next-app.
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
+const chivoMono = Chivo_Mono({
+  variable: "--font-chivo-mono",
   subsets: ["latin"],
 });
 
@@ -98,7 +90,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="es" className={`${geistSans.variable} ${geistMono.variable}`}>
+    <html lang="es" className={`${archivo.variable} ${chivoMono.variable}`}>
       <body className="antialiased selection:bg-accent selection:text-background">
         <script
           type="application/ld+json"
@@ -106,27 +98,17 @@ export default function RootLayout({
             __html: JSON.stringify(organizationJsonLd).replace(/</g, "\\u003c"),
           }}
         />
-        <ScrollProgress />
-        <CustomCursor />
-        <AuroraBackground />
         <SmoothScroll />
         <SoundProvider>
           <MotionProvider>
             <Navbar />
-            <SideNav />
             <main>{children}</main>
             <Se7enFooter />
             <CommandPalette />
             <BookingModal />
-            <FloatingStatusBar />
-            <ShortcutsModal />
-            <VideoTheaterModal />
             <WhatsAppWidget />
-            <BadgeGeneratorModal />
-            <KonamiEasterEgg />
           </MotionProvider>
         </SoundProvider>
-        <ConsoleEasterEgg />
       </body>
     </html>
   );

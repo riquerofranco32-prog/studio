@@ -122,7 +122,7 @@ export function DesignSystemClient() {
 
           <div className="space-y-4 rounded-3xl border border-border bg-surface p-6 sm:p-8">
             <div className="border-b border-border/80 pb-4">
-              <span className="font-mono text-[10px] text-accent uppercase">Display Heading (Geist Sans)</span>
+              <span className="font-mono text-[10px] text-accent uppercase">Display Heading (Archivo)</span>
               <p className="display text-3xl sm:text-5xl text-foreground font-bold tracking-tight mt-1">
                 Experiencias digitales de alta fidelidad.
               </p>
@@ -143,7 +143,7 @@ export function DesignSystemClient() {
             </div>
 
             <div>
-              <span className="font-mono text-[10px] text-accent uppercase">Monospace Code (Geist Mono 12px)</span>
+              <span className="font-mono text-[10px] text-accent uppercase">Monospace Code (Chivo Mono 12px)</span>
               <p className="font-mono text-xs text-emerald-400 mt-1">
                 {`const studio = new Se7enStudio({ latency: "14ms", lighthouse: 100 });`}
               </p>
