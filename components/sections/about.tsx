@@ -5,7 +5,6 @@ import Link from "next/link";
 import { LinkedinIcon } from "@/components/ui/brand-icons";
 import { Container } from "@/components/ui/container";
 import { RevealText } from "@/components/ui/reveal-text";
-import { FounderVoiceWave } from "@/components/ui/founder-voice-wave";
 import { team } from "@/data/team";
 
 export function About() {
@@ -77,10 +76,6 @@ export function About() {
               </div>
             </div>
           ))}
-        </div>
-
-        <div className="mt-8 md:mx-auto md:max-w-md">
-          <FounderVoiceWave />
         </div>
       </Container>
     </section>

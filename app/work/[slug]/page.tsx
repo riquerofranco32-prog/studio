@@ -63,7 +63,9 @@ export default async function CaseStudyPage({
   const project = getProjectBySlug(slug);
   if (!project) notFound();
   const nextProject = getNextProject(project.slug);
-  const clientTestimonial = testimonials.find((t) => t.projectSlug === project.slug);
+  const clientTestimonial = testimonials.find(
+    (t) => t.projectSlug === project.slug && t.published !== false,
+  );
 
   const jsonLd = {
     "@context": "https://schema.org",
