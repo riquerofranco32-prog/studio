@@ -1,11 +1,12 @@
-Drop project screenshots here, one per project:
+Capturas de cada proyecto, tomadas del sitio en vivo a 1440×900 (@1.5x).
 
-- takefyy.jpg
-- pone-la-pava.jpg
-- sentinel.jpg
-- apex-ai.jpg
-- altum-sci.jpg
-- pravilo.jpg
+- takefyy-2026-09.jpg
+- apex-ai-2026-09.jpg
+- pone-la-pava-2026-09.jpg
+- pravilo-2026-09.jpg
+- sentinel-2026-09.jpg
+- altum-sci-2026-09.jpg
 
-Referenced by `data/projects.ts` (`image` field) — used on the work grid and each case study page.
-Recommended: 1600px wide, 4:3 crop, JPG/WebP.
+Referenciadas desde `data/projects.ts` (campo `image`). Al actualizar una
+captura, cambiar el sufijo de fecha: next/image cachea por URL y con el mismo
+nombre seguiría sirviendo la versión vieja.

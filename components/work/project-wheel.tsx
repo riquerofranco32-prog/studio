@@ -19,18 +19,20 @@ import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { EASE } from "@/lib/motion";
 import type { Project } from "@/types";
 
-// Rueda vertical de proyectos. La sección es alta y su interior queda fijo
+// Rueda horizontal de proyectos. La sección es alta y su interior queda fijo
 // (sticky) mientras se scrollea: el scroll recorre la lista, el proyecto
-// activo se ve grande en el centro y el resto queda en miniatura apilado
-// arriba y abajo, inclinado como sobre un cilindro. Al scrollear rápido se
-// desenfoca un poco, como un barrido.
+// activo se ve grande en el centro y el resto queda en miniatura a los
+// costados, girado como sobre un cilindro. Al scrollear rápido se desenfoca
+// un poco, como un barrido.
 
 /** Escala de las miniaturas respecto de la tarjeta activa. */
-const SMALL = 0.2;
+const SMALL = 0.3;
 /** Aire entre la activa y la primera miniatura, en px. */
-const GAP = 28;
+const GAP = 32;
 /** Aire entre miniaturas, en px (ya escaladas). */
-const THUMB_GAP = 10;
+const THUMB_GAP = 14;
+/** Cuánto sube la tarjeta respecto del centro, para dejar lugar a los datos. */
+const LIFT = 40;
 /** Alto de scroll que consume cada proyecto, en vh. */
 const STEP_VH = 60;
 
@@ -39,10 +41,10 @@ type Dims = { w: number; h: number; mobile: boolean };
 function measure(): Dims {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
-  // La tarjeta tiene que entrar con miniaturas arriba y abajo: se limita por
-  // ancho y también por alto de pantalla.
-  const byWidth = vw < 768 ? vw * 0.84 : Math.min(vw * 0.42, 620);
-  const byHeight = (vh * 0.46 * 16) / 10;
+  // La tarjeta tiene que dejar lugar a las miniaturas de los costados y, en
+  // alto, a los datos del proyecto que van debajo.
+  const byWidth = vw < 768 ? vw * 0.62 : Math.min(vw * 0.46, 680);
+  const byHeight = (vh * 0.5 * 16) / 10;
   const w = Math.min(byWidth, byHeight);
   return { w, h: (w * 10) / 16, mobile: vw < 768 };
 }
@@ -137,9 +139,15 @@ function Wheel({ projects }: { projects: Project[] }) {
           ))}
         </motion.div>
 
-        {/* Datos del proyecto activo: nombre a la izquierda, año y
-            categoría a la derecha; debajo de la tarjeta en mobile. */}
-        <div className="pointer-events-none absolute inset-0 mx-auto flex w-full max-w-[1400px] items-end justify-between px-6 pb-24 md:items-center md:px-10 md:pb-0">
+        {/* Datos del proyecto activo, debajo de la tarjeta: nombre a la
+            izquierda; año, categoría y link a la derecha. */}
+        <div
+          style={{
+            top: `calc(50% + ${dims.h / 2 + LIFT + 24}px)`,
+            width: dims.mobile ? "calc(100% - 48px)" : Math.max(dims.w, 560),
+          }}
+          className="pointer-events-none absolute left-1/2 flex -translate-x-1/2 items-start justify-between gap-6"
+        >
           <AnimatePresence mode="popLayout" initial={false}>
             <motion.div
               key={`l-${current.slug}`}
@@ -147,12 +155,12 @@ function Wheel({ projects }: { projects: Project[] }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.35, ease: EASE }}
-              className="max-w-[40%] md:max-w-[22%]"
+              className="min-w-0"
             >
               <span className="font-mono text-xs text-accent">
                 {current.number}
               </span>
-              <p className="mt-2 text-xl font-medium tracking-tight text-foreground md:text-2xl">
+              <p className="mt-1 text-xl font-medium tracking-tight text-foreground md:text-2xl">
                 {current.name}
               </p>
             </motion.div>
@@ -164,13 +172,15 @@ function Wheel({ projects }: { projects: Project[] }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -12 }}
               transition={{ duration: 0.35, ease: EASE }}
-              className="max-w-[50%] text-right font-mono text-[11px] uppercase tracking-wide text-muted md:max-w-[22%]"
+              className="shrink-0 text-right font-mono text-[11px] uppercase tracking-wide text-muted"
             >
-              <p className="text-foreground">{current.year}</p>
-              <p className="mt-1">{current.category}</p>
+              <p>
+                <span className="text-foreground">{current.year}</span> ·{" "}
+                {current.category.split("/")[0].trim()}
+              </p>
               <Link
                 href={`/work/${current.slug}`}
-                className="focus-ring pointer-events-auto mt-4 inline-flex items-center gap-1.5 text-accent hover:underline"
+                className="focus-ring pointer-events-auto mt-2 inline-flex items-center gap-1.5 text-accent hover:underline"
               >
                 Ver caso
                 <ArrowUpRight size={13} />
@@ -206,17 +216,16 @@ function WheelItem({
   active: boolean;
   onSelect: () => void;
 }) {
-  const { h, mobile } = dims;
-  // En mobile los datos van debajo de la tarjeta: se muestra una sola
-  // miniatura por lado para que no se pisen.
+  const { w, mobile } = dims;
+  // En mobile entra una sola miniatura por lado.
   const fadeFrom = mobile ? 1 : 2.2;
   // Distancia centro a centro entre la activa y la primera miniatura.
-  const near = h / 2 + (SMALL * h) / 2 + GAP;
+  const near = w / 2 + (SMALL * w) / 2 + (mobile ? 14 : GAP);
   // Paso entre miniaturas sucesivas.
-  const far = SMALL * h + THUMB_GAP;
+  const far = SMALL * w + THUMB_GAP;
 
   const d = useTransform(pos, (p) => index - p);
-  const y = useTransform(d, (v) => {
+  const x = useTransform(d, (v) => {
     const a = Math.abs(v);
     const off = a <= 1 ? a * near : near + (a - 1) * far;
     return Math.sign(v) * off;
@@ -225,7 +234,7 @@ function WheelItem({
     const a = Math.min(Math.abs(v), 1);
     return 1 - (1 - SMALL) * a;
   });
-  const rotateX = useTransform(d, (v) => Math.max(-22, Math.min(22, -v * 12)));
+  const rotateY = useTransform(d, (v) => Math.max(-28, Math.min(28, v * 16)));
   const opacity = useTransform(d, (v) => {
     const a = Math.abs(v);
     return a <= fadeFrom ? 1 : Math.max(0, 1 - (a - fadeFrom) * (mobile ? 1.5 : 0.5));
@@ -235,15 +244,15 @@ function WheelItem({
   return (
     <motion.div
       style={{
-        y,
+        x,
         scale,
-        rotateX,
+        rotateY,
         opacity,
         zIndex,
         width: dims.w,
         height: dims.h,
         marginLeft: -dims.w / 2,
-        marginTop: -dims.h / 2,
+        marginTop: -dims.h / 2 - LIFT,
       }}
       className="absolute left-1/2 top-1/2 will-change-transform"
     >
@@ -264,22 +273,9 @@ function WheelItem({
           alt=""
           fill
           priority={index === 0}
-          sizes="(min-width: 768px) 620px, 84vw"
+          sizes="(min-width: 768px) 680px, 62vw"
           className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.03]"
         />
-        {active && project.video && (
-          <video
-            aria-hidden
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="absolute inset-0 h-full w-full object-cover object-top"
-          >
-            <source src={project.video.webm} type="video/webm" />
-            <source src={project.video.mp4} type="video/mp4" />
-          </video>
-        )}
       </Link>
     </motion.div>
   );
