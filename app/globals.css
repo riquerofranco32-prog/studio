@@ -423,13 +423,3 @@ body::after {
 .glow-accent-md {
   box-shadow: 0 0 35px rgba(255, 77, 46, 0.3);
 }
-
-
-/* Carruseles horizontales (galería de proyectos): se scrollea con dedo,
-   trackpad, teclado o arrastre; la barra nativa sobra. */
-.no-scrollbar {
-  scrollbar-width: none;
-}
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
-}
