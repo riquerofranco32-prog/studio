@@ -1,53 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { AnimatePresence } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { RevealText } from "@/components/ui/reveal-text";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Magnetic } from "@/components/ui/magnetic";
-import {
-  CategoryFilter,
-  CategoryOption,
-} from "@/components/ui/category-filter";
-import { ProjectCard } from "@/components/work/project-card";
+import { ProjectWheel } from "@/components/work/project-wheel";
 import { projects } from "@/data/projects";
 import { SITE } from "@/data/site";
 
-const categories: CategoryOption[] = [
-  { id: "all", label: "Todos", count: projects.length },
-  {
-    id: "saas",
-    label: "Plataformas & Apps",
-    count: projects.filter((p) => p.categoryGroup === "saas").length,
-  },
-  {
-    id: "ecommerce",
-    label: "E-Commerce",
-    count: projects.filter((p) => p.categoryGroup === "ecommerce").length,
-  },
-  {
-    id: "systems",
-    label: "Software & IA",
-    count: projects.filter((p) => p.categoryGroup === "systems").length,
-  },
-  {
-    id: "web",
-    label: "Web Corporativa",
-    count: projects.filter((p) => p.categoryGroup === "web").length,
-  },
-];
+const ordered = [...projects].sort((a, b) => a.order - b.order);
 
 export function SelectedWork() {
-  const [selectedCategory, setSelectedCategory] = useState("all");
-
-  const filteredProjects = projects
-    .filter(
-      (p) => selectedCategory === "all" || p.categoryGroup === selectedCategory,
-    )
-    .sort((a, b) => a.order - b.order);
-
   return (
     <section id="work" className="border-t border-border py-20 md:py-28">
       <Container>
@@ -79,37 +43,9 @@ export function SelectedWork() {
           </Magnetic>
         </div>
 
-        {/* Barra de filtros interactiva */}
-        <div className="mt-12 flex items-center justify-between border-y border-border py-4">
-          <CategoryFilter
-            categories={categories}
-            selected={selectedCategory}
-            onSelect={setSelectedCategory}
-          />
-          <span
-            aria-live="polite"
-            className="hidden shrink-0 font-mono text-xs whitespace-nowrap text-muted lg:inline"
-          >
-            Mostrando {filteredProjects.length} de {projects.length}
-          </span>
-        </div>
-
-        {/* Grilla: 2 columnas desde md, así que alcanza el `sizes` por defecto
-            de ProjectCard (50vw desde 768px). */}
-        <div className="mt-12 grid grid-cols-1 gap-x-8 gap-y-14 md:grid-cols-2">
-          <AnimatePresence mode="popLayout">
-            {filteredProjects.map((project, i) => (
-              <ProjectCard
-                key={project.slug}
-                project={project}
-                priority={i === 0}
-                className="w-full"
-                index={i % 2}
-              />
-            ))}
-          </AnimatePresence>
-        </div>
       </Container>
+
+      <ProjectWheel projects={ordered} />
     </section>
   );
 }

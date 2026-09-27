@@ -29,7 +29,9 @@ export const testimonials: Testimonial[] = [
     highlight: "Velocidad y calidad de producto",
     quote:
       "Se7en diseñó y construyó nuestra plataforma de punta a punta. La velocidad de iteración y la calidad visual superaron cualquier expectativa. Nuestros restaurantes asociados elogian constantemente la simpleza de uso.",
-    published: true,
+    // Franco es fundador de Se7en y de Takefyy: presentarlo como cliente es un
+    // autotestimonio. Fuera hasta tener la cita de otra persona del equipo.
+    published: false,
     order: 1,
   },
   {

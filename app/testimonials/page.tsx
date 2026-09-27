@@ -3,13 +3,13 @@ import { TestimonialsClient } from "./testimonials-client";
 import { SITE } from "@/data/site";
 
 export const metadata: Metadata = {
-  title: "Historias de Clientes, Métricas & Testimonios | Se7en Studio",
+  title: "Testimonios",
   description:
-    "Resultados reales de fundadores y empresas que construyeron sus plataformas digitales, SaaS y e-commerce con Se7en Studio.",
+    "Lo que dicen las marcas con las que trabajó Se7en Studio.",
   openGraph: {
-    title: "Historias de Clientes, Métricas & Testimonios | Se7en Studio",
+    title: "Testimonios",
     description:
-      "Resultados reales de fundadores y empresas que construyeron sus plataformas digitales, SaaS y e-commerce con Se7en Studio.",
+      "Lo que dicen las marcas con las que trabajó Se7en Studio.",
     url: `${SITE.url}/testimonials`,
   },
 };

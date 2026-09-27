@@ -7,7 +7,7 @@ import { SITE } from "@/data/site";
 /**
  * Footer cinemático de Se7en Studio — "Construimos el puente".
  * Next.js 14 + Tailwind, sin dependencias. Va al final del layout: <Se7enFooter />
- * Fuentes: usa --font-geist-sans / --font-geist-mono (paquete `geist`) si están definidas.
+ * Fuentes: usa --font-archivo / --font-chivo-mono (next/font) si están definidas.
  */
 
 const EXPLORAR = [
@@ -30,7 +30,7 @@ const HERRAMIENTAS = [
 ] as const;
 
 const mono =
-  "font-mono [font-family:var(--font-geist-mono),ui-monospace,monospace]";
+  "font-mono [font-family:var(--font-chivo-mono),ui-monospace,monospace]";
 const reveal =
   "opacity-0 motion-reduce:!opacity-100 motion-reduce:!transform-none";
 
@@ -235,19 +235,6 @@ export default function Se7enFooter() {
                           className="text-left text-[#d6d6d4] transition-colors hover:text-[#ff4d2e]"
                         >
                           Agendar una Llamada
-                        </button>
-                      </li>
-                      <li>
-                        <button
-                          type="button"
-                          onClick={() =>
-                            window.dispatchEvent(
-                              new CustomEvent("open-badge-generator"),
-                            )
-                          }
-                          className="text-left text-[#d6d6d4] transition-colors hover:text-[#ff4d2e]"
-                        >
-                          Insignia &ldquo;Hecho por Se7en&rdquo;
                         </button>
                       </li>
                     </>

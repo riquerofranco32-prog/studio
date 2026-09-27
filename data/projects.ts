@@ -1,6 +1,7 @@
 import { Project } from "@/types";
 
 // ponytail: fuente de datos local para v1 — reemplazar por lectura de la tabla `projects` de Supabase cuando se aplique supabase/schema.sql.
+// Orden = lo que hoy más funciona: Takefyy, Apex, Poné La Pava y Pravilo.
 export const projects: Project[] = [
   {
     slug: "takefyy",
@@ -24,14 +25,18 @@ export const projects: Project[] = [
     outcome:
       "En uso por restaurantes reales, gestionando catálogos y pedidos digitales día a día.",
     url: "https://takefyy.com/",
-    image: "/projects/takefyy.jpg",
+    image: "/projects/takefyy-2026-09.jpg",
+    video: {
+      mp4: "/projects/videos/takefyy-2026-09.mp4",
+      webm: "/projects/videos/takefyy-2026-09.webm",
+    },
     featured: true,
     order: 1,
     size: "large",
   },
   {
     slug: "pone-la-pava",
-    number: "02",
+    number: "03",
     name: "Poné La Pava",
     category: "E-commerce / Experiencia de Marca",
     categoryGroup: "ecommerce",
@@ -51,18 +56,18 @@ export const projects: Project[] = [
     outcome:
       "Tienda en producción, con stock y catálogo actualizados en tiempo real.",
     url: "https://ponelapavayerbas.com/",
-    image: "/projects/pone-la-pava.jpg",
+    image: "/projects/pone-la-pava-2026-09b.jpg",
     video: {
-      mp4: "/projects/videos/pone-la-pava.mp4",
-      webm: "/projects/videos/pone-la-pava.webm",
+      mp4: "/projects/videos/pone-la-pava-2026-09b.mp4",
+      webm: "/projects/videos/pone-la-pava-2026-09b.webm",
     },
     featured: true,
-    order: 2,
+    order: 3,
     size: "medium",
   },
   {
     slug: "sentinel",
-    number: "03",
+    number: "06",
     name: "Sentinel",
     category: "Tecnología Climática y Datos Satelitales",
     categoryGroup: "systems",
@@ -81,27 +86,27 @@ export const projects: Project[] = [
     technology: ["Next.js", "TypeScript", "IA/APIs", "Vercel"],
     outcome:
       "Plataforma en producción con datos satelitales en vivo (NASA FIRMS) e índice de riesgo de incendio.",
-    url: "https://sentineltech.com.ar/",
-    image: "/projects/sentinel.jpg",
+    url: "https://www.sentineltech.com.ar/",
+    image: "/projects/sentinel-2026-09.jpg",
     video: {
-      mp4: "/projects/videos/sentinel.mp4",
-      webm: "/projects/videos/sentinel.webm",
+      mp4: "/projects/videos/sentinel-2026-09.mp4",
+      webm: "/projects/videos/sentinel-2026-09.webm",
     },
-    featured: true,
-    order: 3,
+    featured: false,
+    order: 6,
     size: "large",
   },
   {
     slug: "apex-ai",
-    number: "04",
+    number: "02",
     name: "Apex Performance",
-    category: "Tecnología y Rendimiento",
-    categoryGroup: "systems",
+    category: "Plataforma para Entrenadores",
+    categoryGroup: "saas",
     year: "2025",
     shortDescription:
-      "Un sitio web enfocado en alto rendimiento, tecnología y conversión.",
+      "Una plataforma para entrenadores: rutinas, seguimiento y comunicación con sus atletas en un solo lugar.",
     description:
-      "Apex Performance es una plataforma de tecnología y alto rendimiento. Diseñamos y construimos su presencia web.",
+      "Apex Performance es una plataforma para entrenadores que centraliza rutinas, seguimiento y comunicación con sus atletas, con IA para la periodización. Diseñamos y construimos el sitio.",
     impactMetric: "Carga instantánea",
     challenge:
       "Comunicar con claridad el valor de un producto de tecnología a una audiencia exigente.",
@@ -113,14 +118,18 @@ export const projects: Project[] = [
     outcome:
       "Sitio en producción, presentando el producto con tiempos de carga instantáneos.",
     url: "https://apexperformance.com.ar/",
-    image: "/projects/apex-ai.jpg",
-    featured: false,
-    order: 4,
+    image: "/projects/apex-ai-2026-09-es.jpg",
+    video: {
+      mp4: "/projects/videos/apex-ai-2026-09b.mp4",
+      webm: "/projects/videos/apex-ai-2026-09b.webm",
+    },
+    featured: true,
+    order: 2,
     size: "small",
   },
   {
     slug: "altum-sci",
-    number: "05",
+    number: "07",
     name: "Altum Sci",
     category: "Inmobiliaria / Sitio Corporativo",
     categoryGroup: "web",
@@ -140,14 +149,18 @@ export const projects: Project[] = [
     outcome:
       "Sitio en producción, usado como canal principal de consulta para compradores e inversores en la Patagonia.",
     url: "https://altumsci.com.ar/",
-    image: "/projects/altum-sci.jpg",
+    image: "/projects/altum-sci-2026-09.jpg",
+    video: {
+      mp4: "/projects/videos/altum-sci-2026-09.mp4",
+      webm: "/projects/videos/altum-sci-2026-09.webm",
+    },
     featured: false,
-    order: 5,
+    order: 7,
     size: "medium",
   },
   {
     slug: "pravilo",
-    number: "06",
+    number: "04",
     name: "Pravilo",
     category: "Entrenamiento y Movilidad",
     categoryGroup: "web",
@@ -167,14 +180,45 @@ export const projects: Project[] = [
     outcome:
       "Sitio en producción para el primer centro Pravilo de Argentina, en Plottier, Neuquén.",
     url: "https://www.pravilo.com.ar/",
-    image: "/projects/pravilo.jpg",
+    image: "/projects/pravilo-2026-09.jpg",
     video: {
-      mp4: "/projects/videos/pravilo.mp4",
-      webm: "/projects/videos/pravilo.webm",
+      mp4: "/projects/videos/pravilo-2026-09.mp4",
+      webm: "/projects/videos/pravilo-2026-09.webm",
+    },
+    featured: true,
+    order: 4,
+    size: "small",
+  },
+  {
+    slug: "muzzaga",
+    number: "05",
+    name: "Muzzaga Pádel",
+    category: "Club de Pádel / Reservas Online",
+    categoryGroup: "saas",
+    year: "2026",
+    shortDescription:
+      "El sitio de un club de pádel en Catriel con reserva de canchas online y disponibilidad en tiempo real.",
+    description:
+      "Muzzaga es un club de pádel en Catriel, Río Negro, con dos canchas de cristal. Diseñamos y construimos su sitio y el sistema de reservas: el jugador elige día, cancha y horario, y confirma el turno por WhatsApp.",
+    impactMetric: "Turnos en tiempo real",
+    challenge:
+      "Que reservar una cancha no dependa de mandar mensajes y esperar respuesta: ver qué hay libre y sacar el turno en el momento.",
+    approach:
+      "Un calendario de disponibilidad por día y por cancha, con el turno de 90 minutos como unidad y la confirmación por WhatsApp con seña.",
+    design:
+      "Una identidad deportiva, de alto contraste, con la mascota del club y fotos reales de las canchas; el reservador es lo primero a lo que lleva cada botón.",
+    technology: ["Next.js", "TypeScript", "Vercel"],
+    outcome:
+      "Sitio en producción con reservas online, Canchas Abiertas comunitarias y herramientas para jugadores.",
+    url: "https://muzzaga-padel-seven.vercel.app/",
+    image: "/projects/muzzaga-2026-09.jpg",
+    video: {
+      mp4: "/projects/videos/muzzaga-2026-09.mp4",
+      webm: "/projects/videos/muzzaga-2026-09.webm",
     },
     featured: false,
-    order: 6,
-    size: "small",
+    order: 5,
+    size: "medium",
   },
 ];
 
