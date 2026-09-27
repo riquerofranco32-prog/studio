@@ -1,8 +1,8 @@
 Capturas de cada proyecto, tomadas del sitio en vivo a 1440×900 (@1.5x).
 
 - takefyy-2026-09.jpg
-- apex-ai-2026-09.jpg
-- pone-la-pava-2026-09.jpg
+- apex-ai-2026-09-es.jpg
+- pone-la-pava-2026-09b.jpg
 - pravilo-2026-09.jpg
 - sentinel-2026-09.jpg
 - altum-sci-2026-09.jpg

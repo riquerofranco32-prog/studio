@@ -56,10 +56,10 @@ export const projects: Project[] = [
     outcome:
       "Tienda en producción, con stock y catálogo actualizados en tiempo real.",
     url: "https://ponelapavayerbas.com/",
-    image: "/projects/pone-la-pava-2026-09.jpg",
+    image: "/projects/pone-la-pava-2026-09b.jpg",
     video: {
-      mp4: "/projects/videos/pone-la-pava-2026-09.mp4",
-      webm: "/projects/videos/pone-la-pava-2026-09.webm",
+      mp4: "/projects/videos/pone-la-pava-2026-09b.mp4",
+      webm: "/projects/videos/pone-la-pava-2026-09b.webm",
     },
     featured: true,
     order: 3,
@@ -120,8 +120,8 @@ export const projects: Project[] = [
     url: "https://apexperformance.com.ar/",
     image: "/projects/apex-ai-2026-09-es.jpg",
     video: {
-      mp4: "/projects/videos/apex-ai-2026-09.mp4",
-      webm: "/projects/videos/apex-ai-2026-09.webm",
+      mp4: "/projects/videos/apex-ai-2026-09b.mp4",
+      webm: "/projects/videos/apex-ai-2026-09b.webm",
     },
     featured: true,
     order: 2,
