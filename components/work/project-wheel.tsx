@@ -276,6 +276,20 @@ function WheelItem({
           sizes="(min-width: 768px) 680px, 62vw"
           className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.03]"
         />
+        {/* Sólo el activo monta su clip: el resto no baja ni un byte. */}
+        {active && project.video && (
+          <video
+            aria-hidden
+            autoPlay
+            muted
+            loop
+            playsInline
+            className="absolute inset-0 h-full w-full object-cover object-top"
+          >
+            <source src={project.video.webm} type="video/webm" />
+            <source src={project.video.mp4} type="video/mp4" />
+          </video>
+        )}
       </Link>
     </motion.div>
   );

@@ -8,8 +8,14 @@ nada.
 
 Dos archivos por proyecto, con el slug exacto de `data/projects.ts`:
 
-    public/projects/videos/<slug>.mp4
-    public/projects/videos/<slug>.webm
+    public/projects/videos/<slug>-<aaaa-mm>.mp4
+    public/projects/videos/<slug>-<aaaa-mm>.webm
+
+El sufijo de fecha evita que el navegador o la CDN sirvan un clip viejo
+cacheado con el mismo nombre. Los clips de 2026-09 son grabaciones del sitio
+en vivo a 1280×960: bajan por la página, pasan el cursor por el CTA y vuelven
+arriba (en Pravilo, recorren el sistema de turnos hasta elegir horario, sin
+confirmar la reserva).
 
 Y hay que declararlos en `data/projects.ts`:
 
