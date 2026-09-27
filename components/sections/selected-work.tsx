@@ -1,7 +1,6 @@
 "use client";
 
-import { useState } from "react";
-import { AnimatePresence } from "framer-motion";
+import { useMemo, useState } from "react";
 import { ArrowRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { RevealText } from "@/components/ui/reveal-text";
@@ -11,7 +10,7 @@ import {
   CategoryFilter,
   CategoryOption,
 } from "@/components/ui/category-filter";
-import { ProjectCard } from "@/components/work/project-card";
+import { ProjectGallery } from "@/components/work/project-gallery";
 import { projects } from "@/data/projects";
 import { SITE } from "@/data/site";
 
@@ -42,11 +41,18 @@ const categories: CategoryOption[] = [
 export function SelectedWork() {
   const [selectedCategory, setSelectedCategory] = useState("all");
 
-  const filteredProjects = projects
-    .filter(
-      (p) => selectedCategory === "all" || p.categoryGroup === selectedCategory,
-    )
-    .sort((a, b) => a.order - b.order);
+  // Memo: la galería vuelve al principio cuando cambia esta lista, así que
+  // tiene que mantener la misma referencia entre renders.
+  const filteredProjects = useMemo(
+    () =>
+      projects
+        .filter(
+          (p) =>
+            selectedCategory === "all" || p.categoryGroup === selectedCategory,
+        )
+        .sort((a, b) => a.order - b.order),
+    [selectedCategory],
+  );
 
   return (
     <section id="work" className="border-t border-border py-20 md:py-28">
@@ -94,20 +100,8 @@ export function SelectedWork() {
           </span>
         </div>
 
-        {/* Grilla: 2 columnas desde md, así que alcanza el `sizes` por defecto
-            de ProjectCard (50vw desde 768px). */}
-        <div className="mt-12 grid grid-cols-1 gap-x-8 gap-y-14 md:grid-cols-2">
-          <AnimatePresence mode="popLayout">
-            {filteredProjects.map((project, i) => (
-              <ProjectCard
-                key={project.slug}
-                project={project}
-                priority={i === 0}
-                className="w-full"
-                index={i % 2}
-              />
-            ))}
-          </AnimatePresence>
+        <div className="mt-12">
+          <ProjectGallery projects={filteredProjects} />
         </div>
       </Container>
     </section>
