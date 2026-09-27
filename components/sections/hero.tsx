@@ -5,16 +5,10 @@ import { Container } from "@/components/ui/container";
 import { ButtonLink } from "@/components/ui/button-link";
 import { projects } from "@/data/projects";
 
-// El hero muestra trabajo, no decorados: el titular nombra los proyectos que
-// hoy más funcionan y la imagen grande es el primero de ellos. Sin grilla,
-// resplandores, pastillas, terminal ni marquesina — todo eso lo tiene
-// cualquier landing generada.
-const top = [...projects].sort((a, b) => a.order - b.order).slice(0, 4);
-const lead = top[0];
-
-function listNames(names: string[]) {
-  return `${names.slice(0, -1).join(", ")} y ${names[names.length - 1]}`;
-}
+// El hero muestra trabajo, no decorados: la imagen grande es el proyecto que
+// hoy más funciona. Sin grilla, resplandores, pastillas, terminal ni
+// marquesina — todo eso lo tiene cualquier landing generada.
+const lead = [...projects].sort((a, b) => a.order - b.order)[0];
 
 export function Hero() {
   return (
@@ -28,13 +22,10 @@ export function Hero() {
         </p>
 
         <h1
-          className="hero-rise display mt-6 max-w-6xl text-[2.4rem] text-muted sm:text-5xl md:text-6xl lg:text-7xl"
+          className="hero-rise display mt-6 max-w-5xl text-[2.6rem] text-foreground sm:text-5xl md:text-6xl lg:text-7xl xl:text-[5.5rem]"
           style={{ animationDelay: "0.15s" }}
         >
-          Diseñamos y construimos{" "}
-          <span className="text-foreground">
-            {listNames(top.map((p) => p.name))}.
-          </span>
+          Construimos sitios y apps para marcas que crecen.
         </h1>
 
         <div
