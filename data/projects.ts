@@ -67,7 +67,7 @@ export const projects: Project[] = [
   },
   {
     slug: "sentinel",
-    number: "05",
+    number: "06",
     name: "Sentinel",
     category: "Tecnología Climática y Datos Satelitales",
     categoryGroup: "systems",
@@ -93,7 +93,7 @@ export const projects: Project[] = [
       webm: "/projects/videos/sentinel-2026-09.webm",
     },
     featured: false,
-    order: 5,
+    order: 6,
     size: "large",
   },
   {
@@ -129,7 +129,7 @@ export const projects: Project[] = [
   },
   {
     slug: "altum-sci",
-    number: "06",
+    number: "07",
     name: "Altum Sci",
     category: "Inmobiliaria / Sitio Corporativo",
     categoryGroup: "web",
@@ -155,7 +155,7 @@ export const projects: Project[] = [
       webm: "/projects/videos/altum-sci-2026-09.webm",
     },
     featured: false,
-    order: 6,
+    order: 7,
     size: "medium",
   },
   {
@@ -188,6 +188,37 @@ export const projects: Project[] = [
     featured: true,
     order: 4,
     size: "small",
+  },
+  {
+    slug: "muzzaga",
+    number: "05",
+    name: "Muzzaga Pádel",
+    category: "Club de Pádel / Reservas Online",
+    categoryGroup: "saas",
+    year: "2026",
+    shortDescription:
+      "El sitio de un club de pádel en Catriel con reserva de canchas online y disponibilidad en tiempo real.",
+    description:
+      "Muzzaga es un club de pádel en Catriel, Río Negro, con dos canchas de cristal. Diseñamos y construimos su sitio y el sistema de reservas: el jugador elige día, cancha y horario, y confirma el turno por WhatsApp.",
+    impactMetric: "Turnos en tiempo real",
+    challenge:
+      "Que reservar una cancha no dependa de mandar mensajes y esperar respuesta: ver qué hay libre y sacar el turno en el momento.",
+    approach:
+      "Un calendario de disponibilidad por día y por cancha, con el turno de 90 minutos como unidad y la confirmación por WhatsApp con seña.",
+    design:
+      "Una identidad deportiva, de alto contraste, con la mascota del club y fotos reales de las canchas; el reservador es lo primero a lo que lleva cada botón.",
+    technology: ["Next.js", "TypeScript", "Vercel"],
+    outcome:
+      "Sitio en producción con reservas online, Canchas Abiertas comunitarias y herramientas para jugadores.",
+    url: "https://muzzaga-padel-seven.vercel.app/",
+    image: "/projects/muzzaga-2026-09.jpg",
+    video: {
+      mp4: "/projects/videos/muzzaga-2026-09.mp4",
+      webm: "/projects/videos/muzzaga-2026-09.webm",
+    },
+    featured: false,
+    order: 5,
+    size: "medium",
   },
 ];
 
