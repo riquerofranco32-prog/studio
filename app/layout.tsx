@@ -8,7 +8,6 @@ import { SoundProvider } from "@/components/providers/sound-provider";
 import { CommandPalette } from "@/components/ui/command-palette";
 import { BookingModal } from "@/components/ui/booking-modal";
 import { AuroraBackground } from "@/components/ui/aurora-background";
-import { CheckField } from "@/components/ui/check-field";
 import { WhatsAppWidget } from "@/components/ui/whatsapp-widget";
 import { SITE } from "@/data/site";
 import { team } from "@/data/team";
@@ -103,7 +102,6 @@ export default function RootLayout({
         <AuroraBackground />
         <SmoothScroll />
         <SoundProvider>
-          <CheckField />
           <MotionProvider>
             <Navbar />
             <main>{children}</main>
