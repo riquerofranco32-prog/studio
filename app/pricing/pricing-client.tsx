@@ -21,6 +21,7 @@ import {
   Bot,
   Globe2,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/ui/reveal";
 import { useSoundFx } from "@/components/providers/sound-provider";
@@ -108,7 +109,7 @@ interface AddonModule {
   name: string;
   priceUSD: number;
   extraDays: number;
-  icon: React.ElementType;
+  icon: LucideIcon;
   description: string;
 }
 

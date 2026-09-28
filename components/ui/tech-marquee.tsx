@@ -2,12 +2,13 @@
 
 import { Marquee } from "@/components/ui/marquee";
 import { Zap, ShieldCheck, Cpu, Flame, Database, Globe, Layers, Sparkles } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 
 interface TechBadge {
   name: string;
   category: string;
   metric: string;
-  icon: React.ElementType;
+  icon: LucideIcon;
 }
 
 const techs: TechBadge[] = [

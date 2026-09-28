@@ -20,6 +20,7 @@ import {
   Server,
   Bot,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { useSoundFx } from "@/components/providers/sound-provider";
@@ -31,7 +32,7 @@ interface ArchitectureLayer {
   name: string;
   role: string;
   tech: string;
-  icon: React.ElementType;
+  icon: LucideIcon;
   specs: string[];
   security: string;
 }

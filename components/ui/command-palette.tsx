@@ -19,6 +19,7 @@ import {
   Terminal,
   ShieldCheck,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { projects } from "@/data/projects";
 import { SITE } from "@/data/site";
 
@@ -27,7 +28,7 @@ interface CommandItem {
   title: string;
   subtitle?: string;
   category: "Proyectos" | "Servicios" | "Acciones Rápidas" | "Navegación";
-  icon: React.ElementType;
+  icon: LucideIcon;
   action: () => void;
   keywords?: string[];
 }

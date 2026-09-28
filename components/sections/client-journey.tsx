@@ -15,6 +15,7 @@ import {
   Sparkles,
   ArrowRight,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { useSoundFx } from "@/components/providers/sound-provider";
@@ -24,7 +25,7 @@ interface JourneyPhase {
   days: string;
   title: string;
   tagline: string;
-  icon: React.ElementType;
+  icon: LucideIcon;
   whatHappens: string[];
   deliverable: string;
 }

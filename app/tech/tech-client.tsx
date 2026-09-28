@@ -16,6 +16,7 @@ import {
   Sparkles,
   Code2,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/ui/reveal";
 import { radarItems, RadarRing, RadarCategory, RadarItem } from "@/data/tech-radar";
@@ -23,7 +24,7 @@ import { useSoundFx } from "@/components/providers/sound-provider";
 
 const ringConfig: Record<
   RadarRing,
-  { label: string; badge: string; color: string; bg: string; border: string; icon: React.ElementType }
+  { label: string; badge: string; color: string; bg: string; border: string; icon: LucideIcon }
 > = {
   adopt: {
     label: "Adoptar (Core Stack)",
