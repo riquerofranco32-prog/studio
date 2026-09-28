@@ -103,7 +103,7 @@ export function Navbar() {
                 // radio completo sobre algo alto la deforma en un óvalo.
                 open ? "rounded-[28px] bg-background/95" : "rounded-[32px] bg-background/65"
               }`
-            : "max-w-[1400px] rounded-none border border-transparent bg-transparent"
+            : "max-w-[1400px] rounded-none border-0 bg-transparent"
         }`}
       >
         <nav
