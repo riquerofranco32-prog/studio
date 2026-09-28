@@ -35,14 +35,16 @@ const GAP = 32;
 /** Aire entre miniaturas, en px (ya escaladas). */
 const THUMB_GAP = 14;
 /**
- * Cómo se apoyan las pantallas, para que no queden flotando:
- * - "piso": paradas sobre un piso con horizonte y su reflejo.
- * - "notebook": cada proyecto es una notebook; la tapa se abre al llegar al
- *   centro y las de los costados quedan entrecerradas.
- * Se puede forzar con ?rueda=piso o ?rueda=notebook para comparar.
+ * Cada proyecto es una notebook vista apenas desde arriba: cerrada a los
+ * costados (se ve la tapa de aluminio) y abierta en el centro. La tapa gira
+ * sobre la bisagra con el scroll, así que se abre mientras llega.
  */
-type Stage = "piso" | "notebook";
-const DEFAULT_STAGE: Stage = "piso";
+/** Ángulo de la tapa abierta (positivo: apenas reclinada hacia atrás). */
+const LID_OPEN = 12;
+/** Ángulo de la tapa cerrada, apoyada sobre el teclado. */
+const LID_CLOSED = -89;
+/** Cuánto del teclado se ve debajo de la bisagra, en fracción del alto. */
+const DECK_VISIBLE = 0.2;
 /** Alto de scroll que consume cada proyecto, en vh. */
 const STEP_VH = 60;
 
@@ -88,17 +90,11 @@ function Wheel({ projects }: { projects: Project[] }) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const n = projects.length;
   const [dims, setDims] = useState<Dims>({ w: 620, h: 387.5, mobile: false, lift: 70 });
-  const [stage, setStage] = useState<Stage>(DEFAULT_STAGE);
   const [active, setActive] = useState(0);
 
   useEffect(() => {
     const update = () => setDims(measure());
-    const init = () => {
-      update();
-      const q = new URLSearchParams(window.location.search).get("rueda");
-      if (q === "piso" || q === "notebook") setStage(q);
-    };
-    init();
+    update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);
@@ -156,25 +152,10 @@ function Wheel({ projects }: { projects: Project[] }) {
           />
         </AnimatePresence>
 
-        {/* Piso: línea de horizonte y un plano apenas más claro debajo. */}
-        {stage === "piso" && (
-          <>
-            <div
-              aria-hidden
-              style={{ top: `calc(50% - ${dims.lift}px + ${dims.h / 2}px)` }}
-              className="pointer-events-none absolute inset-x-0 bottom-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.045),transparent_55%)]"
-            />
-            <div
-              aria-hidden
-              style={{ top: `calc(50% - ${dims.lift}px + ${dims.h / 2}px)` }}
-              className="pointer-events-none absolute inset-x-[4%] h-px bg-[linear-gradient(to_right,transparent,rgba(255,255,255,0.22),transparent)]"
-            />
-          </>
-        )}
-
         {/* Pila de proyectos */}
         <motion.div
-          style={{ filter: blur, perspective: 1200 }}
+          // Cámara un poco por encima: deja ver el teclado y la tapa cerrada.
+          style={{ filter: blur, perspective: 2600, perspectiveOrigin: "50% 18%" }}
           className="relative h-full w-full"
         >
           {projects.map((project, i) => (
@@ -186,7 +167,6 @@ function Wheel({ projects }: { projects: Project[] }) {
               dims={dims}
               active={i === active}
               accent={accentOf(project)}
-              stage={stage}
               onSelect={() => scrollToIndex(i)}
             />
           ))}
@@ -196,7 +176,7 @@ function Wheel({ projects }: { projects: Project[] }) {
             personalidad de su marca: tipografía, color, frase y entrada. */}
         <div
           style={{
-            top: `calc(50% - ${dims.lift}px + ${dims.h / 2 + (stage === "piso" ? dims.h * 0.26 : dims.w * 0.035 + 30)}px)`,
+            top: `calc(50% - ${dims.lift}px + ${dims.h / 2 + dims.h * DECK_VISIBLE + 18}px)`,
             width: dims.mobile ? "calc(100% - 48px)" : Math.max(dims.w, 760),
           }}
           className="pointer-events-none absolute left-1/2 -translate-x-1/2"
@@ -225,7 +205,6 @@ function WheelItem({
   dims,
   active,
   accent,
-  stage,
   onSelect,
 }: {
   project: Project;
@@ -234,7 +213,6 @@ function WheelItem({
   dims: Dims;
   active: boolean;
   accent: string;
-  stage: Stage;
   onSelect: () => void;
 }) {
   const { w, mobile } = dims;
@@ -261,9 +239,12 @@ function WheelItem({
     return a <= fadeFrom ? 1 : Math.max(0, 1 - (a - fadeFrom) * (mobile ? 1.5 : 0.5));
   });
   const zIndex = useTransform(d, (v) => 100 - Math.round(Math.abs(v) * 10));
-  // Tapa de la notebook: abierta en el centro, entrecerrada a los costados.
-  const lid = useTransform(d, (v) => (stage === "notebook" ? Math.min(Math.abs(v), 1) * 40 : 0));
-  const notebook = stage === "notebook";
+  // Tapa: abierta en el centro, se va cerrando a medida que se aleja.
+  const lid = useTransform(d, (v) => {
+    const t = Math.min(Math.abs(v), 1);
+    const e = t * t * (3 - 2 * t);
+    return LID_OPEN + (LID_CLOSED - LID_OPEN) * e;
+  });
 
   const card = (
     <Link
@@ -276,15 +257,7 @@ function WheelItem({
           onSelect();
         }
       }}
-      style={
-        active && !notebook
-          ? {
-              borderColor: alpha(accent, 0.45),
-              boxShadow: `0 40px 90px -40px ${alpha(accent, 0.55)}`,
-            }
-          : undefined
-      }
-      className={`focus-ring group relative block h-full w-full overflow-hidden bg-surface transition-[border-color,box-shadow] duration-700 ${notebook ? "rounded-[3px]" : "rounded-md border border-border"}`}
+      className="focus-ring group relative block h-full w-full overflow-hidden rounded-[2px] bg-black"
     >
       <Image
         src={project.image}
@@ -330,46 +303,54 @@ function WheelItem({
       }}
       className="absolute left-1/2 top-1/2 will-change-transform"
     >
-      {notebook ? (
-        <>
-          {/* Tapa: marco negro con la pantalla adentro; gira sobre la bisagra. */}
-          <motion.div
-            style={{
-              rotateX: lid,
-              transformOrigin: "50% 100%",
-              padding: `${w * 0.02}px ${w * 0.02}px ${w * 0.014}px`,
-              boxShadow: active ? `0 30px 80px -30px ${alpha(accent, 0.5)}` : undefined,
-            }}
-            className="relative h-full w-full rounded-t-[14px] border border-[#2c2c31] bg-[#0c0c0e] transition-shadow duration-700"
-          >
-            {card}
-          </motion.div>
-          {/* Base con el hueco para abrir la tapa. */}
-          <div
+      {/* Base: teclado y trackpad, acostada hacia la cámara desde la bisagra. */}
+      <div
+        aria-hidden
+        style={{ transform: "rotateX(90deg)", transformOrigin: "50% 0%" }}
+        className="absolute top-full left-[-3%] h-full w-[106%] rounded-b-[18px] rounded-t-[4px] bg-[linear-gradient(to_bottom,#3c3d42,#2a2b2f_60%,#222327)] shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_40px_60px_-20px_rgba(0,0,0,0.9)]"
+      >
+        {/* Teclado: teclas oscuras separadas por el aluminio. */}
+        <div className="absolute top-[9%] left-[9%] h-[50%] w-[82%] rounded-[4px] bg-[#131316] [background-image:repeating-linear-gradient(to_right,transparent_0,transparent_calc(100%/14_-_3px),#35363b_calc(100%/14_-_3px),#35363b_calc(100%/14)),repeating-linear-gradient(to_bottom,transparent_0,transparent_calc(100%/6_-_3px),#35363b_calc(100%/6_-_3px),#35363b_calc(100%/6))]" />
+        {/* Trackpad. */}
+        <div className="absolute top-[64%] left-1/2 h-[28%] w-[36%] -translate-x-1/2 rounded-[6px] bg-[linear-gradient(to_bottom,#35363b,#2d2e33)] shadow-[inset_0_0_0_1px_rgba(255,255,255,0.06)]" />
+        {/* Hueco para abrir la tapa, en el borde de adelante. */}
+        <div className="absolute bottom-0 left-1/2 h-[2.5%] w-[14%] -translate-x-1/2 rounded-t-md bg-[#18181b]" />
+      </div>
+
+      {/* Tapa: gira sobre la bisagra. Adelante la pantalla, atrás el aluminio. */}
+      <motion.div
+        style={{ rotateX: lid, transformOrigin: "50% 100%", transformStyle: "preserve-3d" }}
+        className="relative h-full w-full"
+      >
+        {/* Frente: canto de aluminio, bisel negro con cámara y la pantalla. */}
+        <div
+          style={{
+            backfaceVisibility: "hidden",
+            padding: `${w * 0.028}px ${w * 0.018}px ${w * 0.03}px`,
+            boxShadow: active ? `0 0 0 1px #4a4b51, 0 30px 90px -30px ${alpha(accent, 0.55)}` : "0 0 0 1px #4a4b51",
+          }}
+          className="absolute inset-0 rounded-t-[16px] rounded-b-[6px] bg-[#0a0a0b] transition-shadow duration-700"
+        >
+          <span
             aria-hidden
-            style={{ height: Math.max(6, w * 0.034) }}
-            className="absolute top-full left-[-7%] w-[114%] rounded-b-[12px] bg-[linear-gradient(to_bottom,#3b3b41,#16161a)] shadow-[0_24px_40px_-12px_rgba(0,0,0,0.85)]"
-          >
-            <div className="mx-auto h-[42%] w-[15%] rounded-b-md bg-[#0c0c0e]" />
-          </div>
-        </>
-      ) : (
-        <>
+            style={{ top: w * 0.011, width: Math.max(3, w * 0.008), height: Math.max(3, w * 0.008) }}
+            className="absolute left-1/2 -translate-x-1/2 rounded-full bg-[#1d2a3a] shadow-[0_0_0_1px_#26262b]"
+          />
           {card}
-          {/* Reflejo sobre el piso: la misma captura invertida y desvanecida. */}
-          <div
-            aria-hidden
-            style={{
-              transform: "scaleY(-1)",
-              maskImage: "linear-gradient(to top, rgba(0,0,0,0.3), transparent 45%)",
-              WebkitMaskImage: "linear-gradient(to top, rgba(0,0,0,0.3), transparent 45%)",
-            }}
-            className="pointer-events-none absolute top-full left-0 mt-[2px] h-full w-full overflow-hidden rounded-md"
-          >
-            <Image src={project.image} alt="" fill sizes="(min-width: 768px) 680px, 62vw" className="object-cover object-top" />
-          </div>
-        </>
-      )}
+          <span aria-hidden className="absolute inset-x-0 bottom-0 h-[3%] rounded-b-[6px] bg-[linear-gradient(to_bottom,#1a1a1d,#0e0e10)]" />
+        </div>
+        {/* Dorso: aluminio con el punto de luz del color de la marca. */}
+        <div
+          aria-hidden
+          style={{ backfaceVisibility: "hidden", transform: "rotateX(180deg)" }}
+          className="absolute inset-0 flex items-center justify-center rounded-t-[16px] rounded-b-[6px] bg-[linear-gradient(135deg,#4a4b51,#303136_45%,#26272b)] shadow-[inset_0_1px_0_rgba(255,255,255,0.15)]"
+        >
+          <span
+            style={{ background: accent, boxShadow: `0 0 ${w * 0.05}px ${alpha(accent, 0.6)}` }}
+            className="block h-[9%] w-[5.6%] rounded-full opacity-80"
+          />
+        </div>
+      </motion.div>
     </motion.div>
   );
 }
