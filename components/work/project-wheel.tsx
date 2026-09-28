@@ -9,6 +9,7 @@ import {
   motion,
   TargetAndTransition,
   Transition,
+  useMotionValue,
   useMotionValueEvent,
   useScroll,
   useSpring,
@@ -123,12 +124,58 @@ function Wheel({ projects }: { projects: Project[] }) {
   // Resorte corto: suaviza el paso entre proyectos sin sentirse atrasado.
   const pos = useSpring(raw, { stiffness: 160, damping: 28, mass: 0.7 });
 
-  useMotionValueEvent(pos, "change", (v) => {
+  // En el celular la rueda no toma el scroll: se desliza con el dedo a los
+  // costados y la página sigue bajando normal. El destino es un índice y el
+  // resorte lo acompaña mientras el dedo arrastra.
+  const swipeTarget = useMotionValue(0);
+  const swipePos = useSpring(swipeTarget, { stiffness: 220, damping: 30, mass: 0.6 });
+  const scenePos = mobile ? swipePos : pos;
+
+  const syncActive = (v: number) => {
     const i = Math.min(n - 1, Math.max(0, Math.round(v)));
     setActive((prev) => (prev === i ? prev : i));
-  });
+  };
+  useMotionValueEvent(pos, "change", (v) => !mobile && syncActive(v));
+  useMotionValueEvent(swipePos, "change", (v) => mobile && syncActive(v));
+
+  const drag = useRef({ x: 0, y: 0, start: 0, on: false, moved: false });
+  const clampIndex = (i: number) => Math.min(n - 1, Math.max(0, i));
+
+  function onPointerDown(e: React.PointerEvent) {
+    if (!mobile) return;
+    drag.current = { x: e.clientX, y: e.clientY, start: Math.round(swipeTarget.get()), on: false, moved: false };
+  }
+  function onPointerMove(e: React.PointerEvent) {
+    const d = drag.current;
+    if (!mobile || e.buttons === 0 && e.pointerType === "mouse") return;
+    const dx = e.clientX - d.x;
+    const dy = e.clientY - d.y;
+    if (!d.on) {
+      // Sólo se toma el gesto si es claramente horizontal; si no, es scroll.
+      if (Math.abs(dx) > 10 && Math.abs(dx) > Math.abs(dy) * 1.2) d.on = true;
+      else return;
+    }
+    const w = window.innerWidth * 0.55;
+    swipeTarget.set(Math.min(n - 0.7, Math.max(-0.3, d.start - dx / w)));
+  }
+  function onPointerUp(e: React.PointerEvent) {
+    const d = drag.current;
+    if (!mobile || !d.on) return;
+    const dx = e.clientX - d.x;
+    let steps = Math.round(-dx / (window.innerWidth * 0.55));
+    if (steps === 0 && Math.abs(dx) > 40) steps = dx < 0 ? 1 : -1;
+    swipeTarget.set(clampIndex(d.start + steps));
+    d.on = false;
+    d.moved = true;
+    // El click que sigue al arrastre no tiene que abrir el caso.
+    window.setTimeout(() => (d.moved = false), 60);
+  }
 
   function scrollToIndex(i: number) {
+    if (mobile) {
+      swipeTarget.set(clampIndex(i));
+      return;
+    }
     const el = sectionRef.current;
     if (!el) return;
     const top = el.getBoundingClientRect().top + window.scrollY;
@@ -137,6 +184,7 @@ function Wheel({ projects }: { projects: Project[] }) {
   }
 
   function pick(i: number) {
+    if (drag.current.moved) return;
     if (i === active) router.push(`/work/${projects[i].slug}`);
     else scrollToIndex(i);
   }
@@ -146,7 +194,7 @@ function Wheel({ projects }: { projects: Project[] }) {
   return (
     <div
       ref={sectionRef}
-      style={{ height: `calc(100vh + ${(n - 1) * STEP_VH}vh)` }}
+      style={{ height: mobile ? "100svh" : `calc(100vh + ${(n - 1) * STEP_VH}vh)` }}
       className="relative mt-28"
     >
       {/* Entrada y salida del escenario negro: fundido con blur, sin corte
@@ -160,7 +208,16 @@ function Wheel({ projects }: { projects: Project[] }) {
         className="pointer-events-none absolute inset-x-0 -bottom-40 z-10 h-48 bg-gradient-to-b from-black via-black/70 to-transparent [mask-image:linear-gradient(to_top,transparent,black_60%)]"
       />
       {/* Fondo negro puro: el agua sólo tiene que mostrar el reflejo. */}
-      <div className="sticky top-0 h-[100dvh] overflow-hidden bg-black">
+      <div
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={onPointerUp}
+        onPointerCancel={onPointerUp}
+        // pan-y: el navegador sigue scrolleando en vertical y el gesto
+        // horizontal queda para la rueda.
+        style={mobile ? { touchAction: "pan-y" } : undefined}
+        className={`sticky top-0 overflow-hidden bg-black ${mobile ? "h-[100svh]" : "h-[100dvh]"}`}
+      >
         {/* Luz ambiente del color de la marca activa, detrás de la escena. */}
         <AnimatePresence initial={false}>
           <motion.div
@@ -178,7 +235,7 @@ function Wheel({ projects }: { projects: Project[] }) {
         </AnimatePresence>
 
         {near && (
-          <ShowcaseScene projects={projects} pos={pos} active={active} mobile={mobile} live={live} onPick={pick} />
+          <ShowcaseScene projects={projects} pos={scenePos} active={active} mobile={mobile} live={live} onPick={pick} />
         )}
 
         {/* El agua se pierde en negro hacia abajo: así el reflejo se funde y
@@ -206,6 +263,28 @@ function Wheel({ projects }: { projects: Project[] }) {
             <BrandLabel key={current.slug} project={current} mobile={mobile} />
           </AnimatePresence>
         </div>
+
+        {/* Mobile: puntos para saber dónde estás y saltar a un proyecto. */}
+        {mobile && (
+          <div className="absolute bottom-8 left-1/2 flex -translate-x-1/2 items-center gap-1.5">
+            {projects.map((p, i) => (
+              <button
+                key={p.slug}
+                aria-label={`Ver ${p.name}`}
+                onClick={() => scrollToIndex(i)}
+                className="flex h-6 items-center"
+              >
+                <span
+                  className="block h-1.5 rounded-full transition-all duration-300"
+                  style={{
+                    width: i === active ? 18 : 6,
+                    background: i === active ? accentOf(current) : "rgba(245,245,244,0.25)",
+                  }}
+                />
+              </button>
+            ))}
+          </div>
+        )}
 
         {/* Contador */}
         <div className="pointer-events-none absolute bottom-8 left-6 font-mono text-xs tabular-nums text-muted md:left-10">
