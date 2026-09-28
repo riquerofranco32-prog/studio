@@ -22,17 +22,18 @@ import { brandFonts } from "@/lib/brand-fonts";
 import type { Project, ProjectBrand } from "@/types";
 
 // Rueda horizontal de proyectos, en 3D. La sección es alta y su interior
-// queda fijo (sticky) mientras se scrollea: cada proyecto es una notebook
-// (components/work/laptop-scene.tsx). La del centro está abierta y muestra el
-// sitio; las de los costados, cerradas. Debajo, el nombre y la frase del
-// proyecto con la tipografía y el color de su marca.
+// queda fijo (sticky) mientras se scrollea: cada proyecto es una pantalla
+// parada sobre un piso que la refleja (components/work/showcase-scene.tsx).
+// La del centro se adelanta y se enciende; las de los costados quedan
+// atenuadas. Debajo, el nombre y la frase con la tipografía y el color de su
+// marca.
 
 /** Alto de scroll que consume cada proyecto, en vh. */
 const STEP_VH = 60;
 
 // three.js pesa: se baja sólo en el cliente y recién cuando la sección está
 // cerca de la pantalla.
-const LaptopScene = dynamic(() => import("@/components/work/laptop-scene"), {
+const ShowcaseScene = dynamic(() => import("@/components/work/showcase-scene"), {
   ssr: false,
 });
 
@@ -149,7 +150,7 @@ function Wheel({ projects }: { projects: Project[] }) {
         </AnimatePresence>
 
         {near && (
-          <LaptopScene projects={projects} pos={pos} active={active} mobile={mobile} onPick={pick} />
+          <ShowcaseScene projects={projects} pos={pos} active={active} mobile={mobile} onPick={pick} />
         )}
 
         {/* Lista accesible: la escena 3D no es navegable con teclado. */}
