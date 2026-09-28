@@ -2,7 +2,9 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { buildSVG, bindScene } from "./scene";
+import { Lock } from "lucide-react";
 import { SITE } from "@/data/site";
+import { WhatsAppLogo } from "@/components/icons/whatsapp-logo";
 
 /**
  * Footer cinemático de Se7en Studio — "Construimos el puente".
@@ -10,23 +12,26 @@ import { SITE } from "@/data/site";
  * Fuentes: usa --font-archivo / --font-chivo-mono (next/font) si están definidas.
  */
 
-const EXPLORAR = [
-  ["Nuestros Trabajos", "/work"],
-  ["Servicios y Precios", "/services"],
-  ["Tecnología", "/tech"],
+// Dos columnas cortas con lo que más se busca; el resto va en chico en la
+// barra de abajo, que termina con el acceso al panel del equipo.
+const ESTUDIO = [
+  ["Trabajos", "/work"],
+  ["Servicios", "/services"],
+  ["Precios", "/pricing"],
+  ["Sobre nosotros", "/#about"],
   ["Blog", "/blog"],
-  ["Testimonios", "/testimonials"],
-  ["Sistema de Diseño", "/design-system"],
-  ["Seguridad y Confidencialidad", "/security"],
-  ["Sobre el Estudio", "/#about"],
 ] as const;
-const HERRAMIENTAS = [
-  ["Portal de Inicio", "/kickoff"],
-  ["Diagnóstico Gratuito", "/audit"],
-  ["Calculadora de Retorno", "/roi"],
-  ["Ejemplo de Sitio en Vivo", "/portal"],
-  ["Configurador de Precios", "/pricing"],
-  ["Demos Interactivas", "/playground"],
+const RECURSOS = [
+  ["Diagnóstico gratuito", "/audit"],
+  ["Calculadora de retorno", "/roi"],
+  ["Demos interactivas", "/playground"],
+  ["Testimonios", "/testimonials"],
+] as const;
+const LEGALES = [
+  ["Tecnología", "/tech"],
+  ["Seguridad", "/security"],
+  ["Sistema de diseño", "/design-system"],
+  ["Portal de inicio", "/kickoff"],
 ] as const;
 
 const mono =
@@ -148,7 +153,7 @@ export default function Se7enFooter() {
         />
 
         {/* barra superior */}
-        <div className="absolute inset-x-4 top-[18px] z-10 flex items-center justify-between md:inset-x-10 md:top-7">
+        <div className="absolute inset-x-4 top-[88px] z-10 flex items-center justify-between md:inset-x-10 md:top-[96px]">
           <div data-reveal=".62" className={reveal}>
             <StatusTag />
           </div>
@@ -176,10 +181,10 @@ export default function Se7enFooter() {
                 Estudio boutique de software y diseño en Argentina. Construimos
                 plataformas, tiendas online y sitios web que cargan al instante.
               </p>
-              <div className="mt-[18px] grid gap-2 text-sm">
+              <div className="mt-[18px] grid gap-2.5 text-sm">
                 <a
                   href={`mailto:${SITE.email}`}
-                  className="transition-colors hover:text-[#ff4d2e]"
+                  className="w-fit transition-colors hover:text-[#ff4d2e]"
                 >
                   {SITE.email}
                 </a>
@@ -187,17 +192,17 @@ export default function Se7enFooter() {
                   href={SITE.whatsapp}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="transition-colors hover:text-[#ff4d2e]"
+                  className="inline-flex w-fit items-center gap-2 text-[#25D366] transition-opacity hover:opacity-80"
                 >
-                  WhatsApp ↗
+                  <WhatsAppLogo size={15} /> WhatsApp
                 </a>
               </div>
             </div>
 
             {(
               [
-                ["EXPLORAR", EXPLORAR, ".88"],
-                ["HERRAMIENTAS", HERRAMIENTAS, ".9"],
+                ["ESTUDIO", ESTUDIO, ".88"],
+                ["RECURSOS", RECURSOS, ".9"],
               ] as const
             ).map(([title, links, at]) => (
               <nav
@@ -222,7 +227,7 @@ export default function Se7enFooter() {
                       </a>
                     </li>
                   ))}
-                  {title === "HERRAMIENTAS" && (
+                  {title === "RECURSOS" && (
                     <>
                       <li>
                         <button
@@ -234,7 +239,7 @@ export default function Se7enFooter() {
                           }
                           className="text-left text-[#d6d6d4] transition-colors hover:text-[#ff4d2e]"
                         >
-                          Agendar una Llamada
+                          Agendar una llamada
                         </button>
                       </li>
                     </>
@@ -266,23 +271,35 @@ export default function Se7enFooter() {
 
           <div
             data-reveal=".94"
-            className={`${reveal} ${mono} mx-auto mt-[30px] flex max-w-[1360px] flex-col gap-3 border-t md:flex-row md:flex-wrap md:justify-between md:gap-4 border-white/[.08] pt-4 text-xs text-[#8a8a8e]`}
+            className={`${reveal} ${mono} mx-auto mt-[30px] flex max-w-[1360px] flex-col gap-3 border-t md:flex-row md:flex-wrap md:items-center md:justify-between md:gap-4 border-white/[.08] pt-4 text-xs text-[#8a8a8e]`}
           >
             <span>
-              © {new Date().getFullYear()} {SITE.name}. Todos los derechos
-              reservados.
+              © {new Date().getFullYear()} {SITE.name}
             </span>
-            <span>
-              Tecnología moderna · <span className="text-[#3ddc97]">●</span>{" "}
-              Rendimiento 100/100
-            </span>
-            <button
-              type="button"
-              onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
-              className="self-start transition-colors hover:text-[#f5f5f4]"
-            >
-              VOLVER ARRIBA ↑
-            </button>
+            <nav aria-label="Más" className="flex flex-wrap gap-x-5 gap-y-2">
+              {LEGALES.map(([label, href]) => (
+                <a key={href} href={href} className="transition-colors hover:text-[#f5f5f4]">
+                  {label}
+                </a>
+              ))}
+            </nav>
+            <div className="flex items-center gap-5">
+              <button
+                type="button"
+                onClick={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+                className="transition-colors hover:text-[#f5f5f4]"
+              >
+                Volver arriba ↑
+              </button>
+              {/* Lo último de todo: el acceso al panel del equipo. */}
+              <a
+                href="/admin"
+                rel="nofollow"
+                className="inline-flex items-center gap-1.5 rounded-full border border-white/[.08] px-3 py-1.5 transition-colors hover:border-white/20 hover:text-[#f5f5f4]"
+              >
+                <Lock size={11} /> Panel del equipo
+              </a>
+            </div>
           </div>
         </div>
       </div>
