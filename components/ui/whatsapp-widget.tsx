@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { MessageCircle, X, Send, ArrowRight } from "lucide-react";
+import { X, Send, ArrowRight } from "lucide-react";
+import { WhatsAppLogo } from "@/components/icons/whatsapp-logo";
 import { SITE } from "@/data/site";
 import { useSoundFx } from "@/components/providers/sound-provider";
 import { useFooterInView } from "@/components/ui/floating-status-bar";
@@ -77,14 +78,14 @@ export function WhatsAppWidget() {
             className="mb-3 w-[calc(100vw-2rem)] max-w-sm overflow-hidden rounded-3xl border border-border bg-surface shadow-2xl"
           >
             {/* Header del Chat */}
-            <div className="bg-gradient-to-r from-emerald-600 via-emerald-500 to-teal-600 p-5 text-white">
+            <div className="bg-gradient-to-br from-[#075E54] via-[#0b7a6c] to-[#128C7E] p-5 text-white">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <div className="relative">
-                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 font-mono text-sm font-bold backdrop-blur-md">
-                      7
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#25D366] text-white shadow-[0_2px_10px_rgba(0,0,0,0.25)]">
+                      <WhatsAppLogo size={22} />
                     </div>
-                    <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-emerald-600 bg-emerald-300 animate-pulse" />
+                    <span className="absolute bottom-0 right-0 h-3 w-3 rounded-full border-2 border-[#075E54] bg-[#25D366]" />
                   </div>
                   <div>
                     <h3 className="font-semibold text-sm leading-tight">
@@ -147,11 +148,11 @@ export function WhatsAppWidget() {
                 value={customMessage}
                 onChange={(e) => setCustomMessage(e.target.value)}
                 placeholder="Escribí un mensaje..."
-                className="focus-ring w-full rounded-full border border-border bg-background py-2 px-4 text-xs text-foreground placeholder:text-muted focus:border-emerald-500"
+                className="focus-ring w-full rounded-full border border-border bg-background py-2 px-4 text-xs text-foreground placeholder:text-muted focus:border-[#25D366]"
               />
               <button
                 type="submit"
-                className="focus-ring flex h-8 w-8 items-center justify-center rounded-full bg-emerald-500 text-white hover:bg-emerald-600 transition-colors shrink-0"
+                className="focus-ring flex h-8 w-8 items-center justify-center rounded-full bg-[#25D366] text-white hover:bg-[#1ebe5a] transition-colors shrink-0"
                 aria-label="Enviar"
               >
                 <Send size={13} />
@@ -161,26 +162,34 @@ export function WhatsAppWidget() {
         )}
       </AnimatePresence>
 
-      {/* Botón Flotante Principal */}
+      {/* Botón flotante: el logo oficial sobre el verde de WhatsApp. En
+          mobile es el círculo clásico; desde sm suma el texto. */}
       <motion.button
         type="button"
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+        whileHover={{ scale: 1.04, y: -1 }}
+        whileTap={{ scale: 0.96 }}
         aria-expanded={open}
         aria-label="WhatsApp directo"
         onClick={() => {
           playPop();
           setOpen((prev) => !prev);
         }}
-        className="focus-ring group relative flex items-center gap-2.5 rounded-full border border-emerald-500/40 bg-emerald-500 px-4 py-3 text-xs font-semibold text-white shadow-[0_4px_25px_rgba(16,185,129,0.4)] transition-all hover:bg-emerald-600 hover:shadow-[0_4px_30px_rgba(16,185,129,0.6)]"
+        className="focus-ring group relative flex h-14 w-14 items-center justify-center gap-3 rounded-full bg-[#25D366] text-white shadow-[0_8px_28px_-6px_rgba(37,211,102,0.65),inset_0_1px_0_rgba(255,255,255,0.35)] transition-[background-color,box-shadow] duration-300 hover:bg-[#1ebe5a] hover:shadow-[0_10px_34px_-6px_rgba(37,211,102,0.8),inset_0_1px_0_rgba(255,255,255,0.35)] sm:h-auto sm:w-auto sm:py-2.5 sm:pr-5 sm:pl-2.5"
       >
-        <span className="relative flex h-2 w-2">
-          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-white opacity-75" />
-          <span className="relative inline-flex h-2 w-2 rounded-full bg-white" />
+        <span className="relative flex h-9 w-9 shrink-0 items-center justify-center">
+          {/* Una onda suave que se abre desde el logo cada tanto. */}
+          <span
+            aria-hidden
+            className="pointer-events-none absolute inset-0 rounded-full bg-white/30 motion-safe:animate-[ping_2.8s_cubic-bezier(0,0,0.2,1)_infinite]"
+          />
+          <WhatsAppLogo size={28} className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)] sm:size-[26px]" />
+          {/* En línea */}
+          <span className="absolute top-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-[#25D366] bg-white" />
         </span>
-
-        <MessageCircle size={17} />
-        <span className="hidden sm:inline">WhatsApp directo</span>
+        <span className="relative hidden flex-col items-start leading-tight sm:flex">
+          <span className="text-[13px] font-semibold">WhatsApp directo</span>
+          <span className="text-[10.5px] font-medium text-white/85">Franco y Federico</span>
+        </span>
       </motion.button>
     </div>
   );
