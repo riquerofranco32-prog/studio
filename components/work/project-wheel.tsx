@@ -132,7 +132,8 @@ function Wheel({ projects }: { projects: Project[] }) {
       style={{ height: `calc(100vh + ${(n - 1) * STEP_VH}vh)` }}
       className="relative mt-8"
     >
-      <div className="sticky top-0 h-[100dvh] overflow-hidden">
+      {/* Fondo negro puro: el agua sólo tiene que mostrar el reflejo. */}
+      <div className="sticky top-0 h-[100dvh] overflow-hidden bg-black">
         {/* Luz ambiente del color de la marca activa, detrás de la escena. */}
         <AnimatePresence initial={false}>
           <motion.div
@@ -143,7 +144,7 @@ function Wheel({ projects }: { projects: Project[] }) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.9, ease: EASE }}
             style={{
-              background: `radial-gradient(ellipse 55% 45% at 50% 38%, ${alpha(accentOf(current), 0.22)}, transparent 72%)`,
+              background: `radial-gradient(ellipse 50% 38% at 50% 34%, ${alpha(accentOf(current), 0.12)}, transparent 70%)`,
             }}
             className="pointer-events-none absolute inset-0"
           />
@@ -152,6 +153,13 @@ function Wheel({ projects }: { projects: Project[] }) {
         {near && (
           <ShowcaseScene projects={projects} pos={pos} active={active} mobile={mobile} onPick={pick} />
         )}
+
+        {/* El agua se pierde en negro hacia abajo: así el reflejo se funde y
+            los datos del proyecto se leen encima. */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-[42%] bg-[linear-gradient(to_top,#000_18%,rgba(0,0,0,0.85)_45%,transparent)]"
+        />
 
         {/* Lista accesible: la escena 3D no es navegable con teclado. */}
         <ul className="sr-only">

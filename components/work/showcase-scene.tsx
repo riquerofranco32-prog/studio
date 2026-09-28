@@ -15,8 +15,8 @@ import type { MotionValue } from "framer-motion";
 import type { Project } from "@/types";
 
 // Vidriera 3D de la rueda de Trabajo. Cada proyecto es una pantalla de vidrio
-// con canto de aluminio, parada sobre un piso pulido que la refleja de
-// verdad (MeshReflectorMaterial). El scroll gira la rueda: la pantalla que
+// con canto de aluminio, parada sobre agua negra y quieta que la refleja de
+// verdad (MeshReflectorMaterial con un mapa de ondas). El scroll gira la rueda: la pantalla que
 // llega al centro se adelanta y se enciende con su sitio; las de los
 // costados quedan atenuadas, giradas en arco.
 
@@ -181,6 +181,72 @@ function glowTexture() {
   return _glow;
 }
 
+// Agua: mapa de distorsión que se redibuja con ondas suaves y lentas. El
+// shader del reflector corre el UV del reflejo según este mapa.
+// Una sola textura para toda la página (hay una sola escena).
+let _water: THREE.CanvasTexture | null = null;
+function waterTexture() {
+  if (_water) return _water;
+  const c = document.createElement("canvas");
+  c.width = c.height = 128;
+  _water = new THREE.CanvasTexture(c);
+  _water.wrapS = _water.wrapT = THREE.RepeatWrapping;
+  return _water;
+}
+
+function drawWater(time: number) {
+  const tex = waterTexture();
+  const ctx = (tex.image as HTMLCanvasElement).getContext("2d");
+  if (!ctx) return;
+  const img = ctx.getImageData(0, 0, 128, 128);
+  const d = img.data;
+  for (let y = 0; y < 128; y++) {
+    for (let x = 0; x < 128; x++) {
+      const v =
+        Math.sin(y * 0.42 + time * 1.3) * 0.55 +
+        Math.sin(x * 0.11 + y * 0.07 - time * 0.7) * 0.35 +
+        Math.sin((x + y) * 0.19 + time * 0.9) * 0.1;
+      const i = (y * 128 + x) * 4;
+      d[i] = d[i + 1] = d[i + 2] = 128 + v * 110;
+      d[i + 3] = 255;
+    }
+  }
+  ctx.putImageData(img, 0, 0);
+  tex.needsUpdate = true;
+}
+
+function Water({ mobile }: { mobile: boolean }) {
+  const frame = useRef(0);
+  // Cada 2 frames alcanza: las ondas son lentas.
+  useFrame(({ clock }) => {
+    if (frame.current++ % 2 === 0) drawWater(clock.elapsedTime);
+  });
+  return (
+    <mesh rotation-x={-Math.PI / 2} position={[0, 0, 0]}>
+      <planeGeometry args={[60, 30]} />
+      {/* mirror=1: el piso sólo muestra lo que refleja; donde no hay nada,
+          queda negro. El color claro es lo que multiplica al reflejo. */}
+      <MeshReflectorMaterial
+        resolution={mobile ? 512 : 1024}
+        blur={[90, 20]}
+        mixBlur={0.35}
+        mixStrength={1.6}
+        mixContrast={1.05}
+        mirror={1}
+        depthScale={2.2}
+        minDepthThreshold={0}
+        maxDepthThreshold={1}
+        distortionMap={waterTexture()}
+        distortion={0.02}
+        roughness={1}
+        metalness={0}
+        color="#8c8c8c"
+        envMapIntensity={0}
+      />
+    </mesh>
+  );
+}
+
 function CameraRig({ mobile }: { mobile: boolean }) {
   // La pantalla activa manda: la cámara se aleja lo justo para que ocupe
   // ~2/3 del ancho en desktop (casi todo en mobile) sin pasarse de alto.
@@ -230,8 +296,8 @@ export default function ShowcaseScene({
       className="!absolute inset-0"
     >
       <CameraRig mobile={mobile} />
-      <fog attach="fog" args={["#0a0a0b", 12, 26]} />
-      <hemisphereLight args={["#ffffff", "#111111", 0.35]} />
+      <fog attach="fog" args={["#000000", 12, 26]} />
+      <hemisphereLight args={["#ffffff", "#000000", 0.9]} />
       <Environment resolution={256} frames={1} environmentIntensity={1.2}>
         <Lightformer form="rect" intensity={2.5} position={[0, 5, -3]} rotation-x={Math.PI / 2.2} scale={[12, 4, 1]} />
         <Lightformer form="rect" intensity={1.2} position={[-6, 2, 3]} rotation-y={Math.PI / 2} scale={[8, 2, 1]} />
@@ -240,25 +306,8 @@ export default function ShowcaseScene({
       {projects.map((p, i) => (
         <Screen key={p.slug} project={p} index={i} pos={pos} mobile={mobile} active={i === active} onPick={onPick} />
       ))}
-      {/* Piso pulido: refleja las pantallas con un desenfoque suave, como
-          un piso de resina o un escenario. */}
-      <mesh rotation-x={-Math.PI / 2} position={[0, 0, 0]}>
-        <planeGeometry args={[60, 30]} />
-        <MeshReflectorMaterial
-          resolution={mobile ? 512 : 1024}
-          blur={[300, 100]}
-          mixBlur={1}
-          mixStrength={90}
-          mixContrast={1}
-          depthScale={1.2}
-          minDepthThreshold={0.4}
-          maxDepthThreshold={1.4}
-          roughness={1}
-          metalness={0.5}
-          color="#050506"
-          envMapIntensity={0.08}
-        />
-      </mesh>
+      {/* Piso de agua quieta: negro, con el reflejo apenas ondulado. */}
+      <Water mobile={mobile} />
     </Canvas>
   );
 }
