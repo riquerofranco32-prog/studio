@@ -16,7 +16,9 @@ cacheado con el mismo nombre. Los clips de 2026-09c son grabaciones del sitio
 en vivo a 1280×800 (16:10, la misma proporción que las pantallas de la rueda
 3D y que las capturas): bajan por la página, pasan el cursor por el CTA y
 vuelven arriba. En Pravilo y Muzzaga recorren el sistema de turnos sin
-confirmar ninguna reserva; en Apex usan el celular de la app del atleta.
+confirmar ninguna reserva; en Apex usan el celular de la app del atleta. En iPhone Vita el hero se arma
+con la rueda (bloquea el scroll hasta terminar), así que se grabó con eventos
+de rueda: arma el hero, baja por el catálogo y lo rebobina hasta el título.
 
 Y hay que declararlos en `data/projects.ts`:
 
