@@ -7,7 +7,7 @@ export const SITE = {
   // se7enstudio.com.ar no resuelve: canonical, OG, sitemap y JSON-LD apuntaban a
   // un dominio muerto. Cuando haya dominio propio, se cambia con la variable.
   url: process.env.NEXT_PUBLIC_SITE_URL ?? "https://se7enstudio.vercel.app",
-  email: "riquerofranco32@gmail.com",
+  email: "se7endevv@gmail.com",
   whatsapp: "https://wa.me/5492994247985",
   // ponytail: sin cuentas de estudio propias todavía (instagram.com/se7enstudio,
   // linkedin.com/company/se7enstudio y github.com/se7enstudio no existen o no son

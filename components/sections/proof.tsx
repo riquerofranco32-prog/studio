@@ -17,7 +17,7 @@ const keyStats = [
 
 export function Proof() {
   return (
-    <section className="border-t border-border py-20 md:py-28">
+    <section className="py-20 md:py-28">
       <Container>
         <p className="font-mono text-xs tracking-widest text-muted uppercase">
           El estudio, en números

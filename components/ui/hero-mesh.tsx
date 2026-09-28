@@ -65,6 +65,10 @@ export function HeroMesh() {
           speed={0.25}
           distortion={0.85}
           swirl={0.5}
+          // Es un degradé difuso: a ~0.5 MP se ve igual y el shader procesa
+          // un cuarto de los píxeles que en una pantalla retina completa.
+          minPixelRatio={1}
+          maxPixelCount={960 * 540}
         />
       ) : null}
 

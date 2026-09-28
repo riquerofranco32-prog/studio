@@ -10,7 +10,6 @@ import {
   GitBranch,
   GitCommit,
   Layers,
-  MessageCircle,
   Play,
   Rocket,
   ShieldCheck,
@@ -25,6 +24,7 @@ import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/ui/reveal";
 import { useSoundFx } from "@/components/providers/sound-provider";
 import { SITE } from "@/data/site";
+import { WhatsAppLogo } from "@/components/icons/whatsapp-logo";
 
 interface SprintTask {
   id: string;
@@ -133,7 +133,7 @@ export function PortalClient() {
                 rel="noopener noreferrer"
                 className="focus-ring inline-flex items-center gap-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 px-3.5 py-1.5 font-mono text-xs text-emerald-400 hover:bg-emerald-500/20 transition-colors"
               >
-                <MessageCircle size={14} />
+                <WhatsAppLogo size={14} />
                 <span>Canal Directo</span>
               </a>
 

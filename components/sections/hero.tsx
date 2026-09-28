@@ -14,11 +14,11 @@ import {
 import { ArrowRight, ArrowUpRight } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { ButtonLink } from "@/components/ui/button-link";
-import { Marquee } from "@/components/ui/marquee";
 import { Magnetic } from "@/components/ui/magnetic";
 import { ScrambleText } from "@/components/ui/scramble-text";
 import { HeroMesh } from "@/components/ui/hero-mesh";
 import { DeliveryCard } from "@/components/sections/hero/delivery-card";
+import { BrandMarquee } from "@/components/sections/hero/brand-marquee";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { EASE } from "@/lib/motion";
 import { projects } from "@/data/projects";
@@ -94,13 +94,19 @@ export function Hero() {
           className="pointer-events-none absolute inset-0 opacity-60"
         />
       )}
+      {/* Borde de abajo: la grilla y el resplandor se funden con blur en el
+          fondo de la página, sin línea de corte contra la sección siguiente. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-64 bg-gradient-to-b from-transparent via-background/70 to-background"
+      />
 
       <Container className="relative">
         <div
           className="hero-rise mb-8 flex flex-wrap items-center gap-3"
           style={{ animationDelay: SEQUENCE.kicker }}
         >
-          <div className="inline-flex items-center gap-2.5 rounded-full border border-border bg-surface/80 px-3.5 py-1.5 font-mono text-xs text-muted backdrop-blur-md">
+          <div className="inline-flex items-center gap-2.5 rounded-full border border-border bg-surface/90 px-3.5 py-1.5 font-mono text-xs text-muted">
             <span className="relative flex h-2 w-2">
               {!reduceMotion && (
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
@@ -185,30 +191,15 @@ export function Hero() {
 
       {/* Marquee de Clientes y Productos */}
       <div
-        className="hero-rise relative mt-14 border-y md:mt-16 border-border py-4 bg-surface/30"
+        className="hero-rise relative mt-14 md:mt-16"
         style={{ animationDelay: SEQUENCE.ticker }}
         onMouseMove={reduceMotion ? undefined : handleMarqueeMouseMove}
         onMouseLeave={reduceMotion ? undefined : () => setHovered(null)}
       >
-        <Marquee duration={35}>
-          {clientBrands.map((project) => (
-            <span
-              key={project.slug}
-              onMouseEnter={
-                reduceMotion ? undefined : () => setHovered(project)
-              }
-              className="flex items-center gap-8 pr-8 text-lg font-medium tracking-tight text-muted transition-colors hover:text-foreground md:text-xl"
-            >
-              <span>{project.name}</span>
-              <span className="font-mono text-xs text-accent">
-                [{project.category.split("/")[0].trim()}]
-              </span>
-              <span aria-hidden className="text-accent/40 text-xs">
-                ✱
-              </span>
-            </span>
-          ))}
-        </Marquee>
+        <BrandMarquee
+          projects={clientBrands}
+          onHover={reduceMotion ? undefined : setHovered}
+        />
       </div>
 
       {/* Preview flotante: se abre en círculo desde el cursor al pasar sobre

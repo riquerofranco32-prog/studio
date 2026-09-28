@@ -65,6 +65,9 @@ const waterFragment = /* glsl */ `
   uniform sampler2D map;
   uniform float time;
   uniform float lum;
+  // Onda del cursor: punto (en uv del reflejo) y fuerza, que se apaga sola.
+  uniform vec2 mouse;
+  uniform float ripple;
   varying vec2 vUv;
 
   float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
@@ -87,6 +90,15 @@ const waterFragment = /* glsl */ `
     float n = n1 * 0.65 + n2 * 0.35;
     float amp = 0.004 + far * 0.022;
     vec2 uv = vUv + vec2((n - 0.5) * amp, (n2 - 0.5) * amp * 0.6);
+
+    // El cursor toca el agua: anillos concéntricos que se abren desde el
+    // punto y empujan el reflejo hacia afuera. El reflejo es 16:10, así que
+    // la distancia se corrige para que los anillos sean redondos.
+    vec2 dm = (vUv - mouse) * vec2(1.6, 1.0);
+    float dist = length(dm);
+    float wave = sin(dist * 48.0 - time * 7.0);
+    float rings = wave * exp(-dist * 5.0) * ripple;
+    uv += (dm / max(dist, 1e-4)) * rings * 0.024;
 
     // Desenfoque: ya suave al pie de la pantalla y cada vez más abierto.
     // 13 muestras en dos anillos, estirados en vertical.
@@ -117,12 +129,20 @@ const waterFragment = /* glsl */ `
     float crest = smoothstep(0.62, 0.9, n) * (0.35 + 0.65 * smoothstep(0.0, 0.25, far));
     float lines = 0.5 + 0.5 * sin(far * 170.0 + n * 9.0 - time * 2.4);
     c *= 0.82 + 0.5 * crest * lines;
+    // Las crestas de la onda del cursor levantan luz, y el punto de contacto
+    // brilla un poco.
+    c *= 1.0 + rings * 0.8;
+    // Filo de luz en cada anillo, del color del reflejo más un poco de blanco.
+    float edge = pow(max(wave, 0.0), 10.0) * exp(-dist * 4.5) * ripple;
+    c += (c * 0.8 + vec3(0.08)) * edge;
+    c += c * exp(-dist * 12.0) * ripple * 0.6;
 
     // Tinte muy leve de agua profunda en lo oscuro.
     c += vec3(0.0, 0.006, 0.012) * (1.0 - l);
 
     // Más fuerte al pie de la pantalla y apagado hacia el fondo.
     float fade = pow(1.0 - far, 1.8) * mix(0.5, 0.26, far);
+    fade = min(1.0, fade + edge * 0.35);
     gl_FragColor = vec4(c * lum * 0.8, fade);
     #include <colorspace_fragment>
   }
@@ -140,7 +160,18 @@ function Surfaces({ tex, screenRef, waterRef }: { tex: THREE.Texture } & Refs) {
     map: { value: tex },
     time: { value: 0 },
     lum: { value: 1 },
+    mouse: { value: new THREE.Vector2(0.5, 0.2) },
+    ripple: { value: 0 },
   }));
+
+  // Pasar el cursor (o tocar) el agua la agita en ese punto. La fuerza se
+  // apaga sola en el useFrame de Screen.
+  function stir(e: ThreeEvent<PointerEvent>) {
+    const u = ((e.eventObject as THREE.Mesh).material as THREE.ShaderMaterial).uniforms;
+    if (!e.uv || !u) return;
+    u.mouse.value.copy(e.uv);
+    u.ripple.value = Math.min(1, u.ripple.value + 0.35);
+  }
 
   return (
     <>
@@ -151,7 +182,11 @@ function Surfaces({ tex, screenRef, waterRef }: { tex: THREE.Texture } & Refs) {
       </mesh>
       {/* Su reflejo, espejado bajo la línea del agua (y = 0). */}
       <group scale={[1, -1, 1]}>
-        <mesh position={[0, LIFT + (SH + FRAME * 2) / 2, DEPTH / 2 + 0.003]}>
+        <mesh
+          position={[0, LIFT + (SH + FRAME * 2) / 2, DEPTH / 2 + 0.003]}
+          onPointerMove={stir}
+          onPointerDown={stir}
+        >
           <planeGeometry args={[SW, SH]} />
           <shaderMaterial
             ref={waterRef}
@@ -252,7 +287,7 @@ function Screen({
   const pool = useRef<THREE.MeshBasicMaterial>(null);
   const accent = project.brand?.accent ?? "#ff4d2e";
 
-  useFrame(({ clock }) => {
+  useFrame(({ clock }, delta) => {
     const g = group.current;
     if (!g) return;
     const v = index - pos.get();
@@ -275,6 +310,8 @@ function Screen({
     if (w) {
       w.uniforms.lum.value = lum;
       w.uniforms.time.value = clock.elapsedTime + index * 3.1;
+      // La onda del cursor se calma en ~2 s.
+      w.uniforms.ripple.value *= Math.pow(0.2, delta);
     }
     if (glow.current) glow.current.opacity = 0.35 * (1 - e);
     if (pool.current) pool.current.opacity = 0.16 * (1 - e);
@@ -384,17 +421,23 @@ export default function ShowcaseScene({
   pos,
   active,
   mobile,
+  live,
   onPick,
 }: {
   projects: Project[];
   pos: MotionValue<number>;
   active: number;
   mobile: boolean;
+  /** false: la sección no está a la vista; la escena no dibuja cuadros. */
+  live: boolean;
   onPick: (i: number) => void;
 }) {
   return (
     <Canvas
-      dpr={[1, mobile ? 1.5 : 2]}
+      frameloop={live ? "always" : "never"}
+      // 1.5 alcanza para pantallas retina: a 2 el shader del agua procesa
+      // casi el doble de píxeles por cuadro sin diferencia a la vista.
+      dpr={[1, 1.5]}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
       camera={{ fov: 30, near: 0.1, far: 80, position: [0, 1.8, 9] }}
       className="!absolute inset-0"
@@ -408,7 +451,7 @@ export default function ShowcaseScene({
         <Lightformer form="rect" intensity={1} position={[6, 2, 3]} rotation-y={-Math.PI / 2} scale={[8, 2, 1]} />
       </Environment>
       {projects.map((p, i) => (
-        <Screen key={p.slug} project={p} index={i} pos={pos} mobile={mobile} active={i === active} onPick={onPick} />
+        <Screen key={p.slug} project={p} index={i} pos={pos} mobile={mobile} active={live && i === active} onPick={onPick} />
       ))}
     </Canvas>
   );

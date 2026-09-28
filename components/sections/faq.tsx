@@ -2,10 +2,11 @@
 
 import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import { ChevronDown, HelpCircle, MessageCircle } from "lucide-react";
+import { ChevronDown, HelpCircle } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { faqs } from "@/data/faq";
+import { WhatsAppLogo } from "@/components/icons/whatsapp-logo";
 import { SITE } from "@/data/site";
 
 // Misma fuente que la lista: si cambia una respuesta, cambia el schema.
@@ -36,7 +37,7 @@ function StillHaveQuestions() {
         rel="noopener noreferrer"
         className="focus-ring mt-4 inline-flex items-center gap-2 text-sm font-medium text-accent transition-colors hover:underline"
       >
-        <MessageCircle size={16} aria-hidden="true" />
+        <WhatsAppLogo size={16} aria-hidden="true" />
         Consultar por WhatsApp &rarr;
       </a>
     </div>

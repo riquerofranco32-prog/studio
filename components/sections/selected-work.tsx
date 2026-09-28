@@ -13,7 +13,7 @@ const ordered = [...projects].sort((a, b) => a.order - b.order);
 
 export function SelectedWork() {
   return (
-    <section id="work" className="border-t border-border py-20 md:py-28">
+    <section id="work" className="py-20 md:py-28">
       <Container>
         <div className="flex flex-col justify-between gap-8 md:flex-row md:items-end">
           <div className="max-w-2xl">

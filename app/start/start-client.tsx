@@ -11,7 +11,6 @@ import {
   Sparkles,
   Layers,
   Clock,
-  MessageCircle,
   Check,
   Calendar,
   Layout,
@@ -27,6 +26,7 @@ import { useSoundFx } from "@/components/providers/sound-provider";
 import { SITE } from "@/data/site";
 import { sendLead } from "@/lib/send-lead";
 import { LeadError } from "@/components/ui/lead-error";
+import { WhatsAppLogo } from "@/components/icons/whatsapp-logo";
 
 const productTypes = [
   {
@@ -255,7 +255,7 @@ ${extraDetails ? `• Detalles: ${extraDetails}` : ""}
                     rel="noopener noreferrer"
                     className="focus-ring inline-flex items-center gap-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 px-6 py-3 text-sm font-medium text-emerald-400 hover:bg-emerald-500/20 transition-colors"
                   >
-                    <MessageCircle size={16} />
+                    <WhatsAppLogo size={16} />
                     <span>Continuar por WhatsApp</span>
                   </a>
 

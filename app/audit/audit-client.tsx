@@ -11,7 +11,6 @@ import {
   ArrowRight,
   Sparkles,
   Send,
-  MessageCircle,
   Clock,
 } from "lucide-react";
 import { Container } from "@/components/ui/container";
@@ -20,6 +19,7 @@ import { useSoundFx } from "@/components/providers/sound-provider";
 import { SITE } from "@/data/site";
 import { sendLead } from "@/lib/send-lead";
 import { LeadError } from "@/components/ui/lead-error";
+import { WhatsAppLogo } from "@/components/icons/whatsapp-logo";
 
 const platformOptions = [
   "WordPress / WooCommerce",
@@ -136,7 +136,7 @@ export function AuditClient() {
                     rel="noopener noreferrer"
                     className="focus-ring inline-flex items-center gap-2 rounded-full bg-emerald-500 px-6 py-3 text-xs font-semibold text-white hover:bg-emerald-600 transition-colors"
                   >
-                    <MessageCircle size={15} />
+                    <WhatsAppLogo size={15} />
                     <span>Avisar por WhatsApp</span>
                   </a>
 

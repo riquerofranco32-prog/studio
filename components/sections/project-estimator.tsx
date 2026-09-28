@@ -4,7 +4,6 @@ import { useState } from "react";
 import {
   Sparkles,
   ArrowRight,
-  MessageCircle,
   Clock,
   Cpu,
   Check,
@@ -17,6 +16,7 @@ import { Container } from "@/components/ui/container";
 import { SectionHeading } from "@/components/ui/section-heading";
 import { Magnetic } from "@/components/ui/magnetic";
 import Link from "next/link";
+import { WhatsAppLogo } from "@/components/icons/whatsapp-logo";
 import { SITE } from "@/data/site";
 
 interface ProductTypeOption {
@@ -507,7 +507,7 @@ export function ProjectEstimator() {
                     rel="noopener noreferrer"
                     className="focus-ring inline-flex items-center justify-center gap-1.5 rounded-full border border-emerald-500/30 bg-emerald-500/10 px-4 py-2.5 font-mono text-xs text-emerald-400 hover:bg-emerald-500/20 transition-colors"
                   >
-                    <MessageCircle size={14} />
+                    <WhatsAppLogo size={14} />
                     <span>WhatsApp</span>
                   </a>
                 </div>

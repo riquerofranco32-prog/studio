@@ -9,7 +9,6 @@ import {
   Layers,
   Calculator,
   Mail,
-  MessageCircle,
   Calendar,
   Sparkles,
   Zap,
@@ -21,6 +20,7 @@ import {
 } from "lucide-react";
 import type { LucideIcon } from "lucide-react";
 import { projects } from "@/data/projects";
+import { WhatsAppLogo } from "@/components/icons/whatsapp-logo";
 import { SITE } from "@/data/site";
 
 interface CommandItem {
@@ -28,7 +28,7 @@ interface CommandItem {
   title: string;
   subtitle?: string;
   category: "Proyectos" | "Servicios" | "Acciones Rápidas" | "Navegación";
-  icon: LucideIcon;
+  icon: LucideIcon | typeof WhatsAppLogo;
   action: () => void;
   keywords?: string[];
 }
@@ -151,7 +151,7 @@ export function CommandPalette() {
         title: "Escribirnos directamente por WhatsApp",
         subtitle: "+54 9 299 424-7985 (Respuesta en < 24 h)",
         category: "Acciones Rápidas",
-        icon: MessageCircle,
+        icon: WhatsAppLogo,
         keywords: ["whatsapp", "chat", "mensaje", "contacto"],
         action: () => {
           setOpen(false);

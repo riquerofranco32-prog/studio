@@ -12,7 +12,6 @@ import {
   ArrowRight,
   Check,
   Mail,
-  MessageCircle,
 } from "lucide-react";
 import { InstagramIcon, LinkedinIcon } from "@/components/ui/brand-icons";
 import { Container } from "@/components/ui/container";
@@ -20,6 +19,7 @@ import { RevealText } from "@/components/ui/reveal-text";
 import { CopyButton } from "@/components/ui/copy-button";
 import { SITE } from "@/data/site";
 import { SLOTS, useMonthName } from "@/lib/availability";
+import { WhatsAppLogo } from "@/components/icons/whatsapp-logo";
 
 const projectTypes = [
   "Landing page",
@@ -273,7 +273,7 @@ export function Contact() {
                   rel="noopener noreferrer"
                   className="focus-ring inline-flex items-center gap-2.5 text-sm text-emerald-400 transition-colors hover:text-emerald-300"
                 >
-                  <MessageCircle
+                  <WhatsAppLogo
                     size={16}
                     className="shrink-0"
                     aria-hidden="true"
@@ -536,7 +536,7 @@ function StepActions({ step, onBack }: { step: number; onBack: () => void }) {
             value="whatsapp"
             className="focus-ring inline-flex items-center justify-center gap-2 rounded-full border border-emerald-500/40 px-6 py-3.5 text-sm font-medium text-emerald-400 transition-colors hover:bg-emerald-500/10"
           >
-            <MessageCircle size={16} aria-hidden="true" />
+            <WhatsAppLogo size={16} aria-hidden="true" />
             Enviar por WhatsApp
           </button>
           <button
