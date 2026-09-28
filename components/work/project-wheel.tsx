@@ -141,8 +141,18 @@ function Wheel({ projects }: { projects: Project[] }) {
     <div
       ref={sectionRef}
       style={{ height: `calc(100vh + ${(n - 1) * STEP_VH}vh)` }}
-      className="relative mt-8"
+      className="relative mt-20"
     >
+      {/* Entrada y salida del escenario negro: fundido con blur, sin corte
+          contra el fondo de la página. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 -top-20 z-10 h-20 bg-gradient-to-b from-transparent to-black backdrop-blur-sm [mask-image:linear-gradient(to_bottom,transparent,black)]"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 -bottom-24 z-10 h-24 bg-gradient-to-b from-black to-transparent backdrop-blur-sm [mask-image:linear-gradient(to_top,transparent,black)]"
+      />
       {/* Fondo negro puro: el agua sólo tiene que mostrar el reflejo. */}
       <div className="sticky top-0 h-[100dvh] overflow-hidden bg-black">
         {/* Luz ambiente del color de la marca activa, detrás de la escena. */}

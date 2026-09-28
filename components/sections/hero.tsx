@@ -94,6 +94,12 @@ export function Hero() {
           className="pointer-events-none absolute inset-0 opacity-60"
         />
       )}
+      {/* Borde de abajo: la grilla y el resplandor se funden con blur en el
+          fondo de la página, sin línea de corte contra la sección siguiente. */}
+      <div
+        aria-hidden
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-40 bg-gradient-to-b from-transparent to-background backdrop-blur-md [mask-image:linear-gradient(to_bottom,transparent,black_70%)]"
+      />
 
       <Container className="relative">
         <div
