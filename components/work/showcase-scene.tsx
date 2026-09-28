@@ -28,7 +28,7 @@ const FRAME = 0.07; // marco negro alrededor de la imagen
 const DEPTH = 0.07; // espesor del panel
 const LIFT = 0.1; // separación del piso (pie invisible)
 
-const SMALL = 0.52;
+const SMALL = 0.46;
 
 function imageUrl(src: string) {
   // Mismo optimizador que next/image: la pantalla no necesita el JPG de 2160px.
@@ -182,21 +182,29 @@ function glowTexture() {
 }
 
 function CameraRig({ mobile }: { mobile: boolean }) {
-  // Cámara baja, casi a la altura de las pantallas: así el piso muestra el
-  // reflejo entero. Se recalcula por frame (es barato) para seguir el tamaño.
+  // La pantalla activa manda: la cámara se aleja lo justo para que ocupe
+  // ~2/3 del ancho en desktop (casi todo en mobile) sin pasarse de alto.
+  // Se recalcula por frame (es barato) para seguir el tamaño del canvas.
   useFrame(({ camera, size }) => {
     const cam = camera as THREE.PerspectiveCamera;
     const aspect = size.width / size.height;
-    const dist = mobile ? 13 / Math.min(1, aspect * 1.9) : 11;
     const fov = mobile ? 34 : 30;
     if (cam.fov !== fov) {
       cam.fov = fov;
       cam.updateProjectionMatrix();
     }
-    cam.position.set(0, mobile ? 1.7 : 1.55, dist);
-    // Mirar por debajo del centro sube las pantallas en el cuadro y deja a
-    // la vista el piso con el reflejo, entre la pantalla y los datos.
-    cam.lookAt(0, mobile ? 0.15 : 0.35, 0);
+    const tanHalf = Math.tan((fov * Math.PI) / 360);
+    const fullW = SW + FRAME * 2;
+    const fullH = SH + FRAME * 2;
+    const byWidth = fullW / ((mobile ? 0.9 : 0.64) * 2 * tanHalf * aspect);
+    const byHeight = fullH / ((mobile ? 0.34 : 0.6) * 2 * tanHalf);
+    // La activa está adelantada 0.9 hacia la cámara.
+    const dist = Math.max(byWidth, byHeight) + 0.9;
+    const cy = LIFT + fullH / 2;
+    cam.position.set(0, cy + 0.15, dist);
+    // Mirar un poco por debajo del centro la ubica en la parte de arriba
+    // del cuadro y deja el reflejo a la vista antes de los datos.
+    cam.lookAt(0, cy - (mobile ? 1.05 : 0.42), 0);
   });
   return null;
 }
