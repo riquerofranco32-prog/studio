@@ -158,7 +158,7 @@ function Wheel({ projects }: { projects: Project[] }) {
             los datos del proyecto se leen encima. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-[42%] bg-[linear-gradient(to_top,#000_18%,rgba(0,0,0,0.85)_45%,transparent)]"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-[34%] bg-[linear-gradient(to_top,#000_38%,rgba(0,0,0,0.78)_68%,transparent)]"
         />
 
         {/* Lista accesible: la escena 3D no es navegable con teclado. */}

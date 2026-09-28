@@ -1,11 +1,10 @@
 "use client";
 
-import { Suspense, useRef } from "react";
+import { Suspense, useRef, useState } from "react";
 import { Canvas, useFrame, type ThreeEvent } from "@react-three/fiber";
 import {
   Environment,
   Lightformer,
-  MeshReflectorMaterial,
   RoundedBox,
   useTexture,
   useVideoTexture,
@@ -14,11 +13,15 @@ import * as THREE from "three";
 import type { MotionValue } from "framer-motion";
 import type { Project } from "@/types";
 
-// Vidriera 3D de la rueda de Trabajo. Cada proyecto es una pantalla de vidrio
-// con canto de aluminio, parada sobre agua negra y quieta que la refleja de
-// verdad (MeshReflectorMaterial con un mapa de ondas). El scroll gira la rueda: la pantalla que
-// llega al centro se adelanta y se enciende con su sitio; las de los
-// costados quedan atenuadas, giradas en arco.
+// Vidriera 3D de la rueda de Trabajo: pantallas de vidrio con canto de
+// aluminio flotando en un cuarto negro, sobre agua quieta. El scroll gira la
+// rueda: la pantalla que llega al centro se adelanta y se enciende; las de
+// los costados quedan atenuadas, giradas en arco.
+//
+// No hay un piso físico: un piso tiene borde y color, y se nota el corte
+// contra el fondo. El agua es el reflejo de cada pantalla, dibujado invertido
+// debajo de ella con su misma imagen (o clip), ondulado y desvanecido. No
+// depende de la luz de la escena, así que es negro puro donde no refleja nada.
 
 // Pantalla 16:10 en unidades de escena. Ojo con RoundedBox: el radio tiene
 // que ser menor que la mitad del lado más chico, si no la geometría se infla.
@@ -26,7 +29,7 @@ const SW = 3.2;
 const SH = SW * (10 / 16);
 const FRAME = 0.07; // marco negro alrededor de la imagen
 const DEPTH = 0.07; // espesor del panel
-const LIFT = 0.1; // separación del piso (pie invisible)
+const LIFT = 0.04; // altura sobre el agua
 
 const SMALL = 0.46;
 
@@ -41,21 +44,88 @@ function pickVideo(video: NonNullable<Project["video"]>) {
   return v.canPlayType('video/webm; codecs="vp9"') ? video.webm : video.mp4;
 }
 
-type Lit = { current: THREE.MeshBasicMaterial | null };
+// Reflejo en el agua: la imagen invertida, corrida por ondas suaves que se
+// abren a medida que se aleja de la línea del agua, y desvanecida hacia abajo.
+const waterVertex = /* glsl */ `
+  varying vec2 vUv;
+  void main() {
+    vUv = uv;
+    gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+  }
+`;
+const waterFragment = /* glsl */ `
+  uniform sampler2D map;
+  uniform float time;
+  uniform float lum;
+  varying vec2 vUv;
+  void main() {
+    vec2 uv = vUv;
+    // v = 0 es el borde de abajo de la pantalla, el que toca el agua.
+    float far = uv.y;
+    float wave = sin(far * 58.0 + time * 2.1) * 0.0032
+               + sin(far * 21.0 - time * 1.3 + uv.x * 7.0) * 0.0024;
+    uv.x += wave * (0.25 + far * 1.6);
+    uv.y += sin(uv.x * 30.0 + time * 1.7) * 0.002 * far;
+    vec4 c = texture2D(map, uv);
+    float fade = pow(1.0 - far, 2.0) * 0.5;
+    gl_FragColor = vec4(c.rgb * lum, fade);
+    #include <colorspace_fragment>
+  }
+`;
 
-function ScreenImage({ src, mat }: { src: string; mat: Lit }) {
+type Refs = {
+  screenRef: React.Ref<THREE.MeshBasicMaterial>;
+  waterRef: React.Ref<THREE.ShaderMaterial>;
+};
+
+function Surfaces({ tex, screenRef, waterRef }: { tex: THREE.Texture } & Refs) {
+  // Cada textura monta su propio Surfaces (imagen o clip), así que los
+  // uniforms nacen ya con su mapa.
+  const [uniforms] = useState(() => ({
+    map: { value: tex },
+    time: { value: 0 },
+    lum: { value: 1 },
+  }));
+
+  return (
+    <>
+      {/* Imagen del sitio. */}
+      <mesh position={[0, LIFT + (SH + FRAME * 2) / 2, DEPTH / 2 + 0.003]}>
+        <planeGeometry args={[SW, SH]} />
+        <meshBasicMaterial ref={screenRef} map={tex} toneMapped={false} />
+      </mesh>
+      {/* Su reflejo, espejado bajo la línea del agua (y = 0). */}
+      <group scale={[1, -1, 1]}>
+        <mesh position={[0, LIFT + (SH + FRAME * 2) / 2, DEPTH / 2 + 0.003]}>
+          <planeGeometry args={[SW, SH]} />
+          <shaderMaterial
+            ref={waterRef}
+            uniforms={uniforms}
+            vertexShader={waterVertex}
+            fragmentShader={waterFragment}
+            transparent
+            depthWrite={false}
+            side={THREE.DoubleSide}
+          />
+        </mesh>
+      </group>
+    </>
+  );
+}
+
+function ImageSurfaces({ src, ...refs }: { src: string } & Refs) {
   // Color y nitidez se ajustan en la carga, dentro del propio hook.
   const tex = useTexture(src, (t) => {
     const one = Array.isArray(t) ? t[0] : t;
     one.colorSpace = THREE.SRGBColorSpace;
     one.anisotropy = 8;
   });
-  return <meshBasicMaterial ref={mat} map={tex} toneMapped={false} />;
+  return <Surfaces tex={tex} {...refs} />;
 }
 
-function ScreenVideo({ src, mat }: { src: string; mat: Lit }) {
+function VideoSurfaces({ src, ...refs }: { src: string } & Refs) {
   const tex = useVideoTexture(src, { muted: true, loop: true, start: true, crossOrigin: "anonymous" });
-  return <meshBasicMaterial ref={mat} map={tex} toneMapped={false} />;
+  return <Surfaces tex={tex} {...refs} />;
 }
 
 const frameMat = new THREE.MeshPhysicalMaterial({
@@ -69,6 +139,28 @@ const edgeMat = new THREE.MeshPhysicalMaterial({
   color: "#c7cad0",
   metalness: 1,
   roughness: 0.22,
+});
+// Reflejo del canto: apagado y desvanecido con la profundidad bajo el agua,
+// igual que la imagen, para que no dibuje un rectángulo con borde.
+const edgeReflMat = new THREE.ShaderMaterial({
+  transparent: true,
+  depthWrite: false,
+  vertexShader: /* glsl */ `
+    varying float vY;
+    void main() {
+      vec4 w = modelMatrix * vec4(position, 1.0);
+      vY = w.y;
+      gl_Position = projectionMatrix * viewMatrix * w;
+    }
+  `,
+  fragmentShader: /* glsl */ `
+    varying float vY;
+    void main() {
+      float fade = pow(clamp(1.0 + vY / 1.4, 0.0, 1.0), 2.0) * 0.4;
+      gl_FragColor = vec4(vec3(0.42), fade);
+      #include <colorspace_fragment>
+    }
+  `,
 });
 
 function Screen({
@@ -87,12 +179,13 @@ function Screen({
   onPick: (i: number) => void;
 }) {
   const group = useRef<THREE.Group>(null);
-  const screenMat = useRef<THREE.MeshBasicMaterial | null>(null);
+  const screen = useRef<THREE.MeshBasicMaterial | null>(null);
+  const water = useRef<THREE.ShaderMaterial | null>(null);
   const glow = useRef<THREE.MeshBasicMaterial>(null);
+  const pool = useRef<THREE.MeshBasicMaterial>(null);
   const accent = project.brand?.accent ?? "#ff4d2e";
-  const dim = useRef(new THREE.Color());
 
-  useFrame(() => {
+  useFrame(({ clock }) => {
     const g = group.current;
     if (!g) return;
     const v = index - pos.get();
@@ -109,9 +202,15 @@ function Screen({
     g.rotation.y = -Math.max(-0.6, Math.min(0.6, v * 0.38));
     g.visible = a < (mobile ? 1.8 : 3.6);
     // Encendido: la imagen pasa de atenuada a plena al llegar al centro.
-    const lum = 0.28 + 0.72 * (1 - e);
-    if (screenMat.current) screenMat.current.color.copy(dim.current.setScalar(lum));
-    if (glow.current) glow.current.opacity = 0.55 * (1 - e);
+    const lum = 0.26 + 0.74 * (1 - e);
+    screen.current?.color.setScalar(lum);
+    const w = water.current;
+    if (w) {
+      w.uniforms.lum.value = lum;
+      w.uniforms.time.value = clock.elapsedTime + index * 3.1;
+    }
+    if (glow.current) glow.current.opacity = 0.35 * (1 - e);
+    if (pool.current) pool.current.opacity = 0.22 * (1 - e);
   });
 
   function onClick(ev: ThreeEvent<MouseEvent>) {
@@ -121,6 +220,7 @@ function Screen({
 
   const w = SW + FRAME * 2;
   const h = SH + FRAME * 2;
+  const glowMap = glowTexture();
 
   return (
     <group
@@ -129,122 +229,59 @@ function Screen({
       onPointerOver={() => (document.body.style.cursor = "pointer")}
       onPointerOut={() => (document.body.style.cursor = "")}
     >
+      {/* Canto de aluminio y panel de vidrio negro. */}
       <group position={[0, LIFT + h / 2, 0]}>
-        {/* Canto de aluminio y panel de vidrio negro. */}
         <RoundedBox args={[w + 0.02, h + 0.02, DEPTH]} radius={DEPTH * 0.45} smoothness={4} material={edgeMat} />
         <RoundedBox args={[w, h, DEPTH + 0.004]} radius={DEPTH * 0.4} smoothness={4} material={frameMat} />
-        {/* Imagen del sitio. */}
-        <mesh position={[0, 0, DEPTH / 2 + 0.003]}>
-          <planeGeometry args={[SW, SH]} />
-          <Suspense fallback={<meshBasicMaterial color="#0b0b0c" />}>
-            {active && project.video ? (
-              <Suspense fallback={<ScreenImage src={imageUrl(project.image)} mat={screenMat} />}>
-                <ScreenVideo src={pickVideo(project.video)} mat={screenMat} />
-              </Suspense>
-            ) : (
-              <ScreenImage src={imageUrl(project.image)} mat={screenMat} />
-            )}
-          </Suspense>
-        </mesh>
         {/* Halo del color de la marca detrás de la pantalla encendida. */}
-        <mesh position={[0, 0, -DEPTH]} scale={1.18}>
+        <mesh position={[0, 0, -DEPTH]} scale={1.2}>
           <planeGeometry args={[w, h]} />
-          <meshBasicMaterial
-            ref={glow}
-            color={accent}
-            transparent
-            opacity={0}
-            depthWrite={false}
-            blending={THREE.AdditiveBlending}
-            toneMapped={false}
-            map={glowTexture()}
-          />
+          <meshBasicMaterial ref={glow} color={accent} transparent opacity={0} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} map={glowMap} />
         </mesh>
       </group>
+      {/* El canto también se refleja: sin él, entre la pantalla y su reflejo
+          queda un hueco que delata que no hay agua. */}
+      <group scale={[1, -1, 1]}>
+        <group position={[0, LIFT + h / 2, 0]}>
+          <RoundedBox args={[w + 0.02, h + 0.02, DEPTH]} radius={DEPTH * 0.45} smoothness={4} material={edgeReflMat} />
+        </group>
+      </group>
+
+      {/* Imagen y su reflejo en el agua. */}
+      <Suspense fallback={null}>
+        {active && project.video ? (
+          <Suspense fallback={<ImageSurfaces src={imageUrl(project.image)} screenRef={screen} waterRef={water} />}>
+            <VideoSurfaces src={pickVideo(project.video)} screenRef={screen} waterRef={water} />
+          </Suspense>
+        ) : (
+          <ImageSurfaces src={imageUrl(project.image)} screenRef={screen} waterRef={water} />
+        )}
+      </Suspense>
+
+      {/* Luz del foco sobre el agua, al pie de la pantalla encendida. */}
+      <mesh rotation-x={-Math.PI / 2} position={[0, 0.001, 0.9]} scale={[w * 1.5, 2.6, 1]}>
+        <planeGeometry args={[1, 1]} />
+        <meshBasicMaterial ref={pool} color="#ffffff" transparent opacity={0} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} map={glowMap} />
+      </mesh>
     </group>
   );
 }
 
-// Degradé radial para el halo, generado una sola vez.
+// Degradé radial para halos y luz del foco, generado una sola vez.
 let _glow: THREE.Texture | null = null;
 function glowTexture() {
   if (_glow) return _glow;
   const c = document.createElement("canvas");
   c.width = c.height = 128;
   const ctx = c.getContext("2d")!;
-  const g = ctx.createRadialGradient(64, 64, 8, 64, 64, 64);
+  const g = ctx.createRadialGradient(64, 64, 4, 64, 64, 64);
   g.addColorStop(0, "rgba(255,255,255,1)");
+  g.addColorStop(0.5, "rgba(255,255,255,0.35)");
   g.addColorStop(1, "rgba(255,255,255,0)");
   ctx.fillStyle = g;
   ctx.fillRect(0, 0, 128, 128);
   _glow = new THREE.CanvasTexture(c);
   return _glow;
-}
-
-// Agua: mapa de distorsión que se redibuja con ondas suaves y lentas. El
-// shader del reflector corre el UV del reflejo según este mapa.
-// Una sola textura para toda la página (hay una sola escena).
-let _water: THREE.CanvasTexture | null = null;
-function waterTexture() {
-  if (_water) return _water;
-  const c = document.createElement("canvas");
-  c.width = c.height = 128;
-  _water = new THREE.CanvasTexture(c);
-  _water.wrapS = _water.wrapT = THREE.RepeatWrapping;
-  return _water;
-}
-
-function drawWater(time: number) {
-  const tex = waterTexture();
-  const ctx = (tex.image as HTMLCanvasElement).getContext("2d");
-  if (!ctx) return;
-  const img = ctx.getImageData(0, 0, 128, 128);
-  const d = img.data;
-  for (let y = 0; y < 128; y++) {
-    for (let x = 0; x < 128; x++) {
-      const v =
-        Math.sin(y * 0.42 + time * 1.3) * 0.55 +
-        Math.sin(x * 0.11 + y * 0.07 - time * 0.7) * 0.35 +
-        Math.sin((x + y) * 0.19 + time * 0.9) * 0.1;
-      const i = (y * 128 + x) * 4;
-      d[i] = d[i + 1] = d[i + 2] = 128 + v * 110;
-      d[i + 3] = 255;
-    }
-  }
-  ctx.putImageData(img, 0, 0);
-  tex.needsUpdate = true;
-}
-
-function Water({ mobile }: { mobile: boolean }) {
-  const frame = useRef(0);
-  // Cada 2 frames alcanza: las ondas son lentas.
-  useFrame(({ clock }) => {
-    if (frame.current++ % 2 === 0) drawWater(clock.elapsedTime);
-  });
-  return (
-    <mesh rotation-x={-Math.PI / 2} position={[0, 0, 0]}>
-      <planeGeometry args={[60, 30]} />
-      {/* mirror=1: el piso sólo muestra lo que refleja; donde no hay nada,
-          queda negro. El color claro es lo que multiplica al reflejo. */}
-      <MeshReflectorMaterial
-        resolution={mobile ? 512 : 1024}
-        blur={[90, 20]}
-        mixBlur={0.35}
-        mixStrength={1.6}
-        mixContrast={1.05}
-        mirror={1}
-        depthScale={2.2}
-        minDepthThreshold={0}
-        maxDepthThreshold={1}
-        distortionMap={waterTexture()}
-        distortion={0.02}
-        roughness={1}
-        metalness={0}
-        color="#8c8c8c"
-        envMapIntensity={0}
-      />
-    </mesh>
-  );
 }
 
 function CameraRig({ mobile }: { mobile: boolean }) {
@@ -296,18 +333,16 @@ export default function ShowcaseScene({
       className="!absolute inset-0"
     >
       <CameraRig mobile={mobile} />
-      <fog attach="fog" args={["#000000", 12, 26]} />
-      <hemisphereLight args={["#ffffff", "#000000", 0.9]} />
-      <Environment resolution={256} frames={1} environmentIntensity={1.2}>
-        <Lightformer form="rect" intensity={2.5} position={[0, 5, -3]} rotation-x={Math.PI / 2.2} scale={[12, 4, 1]} />
-        <Lightformer form="rect" intensity={1.2} position={[-6, 2, 3]} rotation-y={Math.PI / 2} scale={[8, 2, 1]} />
-        <Lightformer form="rect" intensity={1.2} position={[6, 2, 3]} rotation-y={-Math.PI / 2} scale={[8, 2, 1]} />
+      {/* Foco de frente, alto: hace brillar los cantos de aluminio. */}
+      <spotLight position={[0, 6, 10]} angle={0.5} penumbra={1} intensity={80} distance={40} decay={2} />
+      <Environment resolution={256} frames={1} environmentIntensity={1}>
+        <Lightformer form="rect" intensity={2.5} position={[0, 5, 6]} rotation-x={-Math.PI / 3} scale={[10, 3, 1]} />
+        <Lightformer form="rect" intensity={1} position={[-6, 2, 3]} rotation-y={Math.PI / 2} scale={[8, 2, 1]} />
+        <Lightformer form="rect" intensity={1} position={[6, 2, 3]} rotation-y={-Math.PI / 2} scale={[8, 2, 1]} />
       </Environment>
       {projects.map((p, i) => (
         <Screen key={p.slug} project={p} index={i} pos={pos} mobile={mobile} active={i === active} onPick={onPick} />
       ))}
-      {/* Piso de agua quieta: negro, con el reflejo apenas ondulado. */}
-      <Water mobile={mobile} />
     </Canvas>
   );
 }
