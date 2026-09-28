@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useSpring } from "framer-motion";
 import { Menu, X, ArrowUpRight, Search, Volume2, VolumeX } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { SITE } from "@/data/site";
@@ -27,6 +27,11 @@ export function Navbar() {
   const sectionActive = useActiveSection(pathname === "/");
   const toggleRef = useRef<HTMLButtonElement>(null);
   const menuRef = useRef<HTMLDivElement>(null);
+  const [hovered, setHovered] = useState<string | null>(null);
+  // Progreso de lectura: una línea de acento en el borde de abajo de la
+  // pastilla, suavizada con un resorte corto.
+  const { scrollYProgress } = useScroll();
+  const progress = useSpring(scrollYProgress, { stiffness: 220, damping: 34, mass: 0.4 });
 
   // Ruta propia (/work, /blog/x…) o, en la home, la misma sección que marca la
   // side-nav: así los dos indicadores nunca se contradicen.
@@ -82,16 +87,28 @@ export function Navbar() {
       // site-header: le da identidad propia en la capa de View Transitions para
       // poder congelarlo. Ver globals.css — un navbar fijo que se desliza con la
       // página rompe el punto de referencia espacial de la transición.
-      className={`site-header fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
-        scrolled
-          ? "border-b border-border bg-background/80 backdrop-blur-md"
-          : "border-b border-transparent bg-transparent"
+      //
+      // Arriba de todo es una barra transparente a lo ancho. Al bajar se
+      // despega del borde y se cierra en una pastilla flotante de vidrio: se
+      // angosta, se redondea y baja unos píxeles, todo con la misma curva.
+      className={`site-header fixed inset-x-0 top-0 z-50 transition-[padding] duration-500 ease-[var(--ease)] ${
+        scrolled ? "px-3 pt-3 md:px-6" : "px-0 pt-0"
       }`}
     >
-      <Container>
+      <div
+        className={`relative mx-auto transition-[max-width,border-radius,background-color,border-color,box-shadow] duration-500 ease-[var(--ease)] ${
+          scrolled
+            ? `max-w-[1080px] border border-white/10 shadow-[0_12px_40px_-12px_rgba(0,0,0,0.7),inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-xl backdrop-saturate-150 ${
+                // Con el menú mobile abierto la pastilla pasa a tarjeta: un
+                // radio completo sobre algo alto la deforma en un óvalo.
+                open ? "rounded-[28px] bg-background/95" : "rounded-[32px] bg-background/65"
+              }`
+            : "max-w-[1400px] rounded-none border border-transparent bg-transparent"
+        }`}
+      >
         <nav
-          className={`flex items-center justify-between transition-all duration-300 ${
-            scrolled ? "h-16" : "h-20"
+          className={`flex items-center justify-between transition-[height,padding] duration-500 ease-[var(--ease)] ${
+            scrolled ? "h-14 pr-2 pl-5 md:pl-6" : "h-20 px-6 md:px-10"
           }`}
         >
           <Link href="/" className="focus-ring inline-flex items-center">
@@ -108,38 +125,56 @@ export function Navbar() {
               // sirve la variante de 1920px para un logo que se pinta a ~115px.
               sizes="120px"
               priority
-              className="h-7 w-auto"
+              className={`w-auto transition-[height] duration-500 ease-[var(--ease)] ${scrolled ? "h-6" : "h-7"}`}
             />
           </Link>
 
-          <ul className="hidden items-center gap-10 lg:flex">
-            {links.map((link) => (
-              <li key={link.href}>
-                <Link
-                  href={link.href}
-                  aria-current={active === link.id ? "true" : undefined}
-                  className={`focus-ring relative text-sm transition-colors hover:text-foreground ${
-                    active === link.id ? "text-foreground" : "text-muted"
-                  }`}
-                >
-                  {link.label}
-                  <span
-                    aria-hidden
-                    className={`absolute -bottom-1.5 left-0 h-px bg-accent transition-all duration-300 ${
-                      active === link.id ? "w-full" : "w-0"
+          <ul
+            className="hidden items-center gap-1 lg:flex"
+            onMouseLeave={() => setHovered(null)}
+          >
+            {links.map((link) => {
+              const isActive = active === link.id;
+              return (
+                <li key={link.href} className="relative">
+                  <Link
+                    href={link.href}
+                    aria-current={isActive ? "true" : undefined}
+                    onMouseEnter={() => setHovered(link.id)}
+                    className={`focus-ring relative flex items-center gap-1.5 rounded-full px-4 py-2 text-sm transition-colors duration-300 hover:text-foreground ${
+                      isActive ? "text-foreground" : "text-muted"
                     }`}
-                  />
-                </Link>
-              </li>
-            ))}
+                  >
+                    {/* Pastilla que sigue al cursor entre los links. */}
+                    {hovered === link.id && (
+                      <motion.span
+                        layoutId="nav-hover"
+                        aria-hidden
+                        className="absolute inset-0 rounded-full bg-white/[0.09] ring-1 ring-white/10"
+                        transition={{ type: "spring", stiffness: 420, damping: 34 }}
+                      />
+                    )}
+                    {isActive && (
+                      <motion.span
+                        layoutId="nav-active"
+                        aria-hidden
+                        className="relative h-1.5 w-1.5 rounded-full bg-accent shadow-[0_0_10px_var(--accent)]"
+                        transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                      />
+                    )}
+                    <span className="relative">{link.label}</span>
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
 
-          <div className="hidden items-center gap-3 lg:flex">
+          <div className="hidden items-center gap-2 lg:flex">
             {/* Toggle de sonido */}
             <button
               type="button"
               onClick={toggleSound}
-              className="focus-ring p-2 rounded-full border border-border bg-surface/80 text-muted hover:border-foreground/30 hover:text-foreground transition-colors"
+              className="focus-ring rounded-full border border-border bg-surface/60 p-2 text-muted transition-colors hover:border-foreground/30 hover:text-foreground"
               title={
                 soundEnabled
                   ? "Silenciar efectos de sonido"
@@ -163,11 +198,11 @@ export function Navbar() {
               onClick={() =>
                 window.dispatchEvent(new CustomEvent("open-command-palette"))
               }
-              className="focus-ring inline-flex items-center gap-2 rounded-full border border-border bg-surface/80 px-3 py-1.5 font-mono text-xs text-muted hover:border-foreground/30 hover:text-foreground transition-colors"
+              className="focus-ring inline-flex items-center gap-2 rounded-full border border-border bg-surface/60 px-3 py-1.5 font-mono text-xs text-muted transition-colors hover:border-foreground/30 hover:text-foreground"
               title="Buscar (⌘K / Ctrl+K)"
             >
               <Search size={13} />
-              <span className="hidden xl:inline">Buscar</span>
+              <span className={scrolled ? "hidden" : "hidden xl:inline"}>Buscar</span>
               <kbd className="rounded border border-border bg-background px-1.5 py-0.5 text-[10px] text-muted">
                 ⌘K
               </kbd>
@@ -175,12 +210,19 @@ export function Navbar() {
 
             <Link
               href="/start"
-              className="focus-ring group inline-flex items-center gap-1.5 rounded-full bg-accent px-5 py-2.5 text-sm font-medium text-background transition-colors duration-300 hover:bg-accent/90"
+              className={`focus-ring group relative inline-flex items-center gap-1.5 overflow-hidden rounded-full bg-accent text-sm font-medium text-background shadow-[0_6px_20px_-6px_var(--accent)] transition-[padding,background-color] duration-500 ease-[var(--ease)] hover:bg-accent/90 ${
+                scrolled ? "px-4 py-2" : "px-5 py-2.5"
+              }`}
             >
-              Iniciar un proyecto
+              {/* Brillo que cruza el botón al pasar el cursor. */}
+              <span
+                aria-hidden
+                className="pointer-events-none absolute inset-y-0 -left-1/2 w-1/2 -skew-x-12 bg-gradient-to-r from-transparent via-white/35 to-transparent transition-transform duration-700 ease-out group-hover:translate-x-[300%]"
+              />
+              <span className="relative">Iniciar un proyecto</span>
               <ArrowUpRight
                 size={14}
-                className="transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
+                className="relative transition-transform duration-300 group-hover:-translate-y-0.5 group-hover:translate-x-0.5"
               />
             </Link>
           </div>
@@ -209,7 +251,15 @@ export function Navbar() {
             </button>
           </div>
         </nav>
-      </Container>
+
+        {/* Progreso de lectura: sólo en la pastilla. */}
+        <motion.span
+          aria-hidden
+          style={{ scaleX: progress }}
+          className={`pointer-events-none absolute right-6 bottom-0 left-6 h-px origin-left bg-gradient-to-r from-accent/0 via-accent to-accent/0 transition-opacity duration-500 ${
+            scrolled && !open ? "opacity-100" : "opacity-0"
+          }`}
+        />
 
       <AnimatePresence>
         {open && (
@@ -220,9 +270,9 @@ export function Navbar() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-            className="overflow-hidden border-b border-border bg-background lg:hidden"
+            className={`overflow-hidden lg:hidden ${scrolled ? "" : "border-b border-border bg-background"}`}
           >
-            <Container className="flex flex-col gap-1 py-4">
+            <Container className={`flex flex-col gap-1 py-4 ${scrolled ? "!px-5" : ""}`}>
               {links.map((link) => (
                 <Link
                   key={link.href}
@@ -244,6 +294,7 @@ export function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
+      </div>
     </header>
   );
 }
