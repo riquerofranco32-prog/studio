@@ -264,7 +264,7 @@ const BrandLabel = ({
     <motion.div
       ref={ref}
       exit={{ opacity: 0, y: -10, transition: { duration: 0.2 } }}
-      className="flex items-end justify-between gap-6"
+      className={mobile ? "flex flex-col items-start gap-4" : "flex items-end justify-between gap-6"}
     >
       <div className="min-w-0">
         <p className="font-mono text-[11px] uppercase tracking-widest text-muted">
