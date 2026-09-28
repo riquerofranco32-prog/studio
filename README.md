@@ -53,6 +53,24 @@ NEXT_PUBLIC_SUPABASE_ANON_KEY=
 
 Both are optional in v1.
 
+### Panel de pedidos (`/admin`)
+
+El panel de Franco y Federico muestra los pedidos de proyecto que llegan por los
+formularios del sitio, en un tablero por etapa (Nuevo → Contactado → Propuesta →
+Ganado / Perdido), con responsable, notas internas y respuesta rápida por mail.
+
+Variables en Vercel (Settings → Environment Variables), y después redeploy:
+
+```bash
+ADMIN_PASSWORD=             # contraseña del panel (no va en el código: el repo es público)
+SUPABASE_URL=               # Supabase → Project Settings → API
+SUPABASE_SERVICE_ROLE_KEY=  # idem; sólo se usa en el servidor
+# ADMIN_SESSION_SECRET=     # opcional; por defecto se deriva de la contraseña
+```
+
+La tabla se crea pegando `supabase/leads.sql` en el SQL editor de Supabase. Sin
+Supabase configurado el panel funciona, pero avisa que los pedidos todavía no se guardan.
+
 ## Project structure
 
 ```

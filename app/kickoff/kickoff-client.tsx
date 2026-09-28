@@ -75,6 +75,7 @@ export function KickoffClient() {
     setSending(true);
     setSendError(null);
     const result = await sendLead({
+      source: "kickoff",
       name: contactLeader || projectName || "Cliente Kickoff",
       projectType: "Kickoff de Proyecto",
       budget: "Confirmado",

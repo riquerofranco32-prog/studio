@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { SITE } from "@/data/site";
+import { insertLead } from "@/lib/admin/db";
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const MAX_FIELD = 200;
@@ -53,10 +54,25 @@ export async function POST(request: Request) {
     idea: field(body.idea ?? body.message, "", MAX_IDEA),
   };
 
+  // El pedido se guarda para el panel /admin. Con eso solo ya no se pierde:
+  // el mail es un aviso extra.
+  const stored = await insertLead({
+    source: field(body.source, "formulario", 40),
+    channel: "email",
+    name: lead.name,
+    email: lead.email,
+    company: lead.company,
+    project_type: lead.projectType,
+    budget: lead.budget,
+    timeline: lead.timeline,
+    idea: lead.idea,
+  });
+
   const resendApiKey = process.env.RESEND_API_KEY;
   if (!resendApiKey) {
-    // Sin proveedor no hay envío: responder éxito acá perdía leads en silencio.
-    console.error("[contact] RESEND_API_KEY no configurada; lead no enviado:", lead.name);
+    if (stored) return NextResponse.json({ success: true }, { status: 200 });
+    // Sin base ni proveedor de mail: responder éxito acá perdía leads en silencio.
+    console.error("[contact] Sin base ni RESEND_API_KEY; lead no guardado:", lead.name);
     return NextResponse.json(
       { error: "El formulario no está disponible ahora. Escribinos por WhatsApp o mail." },
       { status: 503 }
@@ -110,6 +126,7 @@ export async function POST(request: Request) {
     if (!res.ok) {
       const detail = await res.text().catch(() => "");
       console.error("[contact] Resend rechazó el envío:", res.status, detail);
+      if (stored) return NextResponse.json({ success: true }, { status: 200 });
       return NextResponse.json(
         { error: "No pudimos enviar tu mensaje. Escribinos por WhatsApp o mail." },
         { status: 502 }
@@ -117,6 +134,7 @@ export async function POST(request: Request) {
     }
   } catch (error) {
     console.error("[contact] Error de red con Resend:", error);
+    if (stored) return NextResponse.json({ success: true }, { status: 200 });
     return NextResponse.json(
       { error: "No pudimos enviar tu mensaje. Escribinos por WhatsApp o mail." },
       { status: 502 }

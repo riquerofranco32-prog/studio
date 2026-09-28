@@ -197,8 +197,15 @@ export function Contact() {
     const channel: Channel =
       submitter?.getAttribute("value") === "whatsapp" ? "whatsapp" : "email";
     const href = buildHref(channel, values);
-    // ponytail: sin backend. Se abre la app del visitante con el mensaje
-    // armado; no podemos confirmar el envío, y el éxito lo dice así.
+    // El pedido queda registrado para el panel /admin (keepalive: sigue aunque
+    // la página se vaya al mailto). La charla sigue en la app del visitante con
+    // el mensaje armado; no podemos confirmar ese envío, y el éxito lo dice así.
+    fetch("/api/leads", {
+      method: "POST",
+      keepalive: true,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...values, channel }),
+    }).catch(() => {});
     if (channel === "whatsapp") {
       window.open(href, "_blank", "noopener,noreferrer");
     } else {

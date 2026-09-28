@@ -6,6 +6,8 @@ export interface LeadPayload {
   budget?: string;
   timeline?: string;
   idea?: string;
+  /** De qué formulario viene, para el panel /admin. */
+  source?: string;
 }
 
 export type LeadResult = { ok: true } | { ok: false; error: string };
