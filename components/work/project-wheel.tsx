@@ -89,11 +89,22 @@ function Wheel({ projects }: { projects: Project[] }) {
           io.disconnect();
         }
       },
-      { rootMargin: "100% 0px" },
+      { rootMargin: "250% 0px" },
     );
     if (el) io.observe(el);
+    // Además se precarga cuando la página ya terminó y el navegador está
+    // libre: quien llega de golpe (el link "Casos" del menú) encuentra las
+    // pantallas con su imagen, no marcos vacíos.
+    let idle = 0;
+    const warm = () => {
+      idle = window.setTimeout(() => setNear(true), 1500);
+    };
+    if (document.readyState === "complete") warm();
+    else window.addEventListener("load", warm, { once: true });
     return () => {
       window.removeEventListener("resize", update);
+      window.removeEventListener("load", warm);
+      window.clearTimeout(idle);
       io.disconnect();
     };
   }, []);
