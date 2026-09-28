@@ -1,19 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
+import dynamic from "next/dynamic";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import {
   AnimatePresence,
   motion,
-  MotionValue,
   TargetAndTransition,
   Transition,
   useMotionValueEvent,
   useScroll,
   useSpring,
   useTransform,
-  useVelocity,
 } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 import { ProjectCard } from "@/components/work/project-card";
@@ -22,69 +21,81 @@ import { EASE } from "@/lib/motion";
 import { brandFonts } from "@/lib/brand-fonts";
 import type { Project, ProjectBrand } from "@/types";
 
-// Rueda horizontal de proyectos. La sección es alta y su interior queda fijo
-// (sticky) mientras se scrollea: el scroll recorre la lista, el proyecto
-// activo se ve grande en el centro y el resto queda en miniatura a los
-// costados, girado como sobre un cilindro. Al scrollear rápido se desenfoca
-// un poco, como un barrido.
+// Rueda horizontal de proyectos, en 3D. La sección es alta y su interior
+// queda fijo (sticky) mientras se scrollea: cada proyecto es una pantalla
+// parada sobre un piso que la refleja (components/work/showcase-scene.tsx).
+// La del centro se adelanta y se enciende; las de los costados quedan
+// atenuadas. Debajo, el nombre y la frase con la tipografía y el color de su
+// marca.
 
-/** Escala de las miniaturas respecto de la tarjeta activa. */
-const SMALL = 0.3;
-/** Aire entre la activa y la primera miniatura, en px. */
-const GAP = 32;
-/** Aire entre miniaturas, en px (ya escaladas). */
-const THUMB_GAP = 14;
-/** Cuánto sube la tarjeta respecto del centro, para dejar lugar a los datos. */
-const LIFT = 40;
 /** Alto de scroll que consume cada proyecto, en vh. */
 const STEP_VH = 60;
 
-type Dims = { w: number; h: number; mobile: boolean };
+// three.js pesa: se baja sólo en el cliente y recién cuando la sección está
+// cerca de la pantalla.
+const ShowcaseScene = dynamic(() => import("@/components/work/showcase-scene"), {
+  ssr: false,
+});
 
-function measure(): Dims {
-  const vw = window.innerWidth;
-  const vh = window.innerHeight;
-  // La tarjeta tiene que dejar lugar a las miniaturas de los costados y, en
-  // alto, a los datos del proyecto que van debajo.
-  const byWidth = vw < 768 ? vw * 0.62 : Math.min(vw * 0.46, 680);
-  const byHeight = (vh * 0.5 * 16) / 10;
-  const w = Math.min(byWidth, byHeight);
-  return { w, h: (w * 10) / 16, mobile: vw < 768 };
+function hasWebGL() {
+  try {
+    const c = document.createElement("canvas");
+    return Boolean(c.getContext("webgl2") || c.getContext("webgl"));
+  } catch {
+    return false;
+  }
+}
+
+function Grid({ projects }: { projects: Project[] }) {
+  return (
+    <div className="mx-auto mt-12 grid w-full max-w-[1400px] grid-cols-1 gap-x-8 gap-y-14 px-6 md:grid-cols-2 md:px-10">
+      {projects.map((project, i) => (
+        <ProjectCard key={project.slug} project={project} priority={i === 0} index={i % 2} />
+      ))}
+    </div>
+  );
 }
 
 export function ProjectWheel({ projects }: { projects: Project[] }) {
   const reduceMotion = useReducedMotion();
+  const [webgl, setWebgl] = useState(true);
+  useEffect(() => {
+    const check = () => setWebgl(hasWebGL());
+    check();
+  }, []);
 
-  // Sin la rueda para quien pidió menos movimiento: la grilla de siempre.
-  if (reduceMotion) {
-    return (
-      <div className="mx-auto mt-12 grid w-full max-w-[1400px] grid-cols-1 gap-x-8 gap-y-14 px-6 md:grid-cols-2 md:px-10">
-        {projects.map((project, i) => (
-          <ProjectCard
-            key={project.slug}
-            project={project}
-            priority={i === 0}
-            index={i % 2}
-          />
-        ))}
-      </div>
-    );
-  }
-
+  // Sin la rueda para quien pidió menos movimiento o sin WebGL: la grilla.
+  if (reduceMotion || !webgl) return <Grid projects={projects} />;
   return <Wheel projects={projects} />;
 }
 
 function Wheel({ projects }: { projects: Project[] }) {
   const sectionRef = useRef<HTMLDivElement>(null);
+  const router = useRouter();
   const n = projects.length;
-  const [dims, setDims] = useState<Dims>({ w: 620, h: 387.5, mobile: false });
+  const [mobile, setMobile] = useState(false);
+  const [near, setNear] = useState(false);
   const [active, setActive] = useState(0);
 
   useEffect(() => {
-    const update = () => setDims(measure());
+    const update = () => setMobile(window.innerWidth < 768);
     update();
     window.addEventListener("resize", update);
-    return () => window.removeEventListener("resize", update);
+    const el = sectionRef.current;
+    const io = new IntersectionObserver(
+      ([e]) => {
+        if (e.isIntersecting) {
+          setNear(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "100% 0px" },
+    );
+    if (el) io.observe(el);
+    return () => {
+      window.removeEventListener("resize", update);
+      io.disconnect();
+    };
   }, []);
 
   const { scrollYProgress } = useScroll({
@@ -93,18 +104,11 @@ function Wheel({ projects }: { projects: Project[] }) {
   });
   const raw = useTransform(scrollYProgress, (p) => p * (n - 1));
   // Resorte corto: suaviza el paso entre proyectos sin sentirse atrasado.
-  const pos = useSpring(raw, { stiffness: 180, damping: 30, mass: 0.6 });
+  const pos = useSpring(raw, { stiffness: 160, damping: 28, mass: 0.7 });
 
   useMotionValueEvent(pos, "change", (v) => {
     const i = Math.min(n - 1, Math.max(0, Math.round(v)));
     setActive((prev) => (prev === i ? prev : i));
-  });
-
-  // Desenfoque por velocidad: quieto es 0, barriendo llega a 6px.
-  const velocity = useVelocity(pos);
-  const blur = useTransform(velocity, (v) => {
-    const px = Math.min(Math.abs(v) * 1.6, 6);
-    return px < 0.3 ? "none" : `blur(${px.toFixed(1)}px)`;
   });
 
   function scrollToIndex(i: number) {
@@ -115,6 +119,11 @@ function Wheel({ projects }: { projects: Project[] }) {
     window.scrollTo({ top: top + (travel * i) / (n - 1), behavior: "smooth" });
   }
 
+  function pick(i: number) {
+    if (i === active) router.push(`/work/${projects[i].slug}`);
+    else scrollToIndex(i);
+  }
+
   const current = projects[active];
 
   return (
@@ -123,8 +132,9 @@ function Wheel({ projects }: { projects: Project[] }) {
       style={{ height: `calc(100vh + ${(n - 1) * STEP_VH}vh)` }}
       className="relative mt-8"
     >
-      <div className="sticky top-0 flex h-[100dvh] items-center justify-center overflow-hidden">
-        {/* Luz ambiente del color de la marca activa, detrás de la pila. */}
+      {/* Fondo negro puro: el agua sólo tiene que mostrar el reflejo. */}
+      <div className="sticky top-0 h-[100dvh] overflow-hidden bg-black">
+        {/* Luz ambiente del color de la marca activa, detrás de la escena. */}
         <AnimatePresence initial={false}>
           <motion.div
             key={`glow-${current.slug}`}
@@ -134,42 +144,39 @@ function Wheel({ projects }: { projects: Project[] }) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.9, ease: EASE }}
             style={{
-              background: `radial-gradient(ellipse 60% 48% at 50% calc(50% - ${LIFT}px), ${alpha(accentOf(current), 0.2)}, transparent 72%)`,
+              background: `radial-gradient(ellipse 50% 38% at 50% 34%, ${alpha(accentOf(current), 0.12)}, transparent 70%)`,
             }}
             className="pointer-events-none absolute inset-0"
           />
         </AnimatePresence>
 
-        {/* Pila de proyectos */}
-        <motion.div
-          style={{ filter: blur, perspective: 1200 }}
-          className="relative h-full w-full"
-        >
-          {projects.map((project, i) => (
-            <WheelItem
-              key={project.slug}
-              project={project}
-              index={i}
-              pos={pos}
-              dims={dims}
-              active={i === active}
-              accent={accentOf(project)}
-              onSelect={() => scrollToIndex(i)}
-            />
-          ))}
-        </motion.div>
+        {near && (
+          <ShowcaseScene projects={projects} pos={pos} active={active} mobile={mobile} onPick={pick} />
+        )}
 
-        {/* Datos del proyecto activo, debajo de la tarjeta, con la
-            personalidad de su marca: tipografía, color, frase y entrada. */}
+        {/* El agua se pierde en negro hacia abajo: así el reflejo se funde y
+            los datos del proyecto se leen encima. */}
         <div
-          style={{
-            top: `calc(50% + ${dims.h / 2 + LIFT + 22}px)`,
-            width: dims.mobile ? "calc(100% - 48px)" : Math.max(dims.w, 640),
-          }}
-          className="pointer-events-none absolute left-1/2 -translate-x-1/2"
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-[24%] bg-[linear-gradient(to_top,#000_30%,rgba(0,0,0,0.7)_60%,transparent)]"
+        />
+
+        {/* Lista accesible: la escena 3D no es navegable con teclado. */}
+        <ul className="sr-only">
+          {projects.map((p) => (
+            <li key={p.slug}>
+              <Link href={`/work/${p.slug}`}>{p.name} — {p.category}</Link>
+            </li>
+          ))}
+        </ul>
+
+        {/* Datos del proyecto activo con la personalidad de su marca. */}
+        <div
+          style={{ width: mobile ? "calc(100% - 48px)" : "min(760px, calc(100% - 80px))" }}
+          className={`pointer-events-none absolute left-1/2 -translate-x-1/2 ${mobile ? "bottom-24" : "bottom-[5vh]"}`}
         >
           <AnimatePresence mode="popLayout" initial={false}>
-            <BrandLabel key={current.slug} project={current} mobile={dims.mobile} />
+            <BrandLabel key={current.slug} project={current} mobile={mobile} />
           </AnimatePresence>
         </div>
 
@@ -182,110 +189,6 @@ function Wheel({ projects }: { projects: Project[] }) {
         </div>
       </div>
     </div>
-  );
-}
-
-function WheelItem({
-  project,
-  index,
-  pos,
-  dims,
-  active,
-  accent,
-  onSelect,
-}: {
-  project: Project;
-  index: number;
-  pos: MotionValue<number>;
-  dims: Dims;
-  active: boolean;
-  accent: string;
-  onSelect: () => void;
-}) {
-  const { w, mobile } = dims;
-  // En mobile entra una sola miniatura por lado.
-  const fadeFrom = mobile ? 1 : 2.2;
-  // Distancia centro a centro entre la activa y la primera miniatura.
-  const near = w / 2 + (SMALL * w) / 2 + (mobile ? 14 : GAP);
-  // Paso entre miniaturas sucesivas.
-  const far = SMALL * w + THUMB_GAP;
-
-  const d = useTransform(pos, (p) => index - p);
-  const x = useTransform(d, (v) => {
-    const a = Math.abs(v);
-    const off = a <= 1 ? a * near : near + (a - 1) * far;
-    return Math.sign(v) * off;
-  });
-  const scale = useTransform(d, (v) => {
-    const a = Math.min(Math.abs(v), 1);
-    return 1 - (1 - SMALL) * a;
-  });
-  const rotateY = useTransform(d, (v) => Math.max(-28, Math.min(28, v * 16)));
-  const opacity = useTransform(d, (v) => {
-    const a = Math.abs(v);
-    return a <= fadeFrom ? 1 : Math.max(0, 1 - (a - fadeFrom) * (mobile ? 1.5 : 0.5));
-  });
-  const zIndex = useTransform(d, (v) => 100 - Math.round(Math.abs(v) * 10));
-
-  return (
-    <motion.div
-      style={{
-        x,
-        scale,
-        rotateY,
-        opacity,
-        zIndex,
-        width: dims.w,
-        height: dims.h,
-        marginLeft: -dims.w / 2,
-        marginTop: -dims.h / 2 - LIFT,
-      }}
-      className="absolute left-1/2 top-1/2 will-change-transform"
-    >
-      <Link
-        href={`/work/${project.slug}`}
-        aria-label={`${project.name} — ${project.category}`}
-        tabIndex={active ? 0 : -1}
-        onClick={(e) => {
-          if (!active) {
-            e.preventDefault();
-            onSelect();
-          }
-        }}
-        style={
-          active
-            ? {
-                borderColor: alpha(accent, 0.45),
-                boxShadow: `0 40px 90px -40px ${alpha(accent, 0.55)}`,
-              }
-            : undefined
-        }
-        className="focus-ring group relative block h-full w-full overflow-hidden rounded-md border border-border bg-surface transition-[border-color,box-shadow] duration-700"
-      >
-        <Image
-          src={project.image}
-          alt=""
-          fill
-          priority={index === 0}
-          sizes="(min-width: 768px) 680px, 62vw"
-          className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-        />
-        {/* Sólo el activo monta su clip: el resto no baja ni un byte. */}
-        {active && project.video && (
-          <video
-            aria-hidden
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="absolute inset-0 h-full w-full object-cover object-top"
-          >
-            <source src={project.video.webm} type="video/webm" />
-            <source src={project.video.mp4} type="video/mp4" />
-          </video>
-        )}
-      </Link>
-    </motion.div>
   );
 }
 
@@ -370,7 +273,7 @@ const BrandLabel = ({
     <motion.div
       ref={ref}
       exit={{ opacity: 0, y: -10, transition: { duration: 0.2 } }}
-      className="flex items-end justify-between gap-6"
+      className={`[text-shadow:0_2px_24px_rgba(0,0,0,0.95)] ${mobile ? "flex flex-col items-start gap-4" : "flex items-end justify-between gap-6"}`}
     >
       <div className="min-w-0">
         <p className="font-mono text-[11px] uppercase tracking-widest text-muted">

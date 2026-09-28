@@ -12,10 +12,11 @@ Dos archivos por proyecto, con el slug exacto de `data/projects.ts`:
     public/projects/videos/<slug>-<aaaa-mm>.webm
 
 El sufijo de fecha evita que el navegador o la CDN sirvan un clip viejo
-cacheado con el mismo nombre. Los clips de 2026-09 son grabaciones del sitio
-en vivo a 1280×960: bajan por la página, pasan el cursor por el CTA y vuelven
-arriba (en Pravilo, recorren el sistema de turnos hasta elegir horario, sin
-confirmar la reserva).
+cacheado con el mismo nombre. Los clips de 2026-09c son grabaciones del sitio
+en vivo a 1280×800 (16:10, la misma proporción que las pantallas de la rueda
+3D y que las capturas): bajan por la página, pasan el cursor por el CTA y
+vuelven arriba. En Pravilo y Muzzaga recorren el sistema de turnos sin
+confirmar ninguna reserva; en Apex usan el celular de la app del atleta.
 
 Y hay que declararlos en `data/projects.ts`:
 
@@ -38,8 +39,8 @@ que el cursor entra.
 
 | | |
 |---|---|
-| Relación de aspecto | **4:3** — la tarjeta es `aspect-[4/3]` y cualquier otra cosa se recorta |
-| Resolución | **1280×960** |
+| Relación de aspecto | **16:10** — es la de la pantalla 3D; las tarjetas 4:3 lo recortan con `object-cover` |
+| Resolución | **1280×800** |
 | Duración | **4–6 s**, en loop sin costura (el último frame tiene que pegar con el primero) |
 | FPS | 24–30 |
 | Audio | **ninguno** — sacar la pista, no silenciarla: pesa y no se usa |
@@ -51,17 +52,17 @@ para los navegadores que lo prefieran. El `<source>` de WebM va primero.
 ## Comandos de referencia
 
 ```bash
-ffmpeg -i fuente.mov -an -vf "scale=1280:960:force_original_aspect_ratio=increase,crop=1280:960,fps=30" \
+ffmpeg -i fuente.mov -an -vf "scale=1280:800:force_original_aspect_ratio=increase,crop=1280:800,fps=30" \
   -c:v libx264 -profile:v high -pix_fmt yuv420p -crf 26 -movflags +faststart takefyy.mp4
 ```
 
 ```bash
-ffmpeg -i fuente.mov -an -vf "scale=1280:960:force_original_aspect_ratio=increase,crop=1280:960,fps=30" \
+ffmpeg -i fuente.mov -an -vf "scale=1280:800:force_original_aspect_ratio=increase,crop=1280:800,fps=30" \
   -c:v libvpx-vp9 -crf 34 -b:v 0 -row-mt 1 takefyy.webm
 ```
 
 Si un clip se pasa del techo de peso, subir el `-crf` antes que bajar la
-resolución: en un loop de 5 segundos a 1280×960 el ruido de compresión se nota
+resolución: en un loop de 5 segundos a 1280×800 el ruido de compresión se nota
 mucho menos que la falta de nitidez.
 
 ## Los clips se usan en dos lugares, con reglas distintas

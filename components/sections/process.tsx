@@ -11,6 +11,7 @@ import {
   ShieldCheck,
   Clock,
 } from "lucide-react";
+import type { LucideIcon } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { RevealText } from "@/components/ui/reveal-text";
 import { ButtonLink } from "@/components/ui/button-link";
@@ -21,7 +22,7 @@ interface ProcessStep {
   days: string;
   title: string;
   tagline: string;
-  icon: React.ElementType;
+  icon: LucideIcon;
   description: string;
   tasks: string[];
   deliverable: string;
