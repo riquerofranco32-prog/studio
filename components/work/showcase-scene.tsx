@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useRef, useState } from "react";
+import { Suspense, useEffect, useRef, useState } from "react";
 import { Canvas, useFrame, type ThreeEvent } from "@react-three/fiber";
 import {
   Environment,
@@ -44,8 +44,16 @@ function pickVideo(video: NonNullable<Project["video"]>) {
   return v.canPlayType('video/webm; codecs="vp9"') ? video.webm : video.mp4;
 }
 
-// Reflejo en el agua: la imagen invertida, corrida por ondas suaves que se
-// abren a medida que se aleja de la línea del agua, y desvanecida hacia abajo.
+// Reflejo en el agua: la imagen invertida, como la devuelve una superficie
+// oscura y quieta. Tres cosas lo hacen creíble:
+//  - Ondas: una distorsión de ruido animado que crece al alejarse de la línea
+//    del agua (cerca de la pantalla el agua está más quieta).
+//  - Desenfoque: el reflejo se ablanda con la distancia, más en vertical que
+//    en horizontal, como las estelas de luz sobre el agua.
+//  - Brillos: las crestas de las ondas levantan la luz con el color de la
+//    propia pantalla, en líneas finas que se mueven.
+// El color se mantiene saturado (el agua oscura no lo lava a gris) y todo se
+// desvanece hacia abajo hasta el negro del cuarto.
 const waterVertex = /* glsl */ `
   varying vec2 vUv;
   void main() {
@@ -58,17 +66,58 @@ const waterFragment = /* glsl */ `
   uniform float time;
   uniform float lum;
   varying vec2 vUv;
+
+  float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
+  float noise(vec2 p) {
+    vec2 i = floor(p), f = fract(p);
+    vec2 u = f * f * (3.0 - 2.0 * f);
+    return mix(mix(hash(i), hash(i + vec2(1.0, 0.0)), u.x),
+               mix(hash(i + vec2(0.0, 1.0)), hash(i + vec2(1.0, 1.0)), u.x), u.y);
+  }
+
   void main() {
-    vec2 uv = vUv;
     // v = 0 es el borde de abajo de la pantalla, el que toca el agua.
-    float far = uv.y;
-    float wave = sin(far * 58.0 + time * 2.1) * 0.0032
-               + sin(far * 21.0 - time * 1.3 + uv.x * 7.0) * 0.0024;
-    uv.x += wave * (0.25 + far * 1.6);
-    uv.y += sin(uv.x * 30.0 + time * 1.7) * 0.002 * far;
-    vec4 c = texture2D(map, uv);
-    float fade = pow(1.0 - far, 2.0) * 0.5;
-    gl_FragColor = vec4(c.rgb * lum, fade);
+    float far = vUv.y;
+
+    // Ondas: ruido estirado en horizontal (el agua ondula en franjas), que
+    // corre despacio hacia la cámara.
+    vec2 q = vec2(vUv.x * 5.0, far * 26.0 - time * 0.9);
+    float n1 = noise(q + vec2(time * 0.15, 0.0));
+    float n2 = noise(q * 2.3 - vec2(0.0, time * 0.6));
+    float n = n1 * 0.65 + n2 * 0.35;
+    float amp = 0.004 + far * 0.022;
+    vec2 uv = vUv + vec2((n - 0.5) * amp, (n2 - 0.5) * amp * 0.6);
+
+    // Desenfoque creciente: 9 muestras en una cruz alargada en vertical.
+    float r = far * 0.03;
+    vec3 c = texture2D(map, uv).rgb * 0.2;
+    c += texture2D(map, uv + vec2(0.0,  r * 0.5)).rgb * 0.14;
+    c += texture2D(map, uv + vec2(0.0, -r * 0.5)).rgb * 0.14;
+    c += texture2D(map, uv + vec2(0.0,  r)).rgb * 0.1;
+    c += texture2D(map, uv + vec2(0.0, -r)).rgb * 0.1;
+    c += texture2D(map, uv + vec2( r * 0.4, 0.0)).rgb * 0.08;
+    c += texture2D(map, uv + vec2(-r * 0.4, 0.0)).rgb * 0.08;
+    c += texture2D(map, uv + vec2(0.0,  r * 1.6)).rgb * 0.08;
+    c += texture2D(map, uv + vec2(0.0, -r * 1.6)).rgb * 0.08;
+
+    // Color: más saturado y con algo de contraste, para que un sitio claro
+    // no se refleje como una mancha gris.
+    float l = dot(c, vec3(0.2126, 0.7152, 0.0722));
+    c = mix(vec3(l), c, 1.35);
+    c = max(c, 0.0);
+    c = pow(c, vec3(1.12));
+
+    // Brillos en las crestas, del color de lo que se refleja.
+    float crest = smoothstep(0.62, 0.9, n) * (0.35 + 0.65 * smoothstep(0.0, 0.25, far));
+    float lines = 0.5 + 0.5 * sin(far * 170.0 + n * 9.0 - time * 2.4);
+    c *= 0.82 + 0.5 * crest * lines;
+
+    // Tinte muy leve de agua profunda en lo oscuro.
+    c += vec3(0.0, 0.006, 0.012) * (1.0 - l);
+
+    // Más fuerte al pie de la pantalla y apagado hacia el fondo.
+    float fade = pow(1.0 - far, 1.6) * mix(0.8, 0.45, far);
+    gl_FragColor = vec4(c * lum, fade);
     #include <colorspace_fragment>
   }
 `;
@@ -123,9 +172,20 @@ function ImageSurfaces({ src, ...refs }: { src: string } & Refs) {
   return <Surfaces tex={tex} {...refs} />;
 }
 
-function VideoSurfaces({ src, ...refs }: { src: string } & Refs) {
+function VideoSurfaces({ src, poster, ...refs }: { src: string; poster: string } & Refs) {
   const tex = useVideoTexture(src, { muted: true, loop: true, start: true, crossOrigin: "anonymous" });
-  return <Surfaces tex={tex} {...refs} />;
+  // El clip "carga" antes de tener un cuadro decodificado: hasta que avanza
+  // sigue la captura, si no la pantalla pasa un instante a negro.
+  const [playing, setPlaying] = useState(false);
+  useEffect(() => {
+    const v = tex.image as HTMLVideoElement;
+    const on = () => {
+      if (v.currentTime > 0) setPlaying(true);
+    };
+    v.addEventListener("timeupdate", on);
+    return () => v.removeEventListener("timeupdate", on);
+  }, [tex]);
+  return playing ? <Surfaces tex={tex} {...refs} /> : <ImageSurfaces src={poster} {...refs} />;
 }
 
 const frameMat = new THREE.MeshPhysicalMaterial({
@@ -156,8 +216,9 @@ const edgeReflMat = new THREE.ShaderMaterial({
   fragmentShader: /* glsl */ `
     varying float vY;
     void main() {
-      float fade = pow(clamp(1.0 + vY / 1.4, 0.0, 1.0), 2.0) * 0.4;
-      gl_FragColor = vec4(vec3(0.42), fade);
+      float fade = pow(clamp(1.0 + vY / 0.9, 0.0, 1.0), 2.0) * 0.5;
+      // Aluminio visto en el agua: frío y apagado, no gris plano.
+      gl_FragColor = vec4(vec3(0.16, 0.18, 0.22), fade);
       #include <colorspace_fragment>
     }
   `,
@@ -210,7 +271,7 @@ function Screen({
       w.uniforms.time.value = clock.elapsedTime + index * 3.1;
     }
     if (glow.current) glow.current.opacity = 0.35 * (1 - e);
-    if (pool.current) pool.current.opacity = 0.22 * (1 - e);
+    if (pool.current) pool.current.opacity = 0.16 * (1 - e);
   });
 
   function onClick(ev: ThreeEvent<MouseEvent>) {
@@ -251,7 +312,7 @@ function Screen({
       <Suspense fallback={null}>
         {active && project.video ? (
           <Suspense fallback={<ImageSurfaces src={imageUrl(project.image)} screenRef={screen} waterRef={water} />}>
-            <VideoSurfaces src={pickVideo(project.video)} screenRef={screen} waterRef={water} />
+            <VideoSurfaces src={pickVideo(project.video)} poster={imageUrl(project.image)} screenRef={screen} waterRef={water} />
           </Suspense>
         ) : (
           <ImageSurfaces src={imageUrl(project.image)} screenRef={screen} waterRef={water} />
@@ -261,7 +322,7 @@ function Screen({
       {/* Luz del foco sobre el agua, al pie de la pantalla encendida. */}
       <mesh rotation-x={-Math.PI / 2} position={[0, 0.001, 0.9]} scale={[w * 1.5, 2.6, 1]}>
         <planeGeometry args={[1, 1]} />
-        <meshBasicMaterial ref={pool} color="#ffffff" transparent opacity={0} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} map={glowMap} />
+        <meshBasicMaterial ref={pool} color={accent} transparent opacity={0} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} map={glowMap} />
       </mesh>
     </group>
   );
@@ -299,15 +360,15 @@ function CameraRig({ mobile }: { mobile: boolean }) {
     const tanHalf = Math.tan((fov * Math.PI) / 360);
     const fullW = SW + FRAME * 2;
     const fullH = SH + FRAME * 2;
-    const byWidth = fullW / ((mobile ? 0.9 : 0.64) * 2 * tanHalf * aspect);
-    const byHeight = fullH / ((mobile ? 0.34 : 0.6) * 2 * tanHalf);
+    const byWidth = fullW / ((mobile ? 0.9 : 0.58) * 2 * tanHalf * aspect);
+    const byHeight = fullH / ((mobile ? 0.34 : 0.54) * 2 * tanHalf);
     // La activa está adelantada 0.9 hacia la cámara.
     const dist = Math.max(byWidth, byHeight) + 0.9;
     const cy = LIFT + fullH / 2;
     cam.position.set(0, cy + 0.15, dist);
     // Mirar un poco por debajo del centro la ubica en la parte de arriba
     // del cuadro y deja el reflejo a la vista antes de los datos.
-    cam.lookAt(0, cy - (mobile ? 1.05 : 0.42), 0);
+    cam.lookAt(0, cy - (mobile ? 1.05 : 0.6), 0);
   });
   return null;
 }

@@ -158,7 +158,7 @@ function Wheel({ projects }: { projects: Project[] }) {
             los datos del proyecto se leen encima. */}
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 bottom-0 h-[34%] bg-[linear-gradient(to_top,#000_38%,rgba(0,0,0,0.78)_68%,transparent)]"
+          className="pointer-events-none absolute inset-x-0 bottom-0 h-[24%] bg-[linear-gradient(to_top,#000_30%,rgba(0,0,0,0.7)_60%,transparent)]"
         />
 
         {/* Lista accesible: la escena 3D no es navegable con teclado. */}
@@ -173,7 +173,7 @@ function Wheel({ projects }: { projects: Project[] }) {
         {/* Datos del proyecto activo con la personalidad de su marca. */}
         <div
           style={{ width: mobile ? "calc(100% - 48px)" : "min(760px, calc(100% - 80px))" }}
-          className={`pointer-events-none absolute left-1/2 -translate-x-1/2 ${mobile ? "bottom-24" : "bottom-[9vh]"}`}
+          className={`pointer-events-none absolute left-1/2 -translate-x-1/2 ${mobile ? "bottom-24" : "bottom-[5vh]"}`}
         >
           <AnimatePresence mode="popLayout" initial={false}>
             <BrandLabel key={current.slug} project={current} mobile={mobile} />
@@ -273,7 +273,7 @@ const BrandLabel = ({
     <motion.div
       ref={ref}
       exit={{ opacity: 0, y: -10, transition: { duration: 0.2 } }}
-      className={mobile ? "flex flex-col items-start gap-4" : "flex items-end justify-between gap-6"}
+      className={`[text-shadow:0_2px_24px_rgba(0,0,0,0.95)] ${mobile ? "flex flex-col items-start gap-4" : "flex items-end justify-between gap-6"}`}
     >
       <div className="min-w-0">
         <p className="font-mono text-[11px] uppercase tracking-widest text-muted">
