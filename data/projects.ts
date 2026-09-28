@@ -307,6 +307,10 @@ export const projects: Project[] = [
       "Tienda en producción con catálogo y precios administrados por el propio equipo de iPhone Vita.",
     url: "https://iphonevita.vercel.app/",
     image: "/projects/iphone-vita-2026-09.jpg",
+    video: {
+      mp4: "/projects/videos/iphone-vita-2026-09c.mp4",
+      webm: "/projects/videos/iphone-vita-2026-09c.webm",
+    },
     featured: false,
     order: 8,
     size: "large",
