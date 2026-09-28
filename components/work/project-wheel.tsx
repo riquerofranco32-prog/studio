@@ -141,17 +141,17 @@ function Wheel({ projects }: { projects: Project[] }) {
     <div
       ref={sectionRef}
       style={{ height: `calc(100vh + ${(n - 1) * STEP_VH}vh)` }}
-      className="relative mt-20"
+      className="relative mt-28"
     >
       {/* Entrada y salida del escenario negro: fundido con blur, sin corte
           contra el fondo de la página. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 -top-20 z-10 h-20 bg-gradient-to-b from-transparent to-black backdrop-blur-sm [mask-image:linear-gradient(to_bottom,transparent,black)]"
+        className="pointer-events-none absolute inset-x-0 -top-28 z-10 h-40 bg-gradient-to-b from-transparent via-black/70 to-black backdrop-blur-lg [mask-image:linear-gradient(to_bottom,transparent,black_60%)]"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 -bottom-24 z-10 h-24 bg-gradient-to-b from-black to-transparent backdrop-blur-sm [mask-image:linear-gradient(to_top,transparent,black)]"
+        className="pointer-events-none absolute inset-x-0 -bottom-40 z-10 h-48 bg-gradient-to-b from-black via-black/70 to-transparent backdrop-blur-lg [mask-image:linear-gradient(to_top,transparent,black_60%)]"
       />
       {/* Fondo negro puro: el agua sólo tiene que mostrar el reflejo. */}
       <div className="sticky top-0 h-[100dvh] overflow-hidden bg-black">

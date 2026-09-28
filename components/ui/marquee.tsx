@@ -8,17 +8,23 @@ import { ReactNode } from "react";
 export function Marquee({
   children,
   duration = 40,
+  reverse = false,
   className = "",
 }: {
   children: ReactNode;
   duration?: number;
+  /** Corre hacia la derecha en lugar de hacia la izquierda. */
+  reverse?: boolean;
   className?: string;
 }) {
   return (
     <div className={`marquee relative overflow-hidden ${className}`}>
       <div
         className="marquee-track flex"
-        style={{ ["--marquee-duration" as string]: `${duration}s` }}
+        style={{
+          ["--marquee-duration" as string]: `${duration}s`,
+          animationDirection: reverse ? "reverse" : undefined,
+        }}
       >
         <div className="flex shrink-0 items-center">{children}</div>
         <div className="flex shrink-0 items-center" aria-hidden>
