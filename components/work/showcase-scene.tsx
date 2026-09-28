@@ -88,17 +88,23 @@ const waterFragment = /* glsl */ `
     float amp = 0.004 + far * 0.022;
     vec2 uv = vUv + vec2((n - 0.5) * amp, (n2 - 0.5) * amp * 0.6);
 
-    // Desenfoque creciente: 9 muestras en una cruz alargada en vertical.
-    float r = far * 0.03;
-    vec3 c = texture2D(map, uv).rgb * 0.2;
-    c += texture2D(map, uv + vec2(0.0,  r * 0.5)).rgb * 0.14;
-    c += texture2D(map, uv + vec2(0.0, -r * 0.5)).rgb * 0.14;
-    c += texture2D(map, uv + vec2(0.0,  r)).rgb * 0.1;
-    c += texture2D(map, uv + vec2(0.0, -r)).rgb * 0.1;
-    c += texture2D(map, uv + vec2( r * 0.4, 0.0)).rgb * 0.08;
-    c += texture2D(map, uv + vec2(-r * 0.4, 0.0)).rgb * 0.08;
-    c += texture2D(map, uv + vec2(0.0,  r * 1.6)).rgb * 0.08;
-    c += texture2D(map, uv + vec2(0.0, -r * 1.6)).rgb * 0.08;
+    // Desenfoque: ya suave al pie de la pantalla y cada vez más abierto.
+    // 13 muestras en dos anillos, estirados en vertical.
+    float r = 0.012 + far * 0.06;
+    vec2 ry = vec2(0.0, r), rx = vec2(r * 0.55, 0.0);
+    vec3 c = texture2D(map, uv).rgb * 0.12;
+    c += texture2D(map, uv + ry * 0.45).rgb * 0.09;
+    c += texture2D(map, uv - ry * 0.45).rgb * 0.09;
+    c += texture2D(map, uv + rx * 0.45).rgb * 0.07;
+    c += texture2D(map, uv - rx * 0.45).rgb * 0.07;
+    c += texture2D(map, uv + (rx + ry) * 0.5).rgb * 0.06;
+    c += texture2D(map, uv - (rx + ry) * 0.5).rgb * 0.06;
+    c += texture2D(map, uv + (rx - ry) * 0.5).rgb * 0.06;
+    c += texture2D(map, uv - (rx - ry) * 0.5).rgb * 0.06;
+    c += texture2D(map, uv + ry).rgb * 0.08;
+    c += texture2D(map, uv - ry).rgb * 0.08;
+    c += texture2D(map, uv + rx).rgb * 0.08;
+    c += texture2D(map, uv - rx).rgb * 0.08;
 
     // Color: más saturado y con algo de contraste, para que un sitio claro
     // no se refleje como una mancha gris.
@@ -116,8 +122,8 @@ const waterFragment = /* glsl */ `
     c += vec3(0.0, 0.006, 0.012) * (1.0 - l);
 
     // Más fuerte al pie de la pantalla y apagado hacia el fondo.
-    float fade = pow(1.0 - far, 1.6) * mix(0.8, 0.45, far);
-    gl_FragColor = vec4(c * lum, fade);
+    float fade = pow(1.0 - far, 1.8) * mix(0.5, 0.26, far);
+    gl_FragColor = vec4(c * lum * 0.8, fade);
     #include <colorspace_fragment>
   }
 `;
