@@ -421,17 +421,23 @@ export default function ShowcaseScene({
   pos,
   active,
   mobile,
+  live,
   onPick,
 }: {
   projects: Project[];
   pos: MotionValue<number>;
   active: number;
   mobile: boolean;
+  /** false: la sección no está a la vista; la escena no dibuja cuadros. */
+  live: boolean;
   onPick: (i: number) => void;
 }) {
   return (
     <Canvas
-      dpr={[1, mobile ? 1.5 : 2]}
+      frameloop={live ? "always" : "never"}
+      // 1.5 alcanza para pantallas retina: a 2 el shader del agua procesa
+      // casi el doble de píxeles por cuadro sin diferencia a la vista.
+      dpr={[1, 1.5]}
       gl={{ antialias: true, alpha: true, powerPreference: "high-performance" }}
       camera={{ fov: 30, near: 0.1, far: 80, position: [0, 1.8, 9] }}
       className="!absolute inset-0"
@@ -445,7 +451,7 @@ export default function ShowcaseScene({
         <Lightformer form="rect" intensity={1} position={[6, 2, 3]} rotation-y={-Math.PI / 2} scale={[8, 2, 1]} />
       </Environment>
       {projects.map((p, i) => (
-        <Screen key={p.slug} project={p} index={i} pos={pos} mobile={mobile} active={i === active} onPick={onPick} />
+        <Screen key={p.slug} project={p} index={i} pos={pos} mobile={mobile} active={live && i === active} onPick={onPick} />
       ))}
     </Canvas>
   );

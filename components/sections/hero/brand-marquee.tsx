@@ -40,7 +40,7 @@ export function BrandMarquee({
               key={p.slug}
               onMouseEnter={onHover ? () => onHover(p) : undefined}
               style={{ ["--brand" as string]: accent }}
-              className="group/brand mr-4 flex items-center gap-4 rounded-2xl border border-border bg-surface/60 py-2 pr-6 pl-2 backdrop-blur-sm transition-colors duration-300 hover:border-[var(--brand)]/60 md:mr-6"
+              className="group/brand mr-4 flex items-center gap-4 rounded-2xl border border-border bg-surface/85 py-2 pr-6 pl-2 transition-colors duration-300 hover:border-[var(--brand)]/60 md:mr-6"
             >
               <span className="relative h-11 w-[70px] shrink-0 overflow-hidden rounded-xl border border-border md:h-14 md:w-[90px]">
                 <Image

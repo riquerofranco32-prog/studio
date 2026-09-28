@@ -91,8 +91,8 @@ export function CheckField() {
     typeof window === "undefined" ? new Set() : load(),
   );
   const [fresh, setFresh] = useState<string | null>(null);
-  const [near, setNear] = useState<string | null>(null);
   const checksRef = useRef<Check[]>([]);
+  const layerRef = useRef<HTMLDivElement>(null);
   const { playPop } = useSoundFx();
 
   // Grilla según el tamaño del documento; se rehace si cambia.
@@ -150,14 +150,21 @@ export function CheckField() {
       playPop();
     }
 
+    // El hover cambia una clase en el DOM directo: pasar por el estado de
+    // React re-renderizaría las ~370 palomitas en cada movimiento del mouse.
     let raf = 0;
+    let lit: Element | null = null;
     function onMove(e: PointerEvent) {
-      if (e.pointerType !== "mouse") return;
-      cancelAnimationFrame(raf);
+      if (e.pointerType !== "mouse" || raf) return;
       const { pageX, pageY } = e;
       raf = requestAnimationFrame(() => {
+        raf = 0;
         const c = nearest(pageX, pageY, HOVER);
-        setNear(c ? c.id : null);
+        const el = c ? layerRef.current?.querySelector(`[data-id="${c.id}"]`) ?? null : null;
+        if (el === lit) return;
+        lit?.classList.remove("is-near");
+        el?.classList.add("is-near");
+        lit = el;
       });
     }
 
@@ -174,8 +181,9 @@ export function CheckField() {
 
   return (
     <div
+      ref={layerRef}
       aria-hidden
-      className="pointer-events-none absolute inset-x-0 top-0 -z-10 overflow-hidden"
+      className="pointer-events-none absolute inset-x-0 top-0 -z-10 overflow-hidden [contain:strict]"
       style={{ height }}
     >
       {checks.map((c) => {
@@ -183,7 +191,8 @@ export function CheckField() {
         return (
           <span
             key={c.id}
-            className={`check-dot ${on ? "is-on" : ""} ${fresh === c.id ? "is-fresh" : ""} ${near === c.id && !on ? "is-near" : ""}`}
+            data-id={c.id}
+            className={`check-dot ${on ? "is-on" : ""} ${fresh === c.id ? "is-fresh" : ""}`}
             style={{ left: c.x, top: c.y, rotate: `${c.r}deg` }}
           >
             <svg viewBox="0 0 24 24" width="22" height="22" fill="none">

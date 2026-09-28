@@ -75,6 +75,9 @@ function Wheel({ projects }: { projects: Project[] }) {
   const n = projects.length;
   const [mobile, setMobile] = useState(false);
   const [near, setNear] = useState(false);
+  // La escena 3D sólo dibuja mientras la sección está en pantalla: montada
+  // pero quieta el resto del tiempo (sin cuadros, sin video).
+  const [live, setLive] = useState(false);
   const [active, setActive] = useState(0);
 
   useEffect(() => {
@@ -92,6 +95,8 @@ function Wheel({ projects }: { projects: Project[] }) {
       { rootMargin: "250% 0px" },
     );
     if (el) io.observe(el);
+    const vis = new IntersectionObserver(([e]) => setLive(e.isIntersecting));
+    if (el) vis.observe(el);
     // Además se precarga cuando la página ya terminó y el navegador está
     // libre: quien llega de golpe (el link "Casos" del menú) encuentra las
     // pantallas con su imagen, no marcos vacíos.
@@ -106,6 +111,7 @@ function Wheel({ projects }: { projects: Project[] }) {
       window.removeEventListener("load", warm);
       window.clearTimeout(idle);
       io.disconnect();
+      vis.disconnect();
     };
   }, []);
 
@@ -147,11 +153,11 @@ function Wheel({ projects }: { projects: Project[] }) {
           contra el fondo de la página. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 -top-28 z-10 h-40 bg-gradient-to-b from-transparent via-black/70 to-black backdrop-blur-lg [mask-image:linear-gradient(to_bottom,transparent,black_60%)]"
+        className="pointer-events-none absolute inset-x-0 -top-28 z-10 h-40 bg-gradient-to-b from-transparent via-black/70 to-black [mask-image:linear-gradient(to_bottom,transparent,black_60%)]"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 -bottom-40 z-10 h-48 bg-gradient-to-b from-black via-black/70 to-transparent backdrop-blur-lg [mask-image:linear-gradient(to_top,transparent,black_60%)]"
+        className="pointer-events-none absolute inset-x-0 -bottom-40 z-10 h-48 bg-gradient-to-b from-black via-black/70 to-transparent [mask-image:linear-gradient(to_top,transparent,black_60%)]"
       />
       {/* Fondo negro puro: el agua sólo tiene que mostrar el reflejo. */}
       <div className="sticky top-0 h-[100dvh] overflow-hidden bg-black">
@@ -172,7 +178,7 @@ function Wheel({ projects }: { projects: Project[] }) {
         </AnimatePresence>
 
         {near && (
-          <ShowcaseScene projects={projects} pos={pos} active={active} mobile={mobile} onPick={pick} />
+          <ShowcaseScene projects={projects} pos={pos} active={active} mobile={mobile} live={live} onPick={pick} />
         )}
 
         {/* El agua se pierde en negro hacia abajo: así el reflejo se funde y

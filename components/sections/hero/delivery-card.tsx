@@ -112,7 +112,7 @@ export function DeliveryCard() {
         className="absolute -right-px -bottom-px h-5 w-5 rounded-br-2xl border-r border-b border-accent/50"
       />
 
-      <div className="overflow-hidden rounded-2xl border border-border bg-surface/80 shadow-[0_30px_80px_-40px_rgba(255,77,46,0.35)] backdrop-blur-md">
+      <div className="overflow-hidden rounded-2xl border border-border bg-surface/95 shadow-[0_30px_80px_-40px_rgba(255,77,46,0.35)]">
         {/* Barra de ventana con el estado del deploy. */}
         <div className="flex items-center justify-between gap-3 border-b border-border px-4 py-2.5 font-mono text-[11px]">
           <span className="flex min-w-0 items-center gap-2 text-muted">

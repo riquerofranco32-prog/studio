@@ -98,7 +98,7 @@ export function Hero() {
           fondo de la página, sin línea de corte contra la sección siguiente. */}
       <div
         aria-hidden
-        className="pointer-events-none absolute inset-x-0 bottom-0 h-64 bg-gradient-to-b from-transparent via-background/70 to-background backdrop-blur-xl [mask-image:linear-gradient(to_bottom,transparent,black_55%)]"
+        className="pointer-events-none absolute inset-x-0 bottom-0 h-64 bg-gradient-to-b from-transparent via-background/70 to-background"
       />
 
       <Container className="relative">
@@ -106,7 +106,7 @@ export function Hero() {
           className="hero-rise mb-8 flex flex-wrap items-center gap-3"
           style={{ animationDelay: SEQUENCE.kicker }}
         >
-          <div className="inline-flex items-center gap-2.5 rounded-full border border-border bg-surface/80 px-3.5 py-1.5 font-mono text-xs text-muted backdrop-blur-md">
+          <div className="inline-flex items-center gap-2.5 rounded-full border border-border bg-surface/90 px-3.5 py-1.5 font-mono text-xs text-muted">
             <span className="relative flex h-2 w-2">
               {!reduceMotion && (
                 <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-accent opacity-60" />
