@@ -1,0 +1,49 @@
+import {
+  Anton,
+  Barlow_Condensed,
+  Bricolage_Grotesque,
+  Outfit,
+  Playfair_Display,
+  Plus_Jakarta_Sans,
+} from "next/font/google";
+
+// Tipografías de marca de cada proyecto, las mismas que usan sus sitios.
+// Sólo las usa la rueda de Trabajo para el nombre y la frase del proyecto
+// activo. `preload: false`: el navegador baja cada una recién cuando aparece
+// el proyecto que la usa, no en la primera carga de la página.
+
+const anton = Anton({ subsets: ["latin"], weight: "400", preload: false });
+const bricolage = Bricolage_Grotesque({
+  subsets: ["latin"],
+  weight: ["700", "800"],
+  preload: false,
+});
+const playfair = Playfair_Display({
+  subsets: ["latin"],
+  weight: ["600"],
+  style: ["normal", "italic"],
+  preload: false,
+});
+const barlow = Barlow_Condensed({
+  subsets: ["latin"],
+  weight: ["800", "900"],
+  style: ["normal", "italic"],
+  preload: false,
+});
+const jakarta = Plus_Jakarta_Sans({
+  subsets: ["latin"],
+  weight: ["800"],
+  preload: false,
+});
+const outfit = Outfit({ subsets: ["latin"], weight: ["300", "500"], preload: false });
+
+export const brandFonts = {
+  anton: anton.className,
+  bricolage: bricolage.className,
+  playfair: playfair.className,
+  barlow: barlow.className,
+  jakarta: jakarta.className,
+  outfit: outfit.className,
+} as const;
+
+export type BrandFont = keyof typeof brandFonts;

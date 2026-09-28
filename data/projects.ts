@@ -33,6 +33,7 @@ export const projects: Project[] = [
     featured: true,
     order: 1,
     size: "large",
+    brand: { accent: "#FF6B2C", font: "anton", uppercase: true, tracking: 0.01, tagline: "Tu carta digital. Tus pedidos sin apps.", highlight: "Tus pedidos sin apps.", entrance: "slam" },
   },
   {
     slug: "pone-la-pava",
@@ -64,6 +65,7 @@ export const projects: Project[] = [
     featured: true,
     order: 3,
     size: "medium",
+    brand: { accent: "#C8A46E", font: "playfair", weight: 600, tracking: -0.01, tagline: "El ritual del mate es tuyo.", highlight: "es tuyo.", entrance: "soft" },
   },
   {
     slug: "sentinel",
@@ -95,6 +97,7 @@ export const projects: Project[] = [
     featured: false,
     order: 6,
     size: "large",
+    brand: { accent: "#94F1BE", font: "jakarta", weight: 800, tracking: -0.03, tagline: "Detectamos incendios en minutos, no en horas.", highlight: "en minutos,", entrance: "scan" },
   },
   {
     slug: "apex-ai",
@@ -126,6 +129,7 @@ export const projects: Project[] = [
     featured: true,
     order: 2,
     size: "small",
+    brand: { accent: "#F5C400", font: "bricolage", weight: 800, tracking: -0.03, tagline: "Programación seria, no plantillas.", highlight: "no plantillas.", entrance: "wipe" },
   },
   {
     slug: "altum-sci",
@@ -157,6 +161,7 @@ export const projects: Project[] = [
     featured: false,
     order: 7,
     size: "medium",
+    brand: { accent: "#C9A84C", font: "outfit", weight: 300, tracking: 0.02, tagline: "Tu inversión, en el corazón de la Patagonia.", highlight: "de la Patagonia.", entrance: "spread" },
   },
   {
     slug: "pravilo",
@@ -188,6 +193,7 @@ export const projects: Project[] = [
     featured: true,
     order: 4,
     size: "small",
+    brand: { accent: "#E0303F", font: "barlow", weight: 900, uppercase: true, tagline: "Explorá tu cuerpo a otro nivel.", highlight: "a otro nivel.", entrance: "rise" },
   },
   {
     slug: "muzzaga",
@@ -219,6 +225,7 @@ export const projects: Project[] = [
     featured: false,
     order: 5,
     size: "medium",
+    brand: { accent: "#E8722A", font: "barlow", weight: 800, uppercase: true, italic: true, tagline: "Canchas de pádel en Catriel. Pádel de verdad.", highlight: "Pádel de verdad.", entrance: "slide" },
   },
 ];
 
