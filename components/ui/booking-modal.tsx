@@ -60,6 +60,7 @@ export function BookingModal() {
     setSendError(null);
 
     const result = await sendLead({
+      source: "reserva",
       name,
       email,
       projectType: "Discovery Call (15 min)",
