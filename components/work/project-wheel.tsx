@@ -34,12 +34,19 @@ const SMALL = 0.3;
 const GAP = 32;
 /** Aire entre miniaturas, en px (ya escaladas). */
 const THUMB_GAP = 14;
-/** Cuánto sube la tarjeta respecto del centro, para dejar lugar a los datos. */
-const LIFT = 40;
+/**
+ * Cómo se apoyan las pantallas, para que no queden flotando:
+ * - "piso": paradas sobre un piso con horizonte y su reflejo.
+ * - "notebook": cada proyecto es una notebook; la tapa se abre al llegar al
+ *   centro y las de los costados quedan entrecerradas.
+ * Se puede forzar con ?rueda=piso o ?rueda=notebook para comparar.
+ */
+type Stage = "piso" | "notebook";
+const DEFAULT_STAGE: Stage = "piso";
 /** Alto de scroll que consume cada proyecto, en vh. */
 const STEP_VH = 60;
 
-type Dims = { w: number; h: number; mobile: boolean };
+type Dims = { w: number; h: number; mobile: boolean; lift: number };
 
 function measure(): Dims {
   const vw = window.innerWidth;
@@ -47,9 +54,12 @@ function measure(): Dims {
   // La tarjeta tiene que dejar lugar a las miniaturas de los costados y, en
   // alto, a los datos del proyecto que van debajo.
   const byWidth = vw < 768 ? vw * 0.62 : Math.min(vw * 0.46, 680);
-  const byHeight = (vh * 0.5 * 16) / 10;
+  const byHeight = (vh * 0.44 * 16) / 10;
   const w = Math.min(byWidth, byHeight);
-  return { w, h: (w * 10) / 16, mobile: vw < 768 };
+  const mobile = vw < 768;
+  // Cuánto sube la tarjeta respecto del centro: deja lugar abajo al piso (o
+  // la base de la notebook) y a los datos del proyecto.
+  return { w, h: (w * 10) / 16, mobile, lift: mobile ? 50 : Math.round(vh * 0.08) };
 }
 
 export function ProjectWheel({ projects }: { projects: Project[] }) {
@@ -77,12 +87,18 @@ export function ProjectWheel({ projects }: { projects: Project[] }) {
 function Wheel({ projects }: { projects: Project[] }) {
   const sectionRef = useRef<HTMLDivElement>(null);
   const n = projects.length;
-  const [dims, setDims] = useState<Dims>({ w: 620, h: 387.5, mobile: false });
+  const [dims, setDims] = useState<Dims>({ w: 620, h: 387.5, mobile: false, lift: 70 });
+  const [stage, setStage] = useState<Stage>(DEFAULT_STAGE);
   const [active, setActive] = useState(0);
 
   useEffect(() => {
     const update = () => setDims(measure());
-    update();
+    const init = () => {
+      update();
+      const q = new URLSearchParams(window.location.search).get("rueda");
+      if (q === "piso" || q === "notebook") setStage(q);
+    };
+    init();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
   }, []);
@@ -134,11 +150,27 @@ function Wheel({ projects }: { projects: Project[] }) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.9, ease: EASE }}
             style={{
-              background: `radial-gradient(ellipse 60% 48% at 50% calc(50% - ${LIFT}px), ${alpha(accentOf(current), 0.2)}, transparent 72%)`,
+              background: `radial-gradient(ellipse 60% 48% at 50% calc(50% - ${dims.lift}px), ${alpha(accentOf(current), 0.2)}, transparent 72%)`,
             }}
             className="pointer-events-none absolute inset-0"
           />
         </AnimatePresence>
+
+        {/* Piso: línea de horizonte y un plano apenas más claro debajo. */}
+        {stage === "piso" && (
+          <>
+            <div
+              aria-hidden
+              style={{ top: `calc(50% - ${dims.lift}px + ${dims.h / 2}px)` }}
+              className="pointer-events-none absolute inset-x-0 bottom-0 bg-[linear-gradient(to_bottom,rgba(255,255,255,0.045),transparent_55%)]"
+            />
+            <div
+              aria-hidden
+              style={{ top: `calc(50% - ${dims.lift}px + ${dims.h / 2}px)` }}
+              className="pointer-events-none absolute inset-x-[4%] h-px bg-[linear-gradient(to_right,transparent,rgba(255,255,255,0.22),transparent)]"
+            />
+          </>
+        )}
 
         {/* Pila de proyectos */}
         <motion.div
@@ -154,6 +186,7 @@ function Wheel({ projects }: { projects: Project[] }) {
               dims={dims}
               active={i === active}
               accent={accentOf(project)}
+              stage={stage}
               onSelect={() => scrollToIndex(i)}
             />
           ))}
@@ -163,8 +196,8 @@ function Wheel({ projects }: { projects: Project[] }) {
             personalidad de su marca: tipografía, color, frase y entrada. */}
         <div
           style={{
-            top: `calc(50% + ${dims.h / 2 + LIFT + 22}px)`,
-            width: dims.mobile ? "calc(100% - 48px)" : Math.max(dims.w, 640),
+            top: `calc(50% - ${dims.lift}px + ${dims.h / 2 + (stage === "piso" ? dims.h * 0.26 : dims.w * 0.035 + 30)}px)`,
+            width: dims.mobile ? "calc(100% - 48px)" : Math.max(dims.w, 760),
           }}
           className="pointer-events-none absolute left-1/2 -translate-x-1/2"
         >
@@ -192,6 +225,7 @@ function WheelItem({
   dims,
   active,
   accent,
+  stage,
   onSelect,
 }: {
   project: Project;
@@ -200,6 +234,7 @@ function WheelItem({
   dims: Dims;
   active: boolean;
   accent: string;
+  stage: Stage;
   onSelect: () => void;
 }) {
   const { w, mobile } = dims;
@@ -226,6 +261,55 @@ function WheelItem({
     return a <= fadeFrom ? 1 : Math.max(0, 1 - (a - fadeFrom) * (mobile ? 1.5 : 0.5));
   });
   const zIndex = useTransform(d, (v) => 100 - Math.round(Math.abs(v) * 10));
+  // Tapa de la notebook: abierta en el centro, entrecerrada a los costados.
+  const lid = useTransform(d, (v) => (stage === "notebook" ? Math.min(Math.abs(v), 1) * 40 : 0));
+  const notebook = stage === "notebook";
+
+  const card = (
+    <Link
+      href={`/work/${project.slug}`}
+      aria-label={`${project.name} — ${project.category}`}
+      tabIndex={active ? 0 : -1}
+      onClick={(e) => {
+        if (!active) {
+          e.preventDefault();
+          onSelect();
+        }
+      }}
+      style={
+        active && !notebook
+          ? {
+              borderColor: alpha(accent, 0.45),
+              boxShadow: `0 40px 90px -40px ${alpha(accent, 0.55)}`,
+            }
+          : undefined
+      }
+      className={`focus-ring group relative block h-full w-full overflow-hidden bg-surface transition-[border-color,box-shadow] duration-700 ${notebook ? "rounded-[3px]" : "rounded-md border border-border"}`}
+    >
+      <Image
+        src={project.image}
+        alt=""
+        fill
+        priority={index === 0}
+        sizes="(min-width: 768px) 680px, 62vw"
+        className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+      />
+      {/* Sólo el activo monta su clip: el resto no baja ni un byte. */}
+      {active && project.video && (
+        <video
+          aria-hidden
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="absolute inset-0 h-full w-full object-cover object-top"
+        >
+          <source src={project.video.webm} type="video/webm" />
+          <source src={project.video.mp4} type="video/mp4" />
+        </video>
+      )}
+    </Link>
+  );
 
   return (
     <motion.div
@@ -238,53 +322,54 @@ function WheelItem({
         width: dims.w,
         height: dims.h,
         marginLeft: -dims.w / 2,
-        marginTop: -dims.h / 2 - LIFT,
+        marginTop: -dims.h / 2 - dims.lift,
+        // Escala desde abajo: todas las pantallas quedan paradas sobre la
+        // misma línea en vez de flotar a media altura.
+        transformOrigin: "50% 100%",
+        transformStyle: "preserve-3d",
       }}
       className="absolute left-1/2 top-1/2 will-change-transform"
     >
-      <Link
-        href={`/work/${project.slug}`}
-        aria-label={`${project.name} — ${project.category}`}
-        tabIndex={active ? 0 : -1}
-        onClick={(e) => {
-          if (!active) {
-            e.preventDefault();
-            onSelect();
-          }
-        }}
-        style={
-          active
-            ? {
-                borderColor: alpha(accent, 0.45),
-                boxShadow: `0 40px 90px -40px ${alpha(accent, 0.55)}`,
-              }
-            : undefined
-        }
-        className="focus-ring group relative block h-full w-full overflow-hidden rounded-md border border-border bg-surface transition-[border-color,box-shadow] duration-700"
-      >
-        <Image
-          src={project.image}
-          alt=""
-          fill
-          priority={index === 0}
-          sizes="(min-width: 768px) 680px, 62vw"
-          className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-[1.03]"
-        />
-        {/* Sólo el activo monta su clip: el resto no baja ni un byte. */}
-        {active && project.video && (
-          <video
-            aria-hidden
-            autoPlay
-            muted
-            loop
-            playsInline
-            className="absolute inset-0 h-full w-full object-cover object-top"
+      {notebook ? (
+        <>
+          {/* Tapa: marco negro con la pantalla adentro; gira sobre la bisagra. */}
+          <motion.div
+            style={{
+              rotateX: lid,
+              transformOrigin: "50% 100%",
+              padding: `${w * 0.02}px ${w * 0.02}px ${w * 0.014}px`,
+              boxShadow: active ? `0 30px 80px -30px ${alpha(accent, 0.5)}` : undefined,
+            }}
+            className="relative h-full w-full rounded-t-[14px] border border-[#2c2c31] bg-[#0c0c0e] transition-shadow duration-700"
           >
-            <source src={project.video.webm} type="video/webm" />
-            <source src={project.video.mp4} type="video/mp4" />
-          </video>
-        )}
-      </Link>
+            {card}
+          </motion.div>
+          {/* Base con el hueco para abrir la tapa. */}
+          <div
+            aria-hidden
+            style={{ height: Math.max(6, w * 0.034) }}
+            className="absolute top-full left-[-7%] w-[114%] rounded-b-[12px] bg-[linear-gradient(to_bottom,#3b3b41,#16161a)] shadow-[0_24px_40px_-12px_rgba(0,0,0,0.85)]"
+          >
+            <div className="mx-auto h-[42%] w-[15%] rounded-b-md bg-[#0c0c0e]" />
+          </div>
+        </>
+      ) : (
+        <>
+          {card}
+          {/* Reflejo sobre el piso: la misma captura invertida y desvanecida. */}
+          <div
+            aria-hidden
+            style={{
+              transform: "scaleY(-1)",
+              maskImage: "linear-gradient(to top, rgba(0,0,0,0.3), transparent 45%)",
+              WebkitMaskImage: "linear-gradient(to top, rgba(0,0,0,0.3), transparent 45%)",
+            }}
+            className="pointer-events-none absolute top-full left-0 mt-[2px] h-full w-full overflow-hidden rounded-md"
+          >
+            <Image src={project.image} alt="" fill sizes="(min-width: 768px) 680px, 62vw" className="object-cover object-top" />
+          </div>
+        </>
+      )}
     </motion.div>
   );
 }
