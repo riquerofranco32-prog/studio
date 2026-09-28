@@ -14,7 +14,7 @@ export const team: TeamMember[] = [
     name: "Federico Martín",
     role: "Fundador · Diseño",
     bio: "Diseñador de producto. Traduce tu marca en pantallas que se ven increíbles, cuidando cada detalle, tipografía y animación.",
-    imageUrl: "/team/federico-martin.jpg",
+    imageUrl: "/team/federico-martin-2026-09.jpg",
     linkedin: "https://www.linkedin.com/in/federico-martin-632223231/",
   },
 ];
