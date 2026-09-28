@@ -162,8 +162,8 @@ export function WhatsAppWidget() {
         )}
       </AnimatePresence>
 
-      {/* Botón flotante: el logo oficial sobre el verde de WhatsApp. En
-          mobile es el círculo clásico; desde sm suma el texto. */}
+      {/* Botón flotante: el círculo clásico de WhatsApp, sólo el logo oficial
+          sobre su verde. */}
       <motion.button
         type="button"
         whileHover={{ scale: 1.04, y: -1 }}
@@ -174,7 +174,7 @@ export function WhatsAppWidget() {
           playPop();
           setOpen((prev) => !prev);
         }}
-        className="focus-ring group relative flex h-14 w-14 items-center justify-center gap-3 rounded-full bg-[#25D366] text-white shadow-[0_8px_28px_-6px_rgba(37,211,102,0.65),inset_0_1px_0_rgba(255,255,255,0.35)] transition-[background-color,box-shadow] duration-300 hover:bg-[#1ebe5a] hover:shadow-[0_10px_34px_-6px_rgba(37,211,102,0.8),inset_0_1px_0_rgba(255,255,255,0.35)] sm:h-auto sm:w-auto sm:py-2.5 sm:pr-5 sm:pl-2.5"
+        className="focus-ring group relative flex h-14 w-14 items-center justify-center gap-3 rounded-full bg-[#25D366] text-white shadow-[0_8px_28px_-6px_rgba(37,211,102,0.65),inset_0_1px_0_rgba(255,255,255,0.35)] transition-[background-color,box-shadow] duration-300 hover:bg-[#1ebe5a] hover:shadow-[0_10px_34px_-6px_rgba(37,211,102,0.8),inset_0_1px_0_rgba(255,255,255,0.35)]"
       >
         <span className="relative flex h-9 w-9 shrink-0 items-center justify-center">
           {/* Una onda suave que se abre desde el logo cada tanto. */}
@@ -182,13 +182,9 @@ export function WhatsAppWidget() {
             aria-hidden
             className="pointer-events-none absolute inset-0 rounded-full bg-white/30 motion-safe:animate-[ping_2.8s_cubic-bezier(0,0,0.2,1)_infinite]"
           />
-          <WhatsAppLogo size={28} className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)] sm:size-[26px]" />
+          <WhatsAppLogo size={28} className="drop-shadow-[0_1px_1px_rgba(0,0,0,0.2)]" />
           {/* En línea */}
           <span className="absolute top-0 right-0 h-2.5 w-2.5 rounded-full border-2 border-[#25D366] bg-white" />
-        </span>
-        <span className="relative hidden flex-col items-start leading-tight sm:flex">
-          <span className="text-[13px] font-semibold">WhatsApp directo</span>
-          <span className="text-[10.5px] font-medium text-white/85">Franco y Federico</span>
         </span>
       </motion.button>
     </div>

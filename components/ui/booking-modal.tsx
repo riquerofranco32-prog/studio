@@ -9,12 +9,12 @@ import {
   X,
   CheckCircle2,
   Send,
-  MessageCircle,
   Sparkles,
   ArrowRight,
 } from "lucide-react";
 import { SITE } from "@/data/site";
 import { sendLead } from "@/lib/send-lead";
+import { WhatsAppLogo } from "@/components/icons/whatsapp-logo";
 import { LeadError } from "@/components/ui/lead-error";
 
 const availableSlots = [
@@ -142,7 +142,7 @@ export function BookingModal() {
                     rel="noopener noreferrer"
                     className="focus-ring inline-flex items-center justify-center gap-2 rounded-full bg-emerald-500/10 border border-emerald-500/30 px-5 py-2.5 text-xs font-medium text-emerald-400 hover:bg-emerald-500/20"
                   >
-                    <MessageCircle size={14} />
+                    <WhatsAppLogo size={14} />
                     <span>Confirmar por WhatsApp</span>
                   </a>
                   <button
@@ -284,7 +284,7 @@ export function BookingModal() {
                     rel="noopener noreferrer"
                     className="focus-ring inline-flex items-center gap-1.5 text-xs text-emerald-400 hover:text-emerald-300 font-mono"
                   >
-                    <MessageCircle size={14} />
+                    <WhatsAppLogo size={14} />
                     <span>O coordinar por WhatsApp</span>
                   </a>
                 </div>

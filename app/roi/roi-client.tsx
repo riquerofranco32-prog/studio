@@ -11,7 +11,6 @@ import {
   CheckCircle2,
   Copy,
   Check,
-  MessageCircle,
   Calculator,
   Calendar,
   Sparkles,
@@ -20,6 +19,7 @@ import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/ui/reveal";
 import { CountUp } from "@/components/ui/count-up";
 import { useSoundFx } from "@/components/providers/sound-provider";
+import { WhatsAppLogo } from "@/components/icons/whatsapp-logo";
 import { SITE } from "@/data/site";
 
 interface PlatformPreset {
@@ -324,7 +324,7 @@ export function RoiCalculatorClient() {
                   rel="noopener noreferrer"
                   className="focus-ring flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 text-sm font-medium text-background transition-all hover:bg-accent/90 hover:shadow-[0_0_25px_rgba(255,77,46,0.35)]"
                 >
-                  <MessageCircle size={16} />
+                  <WhatsAppLogo size={16} />
                   <span>Consultar por mi migración</span>
                   <ArrowRight size={16} />
                 </a>

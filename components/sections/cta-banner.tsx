@@ -1,11 +1,12 @@
 "use client";
 
-import { ArrowRight, MessageCircle, Sparkles, Clock, ShieldCheck, Zap } from "lucide-react";
+import { ArrowRight, Sparkles, Clock, ShieldCheck, Zap } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { ButtonLink } from "@/components/ui/button-link";
 import { Magnetic } from "@/components/ui/magnetic";
 import { SITE } from "@/data/site";
 import { SLOTS, useMonthName } from "@/lib/availability";
+import { WhatsAppLogo } from "@/components/icons/whatsapp-logo";
 
 export function CtaBanner() {
   const month = useMonthName();
@@ -68,7 +69,7 @@ export function CtaBanner() {
                   rel="noopener noreferrer"
                   className="focus-ring inline-flex items-center gap-2 rounded-full border border-border bg-surface px-7 py-3.5 text-sm font-medium text-foreground transition-all duration-300 hover:border-emerald-500/50 hover:bg-surface-2 hover:text-emerald-400"
                 >
-                  <MessageCircle size={16} className="text-emerald-400" />
+                  <WhatsAppLogo size={16} className="text-emerald-400" />
                   <span>Escribir por WhatsApp</span>
                 </a>
               </Magnetic>

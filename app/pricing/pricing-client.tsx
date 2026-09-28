@@ -11,7 +11,6 @@ import {
   ArrowRight,
   Copy,
   Check,
-  MessageCircle,
   Calendar,
   Layers,
   ShieldCheck,
@@ -25,6 +24,7 @@ import type { LucideIcon } from "lucide-react";
 import { Container } from "@/components/ui/container";
 import { Reveal } from "@/components/ui/reveal";
 import { useSoundFx } from "@/components/providers/sound-provider";
+import { WhatsAppLogo } from "@/components/icons/whatsapp-logo";
 import { SITE } from "@/data/site";
 
 interface ProductBase {
@@ -470,7 +470,7 @@ export function PricingClient() {
                   rel="noopener noreferrer"
                   className="focus-ring flex w-full items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 text-sm font-medium text-background transition-all hover:bg-accent/90 hover:shadow-[0_0_25px_rgba(255,77,46,0.35)]"
                 >
-                  <MessageCircle size={16} />
+                  <WhatsAppLogo size={16} />
                   <span>Enviar propuesta por WhatsApp</span>
                   <ArrowRight size={16} />
                 </a>
