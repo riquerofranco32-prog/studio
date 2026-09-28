@@ -39,7 +39,7 @@ export function About() {
               className="flex flex-col gap-5 rounded-2xl border border-border bg-surface/40 p-6 transition-colors duration-300 hover:border-foreground/20 hover:bg-surface md:p-8 lg:flex-row lg:items-start"
             >
               {member.imageUrl && (
-                <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-2xl border border-border lg:h-24 lg:w-24">
+                <div className="relative h-20 w-20 shrink-0 overflow-hidden rounded-full border border-border lg:h-24 lg:w-24">
                   <Image
                     src={member.imageUrl}
                     alt={member.name ?? ""}
