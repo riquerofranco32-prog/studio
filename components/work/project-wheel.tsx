@@ -7,6 +7,8 @@ import {
   AnimatePresence,
   motion,
   MotionValue,
+  TargetAndTransition,
+  Transition,
   useMotionValueEvent,
   useScroll,
   useSpring,
@@ -17,7 +19,8 @@ import { ArrowUpRight } from "lucide-react";
 import { ProjectCard } from "@/components/work/project-card";
 import { useReducedMotion } from "@/lib/use-reduced-motion";
 import { EASE } from "@/lib/motion";
-import type { Project } from "@/types";
+import { brandFonts } from "@/lib/brand-fonts";
+import type { Project, ProjectBrand } from "@/types";
 
 // Rueda horizontal de proyectos. La sección es alta y su interior queda fijo
 // (sticky) mientras se scrollea: el scroll recorre la lista, el proyecto
@@ -121,6 +124,22 @@ function Wheel({ projects }: { projects: Project[] }) {
       className="relative mt-8"
     >
       <div className="sticky top-0 flex h-[100dvh] items-center justify-center overflow-hidden">
+        {/* Luz ambiente del color de la marca activa, detrás de la pila. */}
+        <AnimatePresence initial={false}>
+          <motion.div
+            key={`glow-${current.slug}`}
+            aria-hidden
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.9, ease: EASE }}
+            style={{
+              background: `radial-gradient(ellipse 60% 48% at 50% calc(50% - ${LIFT}px), ${alpha(accentOf(current), 0.2)}, transparent 72%)`,
+            }}
+            className="pointer-events-none absolute inset-0"
+          />
+        </AnimatePresence>
+
         {/* Pila de proyectos */}
         <motion.div
           style={{ filter: blur, perspective: 1200 }}
@@ -134,58 +153,23 @@ function Wheel({ projects }: { projects: Project[] }) {
               pos={pos}
               dims={dims}
               active={i === active}
+              accent={accentOf(project)}
               onSelect={() => scrollToIndex(i)}
             />
           ))}
         </motion.div>
 
-        {/* Datos del proyecto activo, debajo de la tarjeta: nombre a la
-            izquierda; año, categoría y link a la derecha. */}
+        {/* Datos del proyecto activo, debajo de la tarjeta, con la
+            personalidad de su marca: tipografía, color, frase y entrada. */}
         <div
           style={{
-            top: `calc(50% + ${dims.h / 2 + LIFT + 24}px)`,
-            width: dims.mobile ? "calc(100% - 48px)" : Math.max(dims.w, 560),
+            top: `calc(50% + ${dims.h / 2 + LIFT + 22}px)`,
+            width: dims.mobile ? "calc(100% - 48px)" : Math.max(dims.w, 640),
           }}
-          className="pointer-events-none absolute left-1/2 flex -translate-x-1/2 items-start justify-between gap-6"
+          className="pointer-events-none absolute left-1/2 -translate-x-1/2"
         >
           <AnimatePresence mode="popLayout" initial={false}>
-            <motion.div
-              key={`l-${current.slug}`}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.35, ease: EASE }}
-              className="min-w-0"
-            >
-              <span className="font-mono text-xs text-accent">
-                {current.number}
-              </span>
-              <p className="mt-1 text-xl font-medium tracking-tight text-foreground md:text-2xl">
-                {current.name}
-              </p>
-            </motion.div>
-          </AnimatePresence>
-          <AnimatePresence mode="popLayout" initial={false}>
-            <motion.div
-              key={`r-${current.slug}`}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.35, ease: EASE }}
-              className="shrink-0 text-right font-mono text-[11px] uppercase tracking-wide text-muted"
-            >
-              <p>
-                <span className="text-foreground">{current.year}</span> ·{" "}
-                {current.category.split("/")[0].trim()}
-              </p>
-              <Link
-                href={`/work/${current.slug}`}
-                className="focus-ring pointer-events-auto mt-2 inline-flex items-center gap-1.5 text-accent hover:underline"
-              >
-                Ver caso
-                <ArrowUpRight size={13} />
-              </Link>
-            </motion.div>
+            <BrandLabel key={current.slug} project={current} mobile={dims.mobile} />
           </AnimatePresence>
         </div>
 
@@ -207,6 +191,7 @@ function WheelItem({
   pos,
   dims,
   active,
+  accent,
   onSelect,
 }: {
   project: Project;
@@ -214,6 +199,7 @@ function WheelItem({
   pos: MotionValue<number>;
   dims: Dims;
   active: boolean;
+  accent: string;
   onSelect: () => void;
 }) {
   const { w, mobile } = dims;
@@ -266,7 +252,15 @@ function WheelItem({
             onSelect();
           }
         }}
-        className="focus-ring group relative block h-full w-full overflow-hidden rounded-md border border-border bg-surface"
+        style={
+          active
+            ? {
+                borderColor: alpha(accent, 0.45),
+                boxShadow: `0 40px 90px -40px ${alpha(accent, 0.55)}`,
+              }
+            : undefined
+        }
+        className="focus-ring group relative block h-full w-full overflow-hidden rounded-md border border-border bg-surface transition-[border-color,box-shadow] duration-700"
       >
         <Image
           src={project.image}
@@ -294,3 +288,130 @@ function WheelItem({
     </motion.div>
   );
 }
+
+/** Hex #rrggbb + opacidad → #rrggbbaa. */
+function alpha(hex: string, a: number) {
+  return `${hex}${Math.round(a * 255).toString(16).padStart(2, "0")}`;
+}
+
+function accentOf(project: Project) {
+  return project.brand?.accent ?? "#ff4d2e";
+}
+
+// Cada marca entra a su manera: Takefyy de golpe, Apex con un corte, Poné La
+// Pava suave como una revista, Pravilo desde abajo, Muzzaga en diagonal como
+// un saque, Sentinel barriendo como un escaneo y Altum abriendo el espaciado.
+const ENTRANCES: Record<
+  ProjectBrand["entrance"],
+  { initial: TargetAndTransition; animate: TargetAndTransition; transition: Transition }
+> = {
+  slam: {
+    initial: { opacity: 0, scale: 1.35, filter: "blur(10px)" },
+    animate: { opacity: 1, scale: 1, filter: "blur(0px)" },
+    transition: { type: "spring", stiffness: 420, damping: 26 },
+  },
+  wipe: {
+    initial: { clipPath: "inset(0 100% 0 0)" },
+    animate: { clipPath: "inset(0 0% 0 0)" },
+    transition: { duration: 0.55, ease: [0.77, 0, 0.18, 1] },
+  },
+  soft: {
+    initial: { opacity: 0, y: 18, filter: "blur(12px)" },
+    animate: { opacity: 1, y: 0, filter: "blur(0px)" },
+    transition: { duration: 0.95, ease: EASE },
+  },
+  rise: {
+    initial: { opacity: 0, y: 46 },
+    animate: { opacity: 1, y: 0 },
+    transition: { type: "spring", stiffness: 300, damping: 24 },
+  },
+  slide: {
+    initial: { opacity: 0, x: -70, skewX: -14 },
+    animate: { opacity: 1, x: 0, skewX: 0 },
+    transition: { type: "spring", stiffness: 340, damping: 22 },
+  },
+  scan: {
+    initial: { clipPath: "inset(0 0 100% 0)", opacity: 0.4 },
+    animate: { clipPath: "inset(0 0 0% 0)", opacity: 1 },
+    transition: { duration: 0.7, ease: [0.4, 0, 0.2, 1] },
+  },
+  spread: {
+    initial: { opacity: 0, letterSpacing: "0.4em" },
+    animate: { opacity: 1, letterSpacing: "0em" },
+    transition: { duration: 1.1, ease: EASE },
+  },
+};
+
+const BrandLabel = ({
+  project,
+  mobile,
+  ref,
+}: {
+  project: Project;
+  mobile: boolean;
+  ref?: React.Ref<HTMLDivElement>;
+}) => {
+  const brand = project.brand;
+  const accent = accentOf(project);
+  const entrance = ENTRANCES[brand?.entrance ?? "soft"];
+  const fontClass = brand ? brandFonts[brand.font] : "";
+  const type: React.CSSProperties = {
+    fontWeight: brand?.weight,
+    fontStyle: brand?.italic ? "italic" : undefined,
+    textTransform: brand?.uppercase ? "uppercase" : undefined,
+    letterSpacing:
+      brand?.entrance === "spread" ? undefined : brand?.tracking != null ? `${brand.tracking}em` : undefined,
+  };
+  const tagline = brand?.tagline;
+  const hl = brand?.highlight && tagline?.includes(brand.highlight) ? brand.highlight : null;
+  const [before, after] = hl && tagline ? tagline.split(hl) : [tagline, ""];
+
+  return (
+    <motion.div
+      ref={ref}
+      exit={{ opacity: 0, y: -10, transition: { duration: 0.2 } }}
+      className="flex items-end justify-between gap-6"
+    >
+      <div className="min-w-0">
+        <p className="font-mono text-[11px] uppercase tracking-widest text-muted">
+          <span style={{ color: accent }}>{project.number}</span>
+          <span className="mx-2 text-border">/</span>
+          {project.category.split("/")[0].trim()} · {project.year}
+        </p>
+        <motion.div
+          initial={entrance.initial}
+          animate={entrance.animate}
+          transition={entrance.transition}
+          style={{ transformOrigin: "left bottom" }}
+          className={fontClass}
+        >
+          <p
+            style={type}
+            className={`mt-2 leading-[0.95] text-foreground ${mobile ? "text-4xl" : "text-5xl lg:text-6xl"}`}
+          >
+            {project.name}
+          </p>
+          {tagline && (
+            <p
+              style={{ ...type, fontWeight: brand?.font === "outfit" ? 500 : type.fontWeight }}
+              className={`mt-2 leading-tight text-muted ${mobile ? "text-base" : "text-lg lg:text-xl"}`}
+            >
+              {before}
+              {hl && <span style={{ color: accent }}>{hl}</span>}
+              {after}
+            </p>
+          )}
+        </motion.div>
+      </div>
+      <Link
+        href={`/work/${project.slug}`}
+        // --brand: el hover rellena con el color de la marca.
+        style={{ borderColor: alpha(accent, 0.5), color: accent, ["--brand" as string]: accent }}
+        className="focus-ring pointer-events-auto inline-flex shrink-0 items-center gap-1.5 rounded-full border px-4 py-2 font-mono text-[11px] uppercase tracking-wide transition-colors duration-300 hover:!bg-[var(--brand)] hover:!text-background"
+      >
+        Ver caso
+        <ArrowUpRight size={13} />
+      </Link>
+    </motion.div>
+  );
+};

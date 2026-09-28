@@ -28,6 +28,29 @@ export interface Project {
   featured: boolean;
   order: number;
   size: "large" | "medium" | "small";
+  /**
+   * Personalidad del proyecto en la rueda de Trabajo: su color, su tipografía
+   * y su frase, sacados del propio sitio. Opcional: sin esto usa los del estudio.
+   */
+  brand?: ProjectBrand;
+}
+
+export interface ProjectBrand {
+  /** Color de acento de la marca (hex). */
+  accent: string;
+  /** Clave de lib/brand-fonts.ts. */
+  font: "anton" | "bricolage" | "playfair" | "barlow" | "jakarta" | "outfit";
+  weight?: number;
+  uppercase?: boolean;
+  italic?: boolean;
+  /** Tracking en em. */
+  tracking?: number;
+  /** Frase principal del sitio del proyecto. */
+  tagline: string;
+  /** Tramo de la frase que va en el color de acento. */
+  highlight?: string;
+  /** Cómo entra el nombre cuando el proyecto llega al centro. */
+  entrance: "slam" | "wipe" | "soft" | "rise" | "slide" | "scan" | "spread";
 }
 
 export interface Service {
