@@ -26,6 +26,10 @@ export const projects: Project[] = [
       "En uso por restaurantes reales, gestionando catálogos y pedidos digitales día a día.",
     url: "https://takefyy.com/",
     image: "/projects/takefyy-2026-09.jpg",
+    screens: {
+      tablet: "/projects/devices/undefined-tablet-2026-09.jpg",
+      mobile: "/projects/devices/undefined-mobile-2026-09.jpg",
+    },
     video: {
       mp4: "/projects/videos/takefyy-2026-09c.mp4",
       webm: "/projects/videos/takefyy-2026-09c.webm",
@@ -66,6 +70,10 @@ export const projects: Project[] = [
       "Tienda en producción, con stock y catálogo actualizados en tiempo real.",
     url: "https://ponelapavayerbas.com/",
     image: "/projects/pone-la-pava-2026-09b.jpg",
+    screens: {
+      tablet: "/projects/devices/undefined-tablet-2026-09.jpg",
+      mobile: "/projects/devices/undefined-mobile-2026-09.jpg",
+    },
     video: {
       mp4: "/projects/videos/pone-la-pava-2026-09c.mp4",
       webm: "/projects/videos/pone-la-pava-2026-09c.webm",
@@ -106,6 +114,10 @@ export const projects: Project[] = [
       "Plataforma en producción con datos satelitales en vivo (NASA FIRMS) e índice de riesgo de incendio.",
     url: "https://www.sentineltech.com.ar/",
     image: "/projects/sentinel-2026-09.jpg",
+    screens: {
+      tablet: "/projects/devices/undefined-tablet-2026-09.jpg",
+      mobile: "/projects/devices/undefined-mobile-2026-09.jpg",
+    },
     video: {
       mp4: "/projects/videos/sentinel-2026-09c.mp4",
       webm: "/projects/videos/sentinel-2026-09c.webm",
@@ -146,6 +158,10 @@ export const projects: Project[] = [
       "Sitio en producción, presentando el producto con tiempos de carga instantáneos.",
     url: "https://apexperformance.com.ar/",
     image: "/projects/apex-ai-2026-09-es.jpg",
+    screens: {
+      tablet: "/projects/devices/undefined-tablet-2026-09.jpg",
+      mobile: "/projects/devices/undefined-mobile-2026-09.jpg",
+    },
     video: {
       mp4: "/projects/videos/apex-ai-2026-09c.mp4",
       webm: "/projects/videos/apex-ai-2026-09c.webm",
@@ -186,6 +202,10 @@ export const projects: Project[] = [
       "Sitio en producción, usado como canal principal de consulta para compradores e inversores en la Patagonia.",
     url: "https://altumsci.com.ar/",
     image: "/projects/altum-sci-2026-09.jpg",
+    screens: {
+      tablet: "/projects/devices/undefined-tablet-2026-09.jpg",
+      mobile: "/projects/devices/undefined-mobile-2026-09.jpg",
+    },
     video: {
       mp4: "/projects/videos/altum-sci-2026-09c.mp4",
       webm: "/projects/videos/altum-sci-2026-09c.webm",
@@ -226,6 +246,10 @@ export const projects: Project[] = [
       "Sitio en producción para el primer centro Pravilo de Argentina, en Plottier, Neuquén.",
     url: "https://www.pravilo.com.ar/",
     image: "/projects/pravilo-2026-09.jpg",
+    screens: {
+      tablet: "/projects/devices/undefined-tablet-2026-09.jpg",
+      mobile: "/projects/devices/undefined-mobile-2026-09.jpg",
+    },
     video: {
       mp4: "/projects/videos/pravilo-2026-09c.mp4",
       webm: "/projects/videos/pravilo-2026-09c.webm",
@@ -266,6 +290,10 @@ export const projects: Project[] = [
       "Sitio en producción con reservas online, Canchas Abiertas comunitarias y herramientas para jugadores.",
     url: "https://muzzaga-padel-seven.vercel.app/",
     image: "/projects/muzzaga-2026-09.jpg",
+    screens: {
+      tablet: "/projects/devices/undefined-tablet-2026-09.jpg",
+      mobile: "/projects/devices/undefined-mobile-2026-09.jpg",
+    },
     video: {
       mp4: "/projects/videos/muzzaga-2026-09c.mp4",
       webm: "/projects/videos/muzzaga-2026-09c.webm",
@@ -307,6 +335,10 @@ export const projects: Project[] = [
       "Tienda en producción con catálogo y precios administrados por el propio equipo de iPhone Vita.",
     url: "https://iphonevita.vercel.app/",
     image: "/projects/iphone-vita-2026-09.jpg",
+    screens: {
+      tablet: "/projects/devices/undefined-tablet-2026-09.jpg",
+      mobile: "/projects/devices/undefined-mobile-2026-09.jpg",
+    },
     video: {
       mp4: "/projects/videos/iphone-vita-2026-09c.mp4",
       webm: "/projects/videos/iphone-vita-2026-09c.webm",

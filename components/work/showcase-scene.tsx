@@ -1,7 +1,12 @@
 "use client";
 
 import { Suspense, useEffect, useRef, useState } from "react";
-import { Canvas, useFrame, type ThreeEvent } from "@react-three/fiber";
+import {
+  Canvas,
+  useFrame,
+  useThree,
+  type ThreeEvent,
+} from "@react-three/fiber";
 import {
   Environment,
   Lightformer,
@@ -167,7 +172,8 @@ function Surfaces({ tex, screenRef, waterRef }: { tex: THREE.Texture } & Refs) {
   // Pasar el cursor (o tocar) el agua la agita en ese punto. La fuerza se
   // apaga sola en el useFrame de Screen.
   function stir(e: ThreeEvent<PointerEvent>) {
-    const u = ((e.eventObject as THREE.Mesh).material as THREE.ShaderMaterial).uniforms;
+    const u = ((e.eventObject as THREE.Mesh).material as THREE.ShaderMaterial)
+      .uniforms;
     if (!e.uv || !u) return;
     u.mouse.value.copy(e.uv);
     u.ripple.value = Math.min(1, u.ripple.value + 0.35);
@@ -213,8 +219,17 @@ function ImageSurfaces({ src, ...refs }: { src: string } & Refs) {
   return <Surfaces tex={tex} {...refs} />;
 }
 
-function VideoSurfaces({ src, poster, ...refs }: { src: string; poster: string } & Refs) {
-  const tex = useVideoTexture(src, { muted: true, loop: true, start: true, crossOrigin: "anonymous" });
+function VideoSurfaces({
+  src,
+  poster,
+  ...refs
+}: { src: string; poster: string } & Refs) {
+  const tex = useVideoTexture(src, {
+    muted: true,
+    loop: true,
+    start: true,
+    crossOrigin: "anonymous",
+  });
   // El clip "carga" antes de tener un cuadro decodificado: hasta que avanza
   // sigue la captura, si no la pantalla pasa un instante a negro.
   const [playing, setPlaying] = useState(false);
@@ -226,7 +241,11 @@ function VideoSurfaces({ src, poster, ...refs }: { src: string; poster: string }
     v.addEventListener("timeupdate", on);
     return () => v.removeEventListener("timeupdate", on);
   }, [tex]);
-  return playing ? <Surfaces tex={tex} {...refs} /> : <ImageSurfaces src={poster} {...refs} />;
+  return playing ? (
+    <Surfaces tex={tex} {...refs} />
+  ) : (
+    <ImageSurfaces src={poster} {...refs} />
+  );
 }
 
 const frameMat = new THREE.MeshPhysicalMaterial({
@@ -299,7 +318,11 @@ function Screen({
     const off = a <= 1 ? a * near : near + (a - 1) * far;
     const s = 1 - (1 - SMALL) * e;
     // La activa se adelanta; las demás retroceden en arco.
-    g.position.set(Math.sign(v) * off, 0, 0.9 * (1 - e) - Math.max(0, a - 1) * 0.5);
+    g.position.set(
+      Math.sign(v) * off,
+      0,
+      0.9 * (1 - e) - Math.max(0, a - 1) * 0.5,
+    );
     g.scale.setScalar(s);
     g.rotation.y = -Math.max(-0.6, Math.min(0.6, v * 0.38));
     g.visible = a < (mobile ? 1.8 : 3.6);
@@ -335,37 +358,91 @@ function Screen({
     >
       {/* Canto de aluminio y panel de vidrio negro. */}
       <group position={[0, LIFT + h / 2, 0]}>
-        <RoundedBox args={[w + 0.02, h + 0.02, DEPTH]} radius={DEPTH * 0.45} smoothness={4} material={edgeMat} />
-        <RoundedBox args={[w, h, DEPTH + 0.004]} radius={DEPTH * 0.4} smoothness={4} material={frameMat} />
+        <RoundedBox
+          args={[w + 0.02, h + 0.02, DEPTH]}
+          radius={DEPTH * 0.45}
+          smoothness={4}
+          material={edgeMat}
+        />
+        <RoundedBox
+          args={[w, h, DEPTH + 0.004]}
+          radius={DEPTH * 0.4}
+          smoothness={4}
+          material={frameMat}
+        />
         {/* Halo del color de la marca detrás de la pantalla encendida. */}
         <mesh position={[0, 0, -DEPTH]} scale={1.2}>
           <planeGeometry args={[w, h]} />
-          <meshBasicMaterial ref={glow} color={accent} transparent opacity={0} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} map={glowMap} />
+          <meshBasicMaterial
+            ref={glow}
+            color={accent}
+            transparent
+            opacity={0}
+            depthWrite={false}
+            blending={THREE.AdditiveBlending}
+            toneMapped={false}
+            map={glowMap}
+          />
         </mesh>
       </group>
       {/* El canto también se refleja: sin él, entre la pantalla y su reflejo
           queda un hueco que delata que no hay agua. */}
       <group scale={[1, -1, 1]}>
         <group position={[0, LIFT + h / 2, 0]}>
-          <RoundedBox args={[w + 0.02, h + 0.02, DEPTH]} radius={DEPTH * 0.45} smoothness={4} material={edgeReflMat} />
+          <RoundedBox
+            args={[w + 0.02, h + 0.02, DEPTH]}
+            radius={DEPTH * 0.45}
+            smoothness={4}
+            material={edgeReflMat}
+          />
         </group>
       </group>
 
       {/* Imagen y su reflejo en el agua. */}
       <Suspense fallback={null}>
         {active && project.video ? (
-          <Suspense fallback={<ImageSurfaces src={imageUrl(project.image)} screenRef={screen} waterRef={water} />}>
-            <VideoSurfaces src={pickVideo(project.video)} poster={imageUrl(project.image)} screenRef={screen} waterRef={water} />
+          <Suspense
+            fallback={
+              <ImageSurfaces
+                src={imageUrl(project.image)}
+                screenRef={screen}
+                waterRef={water}
+              />
+            }
+          >
+            <VideoSurfaces
+              src={pickVideo(project.video)}
+              poster={imageUrl(project.image)}
+              screenRef={screen}
+              waterRef={water}
+            />
           </Suspense>
         ) : (
-          <ImageSurfaces src={imageUrl(project.image)} screenRef={screen} waterRef={water} />
+          <ImageSurfaces
+            src={imageUrl(project.image)}
+            screenRef={screen}
+            waterRef={water}
+          />
         )}
       </Suspense>
 
       {/* Luz del foco sobre el agua, al pie de la pantalla encendida. */}
-      <mesh rotation-x={-Math.PI / 2} position={[0, 0.001, 0.9]} scale={[w * 1.5, 2.6, 1]}>
+      <mesh
+        rotation-x={-Math.PI / 2}
+        position={[0, 0.001, 0.9]}
+        scale={[w * 1.5, 2.6, 1]}
+      >
         <planeGeometry args={[1, 1]} />
-        <meshBasicMaterial ref={pool} color={accent} transparent opacity={0} depthWrite={false} blending={THREE.AdditiveBlending} toneMapped={false} map={glowMap} />
+        <meshBasicMaterial
+          ref={pool}
+          color={accent}
+          transparent
+          opacity={0}
+          depthWrite={false}
+          blending={THREE.AdditiveBlending}
+          toneMapped={false}
+          map={glowMap}
+        />
       </mesh>
     </group>
   );
@@ -386,6 +463,34 @@ function glowTexture() {
   ctx.fillRect(0, 0, 128, 128);
   _glow = new THREE.CanvasTexture(c);
   return _glow;
+}
+
+/**
+ * Con frameloop "never" el primer cuadro se dibujaba recién cuando la sección
+ * entraba en pantalla, y ahí compilaba todos los shaders y el mapa de entorno
+ * de golpe: medido, ~800 ms de getProgramInfoLog en pleno scroll. Esto hace
+ * ese trabajo antes, con la escena montada pero todavía fuera de vista.
+ */
+function Warmup({ live }: { live: boolean }) {
+  const { gl, scene, camera, advance } = useThree();
+  useEffect(() => {
+    if (live) return;
+    let cancelled = false;
+    // ponytail: las texturas de cada pantalla llegan por Suspense a destiempo,
+    // así que se repite un par de veces; compilar lo ya compilado es gratis.
+    const run = async () => {
+      await gl.compileAsync(scene, camera);
+      // Dibujar el cuadro es sincrónico: se espera a que el navegador esté libre.
+      const idle = window.requestIdleCallback ?? ((cb: () => void) => window.setTimeout(cb, 1));
+      if (!cancelled) idle(() => !cancelled && advance(performance.now()), { timeout: 1500 });
+    };
+    const timers = [0, 2000, 5000].map((ms) => window.setTimeout(run, ms));
+    return () => {
+      cancelled = true;
+      timers.forEach(clearTimeout);
+    };
+  }, [live, gl, scene, camera, advance]);
+  return null;
 }
 
 function CameraRig({ mobile }: { mobile: boolean }) {
@@ -442,16 +547,50 @@ export default function ShowcaseScene({
       camera={{ fov: 30, near: 0.1, far: 80, position: [0, 1.8, 9] }}
       className="!absolute inset-0"
     >
+      <Warmup live={live} />
       <CameraRig mobile={mobile} />
       {/* Foco de frente, alto: hace brillar los cantos de aluminio. */}
-      <spotLight position={[0, 6, 10]} angle={0.5} penumbra={1} intensity={80} distance={40} decay={2} />
+      <spotLight
+        position={[0, 6, 10]}
+        angle={0.5}
+        penumbra={1}
+        intensity={80}
+        distance={40}
+        decay={2}
+      />
       <Environment resolution={256} frames={1} environmentIntensity={1}>
-        <Lightformer form="rect" intensity={2.5} position={[0, 5, 6]} rotation-x={-Math.PI / 3} scale={[10, 3, 1]} />
-        <Lightformer form="rect" intensity={1} position={[-6, 2, 3]} rotation-y={Math.PI / 2} scale={[8, 2, 1]} />
-        <Lightformer form="rect" intensity={1} position={[6, 2, 3]} rotation-y={-Math.PI / 2} scale={[8, 2, 1]} />
+        <Lightformer
+          form="rect"
+          intensity={2.5}
+          position={[0, 5, 6]}
+          rotation-x={-Math.PI / 3}
+          scale={[10, 3, 1]}
+        />
+        <Lightformer
+          form="rect"
+          intensity={1}
+          position={[-6, 2, 3]}
+          rotation-y={Math.PI / 2}
+          scale={[8, 2, 1]}
+        />
+        <Lightformer
+          form="rect"
+          intensity={1}
+          position={[6, 2, 3]}
+          rotation-y={-Math.PI / 2}
+          scale={[8, 2, 1]}
+        />
       </Environment>
       {projects.map((p, i) => (
-        <Screen key={p.slug} project={p} index={i} pos={pos} mobile={mobile} active={live && i === active} onPick={onPick} />
+        <Screen
+          key={p.slug}
+          project={p}
+          index={i}
+          pos={pos}
+          mobile={mobile}
+          active={live && i === active}
+          onPick={onPick}
+        />
       ))}
     </Canvas>
   );
