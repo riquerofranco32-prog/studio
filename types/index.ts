@@ -16,6 +16,14 @@ export interface Project {
   url: string;
   image: string;
   /**
+   * Capturas reales del sitio en tablet (768×1024) y celular (390×844) para el
+   * simulador de dispositivos del caso. Sin esto el simulador recorta `image`.
+   */
+  screens?: {
+    tablet: string;
+    mobile: string;
+  };
+  /**
    * Clip mudo de hover para la tarjeta de la grilla. Opcional: si falta, la
    * tarjeta se queda con `image` fija, que es el estado por defecto.
    * Las rutas se resuelven desde /public — ver public/projects/videos/README.md

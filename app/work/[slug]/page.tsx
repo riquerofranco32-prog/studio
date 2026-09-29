@@ -317,6 +317,7 @@ export default async function CaseStudyPage({
                   imageSrc={project.image}
                   projectName={project.name}
                   videoSrc={project.video}
+                  screens={project.screens}
                   liveUrl={project.url}
                 />
               )}
